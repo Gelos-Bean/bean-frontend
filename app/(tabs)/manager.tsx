@@ -33,7 +33,7 @@ const Manager = () => {
     name: string;
     price: number;
     course: string;
-    options?: { item: { name: string }; quantity: number }[]; //optional
+    options?: { item: Product; quantity: number }[]; //optional
     image?: string;    //optional
   };
 
@@ -41,7 +41,57 @@ const Manager = () => {
   
 
   // Handle Add Product
-  const handleAddProduct = async () => { };
+  const handleAddProduct = async (newProduct : Product) => { 
+    try {
+          // I have to manually restructure the JSON before sending to make sure that it is correctly referencing the options
+          var productToAdd = undefined;
+          if(newProduct.options?.length! > 0){ // If things start breaking then look here
+            console.log('Options:', newProduct.options);
+            const structuredOptions = newProduct.options!.map((opt) => {
+              return {
+                item: {
+                  $oid: opt.item 
+                },
+                quantity: opt.quantity || 1 
+              };
+            });
+          // Create the new product object with structured options
+          productToAdd = {
+            ...newProduct, 
+            price: Number(newProduct.price), // Will need to add proper input validation here
+            options: structuredOptions
+          };
+          
+        } else {
+          productToAdd = {
+            ...newProduct,
+            price: Number(newProduct.price), 
+            options: []
+        }};
+        
+        const productJSON = JSON.stringify(productToAdd);
+        console.log(productJSON);
+        const response = await fetch(`http://10.0.2.2:8080/add-item`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', 
+          },
+          body: productJSON, 
+        });
+        if (!response.ok) {
+          const error = await response.json();
+          const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
+          Alert.alert('Error', errorMessage);
+          return;
+        } else {
+          Alert.alert('Success', `${newProduct.name} added successfully`)
+        }
+      console.log('Gluten Free Bun saved successfully');
+    } catch (err) {
+      console.error('Add error:', err);
+      Alert.alert('Error', 'Something went wrong');
+    }
+  };
 
   // Handle Find Product
   const handleFindProduct = async () => { };
@@ -128,7 +178,7 @@ const Manager = () => {
                   {product.options.map((option, optIndex) => (
                     option && option.item && (
                       <Text key={optIndex} style={styles.tableCell}>
-                        Item: {option.item.name}, Quantity: {option.quantity}
+                        {option.item.name} - ${option.item.price}
                       </Text>
                     )
                   ))}

@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput, FlatList } from 'react-native';
-import { SelectList } from 'react-native-dropdown-select-list';
 
 const NewProductModal = ({ visible, onDismiss, onAdd }) => {
   const [nameInput, setNameInput] = React.useState('');
   const [priceInput, setPriceInput] = React.useState('');
   const [selectedCourse, setSelectedCourse] = React.useState('');
-  const [options, setOptions] = React.useState([]); // To store selected options
-  const [searchTerm, setSearchTerm] = React.useState(''); // To store search term
-  const [searchResults, setSearchResults] = React.useState([]); // To store fetched search results
+  const [options, setOptions] = React.useState([]); 
+  const [searchTerm, setSearchTerm] = React.useState(''); 
+  const [searchResults, setSearchResults] = React.useState([]); 
   const [imageInput, setImageInput] = React.useState('');
 
   const courses = [
@@ -24,7 +23,7 @@ const NewProductModal = ({ visible, onDismiss, onAdd }) => {
       const response = await fetch(`http://10.0.2.2:8080/products/${query}`);
       const data = await response.json();
       if (response.ok) {
-        setSearchResults(data); // Assume data is an array of matching products
+        setSearchResults(data.msg); 
       } else {
         console.log('Error fetching products:', data.msg);
       }
@@ -33,13 +32,11 @@ const NewProductModal = ({ visible, onDismiss, onAdd }) => {
     }
   };
 
-  
-
   // Handle when user selects an option (product) from the search results
   const handleSelectOption = (option) => {
-    setOptions([...options, option]); // Add selected option to options array
-    setSearchResults([]); // Clear search results after selecting
-    setSearchTerm(''); // Clear search input
+    setOptions([...options, option]); // Add 
+    setSearchResults([]); // Clear 
+    setSearchTerm(''); // Clear
   };
 
   const handleAdd = () => {
@@ -47,19 +44,19 @@ const NewProductModal = ({ visible, onDismiss, onAdd }) => {
       name: nameInput,
       price: priceInput,
       course: selectedCourse,
-      options: options.map((opt) => ({ item: opt._id, quantity: 1 })), // Add selected options
+      options: options.map((opt) => ({ item: opt._id, quantity: 1 })), 
       image: imageInput,
     };
     onAdd(newProduct);
     onDismiss();
   };
 
-  // Search products as the user types
+  // Search products 
   React.useEffect(() => {
     if (searchTerm) {
-      searchProducts(searchTerm); // Fetch products matching search term
+      searchProducts(searchTerm); 
     } else {
-      setSearchResults([]); // Clear search results if no search term
+      setSearchResults([]);
     }
   }, [searchTerm]);
 
@@ -85,9 +82,28 @@ const NewProductModal = ({ visible, onDismiss, onAdd }) => {
             onChangeText={setPriceInput}
             style={styles.textInputStyle}
           />
-
+          
           <Text>Course:</Text>
-          <SelectList setSelected={setSelectedCourse} data={courses} save="value" />
+          <FlatList
+            data={courses}
+            keyExtractor={(item) => item.key}
+            renderItem={({ item }) => (
+              <Pressable onPress={() => setSelectedCourse(item.value)}>
+                <Text
+                  style={[
+                    styles.dropdownItem,
+                    selectedCourse === item.value && styles.selectedItem,
+                  ]}
+                >
+                  {item.value}
+                </Text>
+              </Pressable>
+            )}
+          />
+
+
+
+          
 
           <Text>Options:</Text>
           <TextInput
@@ -96,13 +112,8 @@ const NewProductModal = ({ visible, onDismiss, onAdd }) => {
             onChangeText={setSearchTerm}
             style={styles.textInputStyle}
           />
-
           {/* Dropdown for search results */}
           {searchResults.length > 0 && (
-            <>
-            <SelectList 
-                setSelected={handleSelectOption} 
-                data={searchResults}/>
             <FlatList
               data={searchResults}
               keyExtractor={(item) => item._id}
@@ -113,8 +124,6 @@ const NewProductModal = ({ visible, onDismiss, onAdd }) => {
               )}
               style={styles.dropdown}
             />
-            </>
-            
           )}
 
           {/* Display selected options */}
@@ -199,9 +208,26 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
+  dropdown: {
+    maxHeight: 150,
+    width: 200,
+    backgroundColor: '#fff',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+  },
   selectedOptions: {
     marginTop: 10,
   },
+  dropdownItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  selectedItem: {
+    fontWeight: 'bold', // Bold the selected item
+    color: '#2196F3',   // Change color for highlight (optional)
+  }
 });
 
 export default NewProductModal;
