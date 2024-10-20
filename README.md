@@ -1,50 +1,28 @@
-# Welcome to your Expo app 👋
+# Bean Scene POS UI
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+__Author:__  
+- Ben Kindon  
+- Nicole Birch  
 
-## Get started
+__Version:__ 0.0.1
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## To run testing environment
+1. Install [node.js](https://nodejs.org/en)
+2. In terminal run `npm install`
+3. To test run `npx expo start`
 
-2. Start the app
+4. While running: 
 
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
 ```
+Press s | switch to developement build
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Press a | open Android
+Press w | open web
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Press j | open debugger
+Press r | reload app
+Press m | toggle menu
+Press o | open project code in your editor
+```
