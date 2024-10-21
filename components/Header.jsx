@@ -12,7 +12,7 @@ export default function Header({ title, location, username }){
       <View style={styles.fixToText}>
           <Image 
             style={styles.logo}
-            source={require('../../assets/images/logo-primary-transparent.png')} />
+            source={require('../assets/images/logo-primary-transparent.png')} />
           <Text style={[ styles.fixToText, styles.middle ]}>{ location }</Text>
           <Text style={styles.fixToText}>{ username ? username : "User" } </Text>
       </View>
