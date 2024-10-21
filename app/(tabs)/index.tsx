@@ -79,14 +79,12 @@ const App = () => (
     <Separator />
     <View>
       <Text style={styles.title}>
-        All interaction for the component are disabled.
+       .{/* All interaction for the component are disabled.*/}
       </Text>
     </View>
     <Separator />
     <View>
-      <Text style={styles.title}>
-        This layout strategy lets the title define the width of the button.
-      </Text>
+      {/*This layout strategy lets the title define the width of the button.*/}
       <View style={styles.fixToText}>
         <Button icon="minus-box" mode="contained" onPress={() => console.log('Pressed')}>
           Void Item
