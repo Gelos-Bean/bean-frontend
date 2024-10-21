@@ -10,7 +10,7 @@ import { Modal, Avatar, Button, Card, Text } from 'react-native-paper';
 import SearchModal from '../../components/modals/searchModal';
 import NewProduct from '../../components/modals/newProduct'
 import styles from '../../styles/posStyles'
-
+import Header from '../../components/Header.jsx';
 
 const Manager = () => {
   // Search product modal 
@@ -136,13 +136,11 @@ const Manager = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.fixToText}>
-        <Text>Logo</Text>
-        <Text>Location</Text>
-        <Text>Username</Text>
-      </View>
-      <Text style={styles.header}>Manager</Text>
-  
+          <Header
+            title={"Manager"}
+            location={"Sydney"}
+            username={null} />
+
       <Text style={styles.title}>Product Details</Text>
   
       {/* only show this bit if there are products */}

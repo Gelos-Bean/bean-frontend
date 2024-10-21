@@ -1,29 +1,25 @@
 import React from 'react';
 import {
   StyleSheet,
-  // Button,
   View,
   SafeAreaView,
-  // Text,
   Alert,
 } from 'react-native';
 
 import { Avatar, Button, Card, Text } from 'react-native-paper';
 import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
+import Header from '../../components/Header.jsx';
+
 const Separator = () => <View style={styles.separator} />;
 
 const App = () => (
   <SafeAreaView style={styles.container}>
     <View style={styles.header}>
-    <View style={styles.fixToText}>
-        <Text>Logo</Text>
-        <Text>Location</Text>
-        <Text>Username</Text>
-      </View>
-      <Text style={styles.title}>
-        Orders
-      </Text>     
+    <Header
+            title={"Manager"}
+            location={"Sydney"}
+            username={null} />
     </View>
     </SafeAreaView>
 );
