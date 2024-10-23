@@ -6,10 +6,16 @@ import {
   Image
 } from 'react-native';
 
-import { Modal, Avatar, Button, Card, Text } from 'react-native-paper';
+import { Button, Text, IconButton, MD3Colors } from 'react-native-paper';
 import SearchModal from '../../components/modals/searchModal';
-import NewProduct from '../../components/modals/newProduct'
-import styles from '../../styles/posStyles'
+import NewProduct from '../../components/modals/newProduct';
+import DeleteModal from '../../components/modals/deleteProduct'
+
+import styles from '../../styles/posStyles';
+
+import Home from '../(tabs)/index'
+
+
 
 
 const Manager = () => {
@@ -23,22 +29,31 @@ const Manager = () => {
   const showNewProductModal = () => setNewProductModalVisible(true);
   const hideNewProductModal = () => setNewProductModalVisible(false);
 
+  // Delete product modal
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const showDeleteModal = () => setDeleteModalVisible(true);
+  const hideDeleteModal = () => setDeleteModalVisible(false);
   
   
 
   const Separator = () => <View style={styles.separator} />;
   //I had to define the data types for each property of Product to make the typescript happy
+  type Option = {
+    _id: string;
+    name: string;
+    price: number;
+  }
+  
   type Product = {
     _id: string;
     name: string;
     price: number;
     course: string;
-    options?: { item: Product; quantity: number }[]; //optional
+    options?: {item: Option}[]; //optional
     image?: string;    //optional
   };
 
-  const [products, setProducts] = useState<Product[]>([]); //Explicitly pointing the useState to the array, type AND allowing it to be null :S
-  
+  const [products, setProducts] = useState<Product[]>([]); //Explicitly pointing the useState to the array, type AND allowing it to be null :S  
 
   // Handle Add Product
   const handleAddProduct = async (newProduct : Product) => { 
@@ -48,12 +63,7 @@ const Manager = () => {
           if(newProduct.options?.length! > 0){ // If things start breaking then look here
             console.log('Options:', newProduct.options);
             const structuredOptions = newProduct.options!.map((opt) => {
-              return {
-                item: {
-                  $oid: opt.item 
-                },
-                quantity: opt.quantity || 1 
-              };
+              return { opt };
             });
           // Create the new product object with structured options
           productToAdd = {
@@ -93,9 +103,6 @@ const Manager = () => {
     }
   };
 
-  // Handle Find Product
-  const handleFindProduct = async () => { };
-
    // Function to handle search
    const handleSearch = async (query: string) => {
     try {
@@ -112,7 +119,9 @@ const Manager = () => {
   
       const data = await response.json();
       console.log('Search Results:', data); // Ben dont forget to remove this
-  
+      
+      
+
       if (data.status && Array.isArray(data.msg)) {
         setProducts(data.msg); // if array
       } else if (data.status) {
@@ -132,87 +141,124 @@ const Manager = () => {
   const handleEditProduct = async (id : string) => { };
 
   // Handle Delete Product 
-  const handleDeleteProduct = async (id : string) => { };
+  const handleDeleteProduct = async (id : string) => { console.log(`Deleting ID: ${id}`)};
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.fixToText}>
-        <Text>Logo</Text>
-        <Text>Location</Text>
-        <Text>Username</Text>
+      <View style={styles.header}>
+        <Text>Heading</Text>
       </View>
-      <Text style={styles.header}>Manager</Text>
-  
-      <Text style={styles.title}>Product Details</Text>
-  
-      {/* only show this bit if there are products */}
-      {products && products.length > 0 && (
-      <View>
-        {products.map((product, index) => (
-          product && (
-            <View key={index} style={styles.table}>
-              <View style={styles.tableRow}>
-                <Text style={styles.tableCell}>Name:</Text>
-                <Text style={styles.tableCell}>{product.name}</Text>
-              </View>
-              <View style={styles.tableRow}>
-                <Text style={styles.tableCell}>Price:</Text>
-                <Text style={styles.tableCell}>${product.price}</Text>
-              </View>
-              <View style={styles.tableRow}>
-                <Text style={styles.tableCell}>Course:</Text>
-                <Text style={styles.tableCell}>{product.course}</Text>
-              </View>
-              <View style={styles.tableRow}>
-                <Text style={styles.tableCell}>Image:</Text>
-                {product.image ? (
-                  <Image source={{ uri: product.image }} style={{ width: 100, height: 100 }} />
-                ) : (
-                  <Text>No image available</Text>
+      <View style={styles.body}>
+        <View style={styles.mainContainer}>
+          <Text style={styles.title}>Product Details</Text>
+          {/* only show this bit if there are products */}
+          {products && products.length > 0 && (
+          <View>
+            {products.map((product, index) => (
+              product && (
+                <View key={index} style={styles.table}>
+                  <View style={styles.tableRow}>
+                    <Text style={styles.tableCell}>Name:</Text>
+                    <Text style={styles.tableCell}>{product.name}</Text>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <Text style={styles.tableCell}>Price:</Text>
+                    <Text style={styles.tableCell}>${product.price}</Text>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <Text style={styles.tableCell}>Course:</Text>
+                    <Text style={styles.tableCell}>{product.course}</Text>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <Text style={styles.tableCell}>Image:</Text>
+                    {product.image ? (
+                      <Image source={{ uri: product.image }} style={{ width: 100, height: 100 }} />
+                    ) : (
+                      <Text>No image available</Text>
+                    )}
+                  </View>
+                  {product.options && product.options.length > 0 && (
+                  <View style={styles.tableRow}>
+                    <Text style={styles.tableCell}>Options:</Text>
+                    {product.options.map((option, optIndex) => (
+                      option && option.item && (
+                        <Text key={optIndex} style={styles.tableCell}>
+                          {option.item.name} - ${option.item.price}
+                        </Text>
+                      )
+                    ))}
+                  </View>
                 )}
-              </View>
-              {/* only show this bit if there are options */}
-              {product.options && product.options.length > 0 && (
-                <View style={styles.tableRow}>
-                  <Text style={styles.tableCell}>Options:</Text>
-                  {product.options.map((option, optIndex) => (
-                    option && option.item && (
-                      <Text key={optIndex} style={styles.tableCell}>
-                        {option.item.name} - ${option.item.price}
-                      </Text>
-                    )
-                  ))}
                 </View>
-              )}
+              )
+            ))}
+          </View>
+          )}      
+        </View>
+        <View style={styles.rightContainer}>
+          <View style={styles.numpadContainer}>
+            <Text>Numpad</Text>
+          </View>
+          <View style={[styles.buttonContainer]}>
+            <View style={styles.buttonRow}>
+              <IconButton style={styles.squareButton}
+                icon="plus-box"
+                iconColor='rgb(229 220 200)'
+                containerColor='rgb(156, 64, 77)'
+                mode="contained"
+                size={40}
+                onPress={showNewProductModal}
+              />
+              <IconButton style={styles.squareButton}
+                icon="pencil"
+                iconColor='rgb(229 220 200)'
+                containerColor='rgb(156, 64, 77)'
+                mode="contained"
+                size={40}
+                onPress={() => console.log('Edit not implemented')}
+              />
             </View>
-          )
-        ))}
-      </View>
-    )}
-
-  
-      <Separator />
-      
-      <View>
-        <View style={styles.fixToText}>
-          <Button icon="plus-box" mode="contained" onPress={showNewProductModal}>
-            Add Product
-          </Button>
-          <Button icon="pencil" mode="contained" onPress={() => console.log('Pressed')}>
-            Edit Product
-          </Button>
-          <Button icon="delete" mode="contained" onPress={() => console.log('Pressed')}>
-            Delete Product
-          </Button>
-          <Button icon="magnify" mode="contained" onPress={showSearchModal}>
-            Find Product
-          </Button>
+            <View style={styles.buttonRow}>
+              <IconButton style={styles.squareButton}
+                icon="magnify"
+                iconColor='rgb(229 220 200)'
+                containerColor='rgb(156, 64, 77)'
+                mode="contained"
+                size={40}
+                onPress={showSearchModal}
+              />
+              <IconButton style={styles.squareButton}
+                icon="delete"
+                iconColor='rgb(229 220 200)'
+                containerColor='rgb(156, 64, 77)'
+                mode="contained"
+                size={40}
+                onPress={showDeleteModal}
+              />
+            </View>
+            <View style={styles.buttonRow}>
+              <Button style={[styles.squareButton, styles.wideButton]}
+                mode="contained"
+                icon="poll">              
+                Report
+              </Button>
+              <IconButton style={styles.roundButton}
+                icon="home-roof"
+                iconColor='rgb(229 220 200)'
+                containerColor='rgb(156, 64, 77)'
+                mode="contained"
+                size={40}
+                onPress={Home}
+              />
+            </View>
+          </View>
         </View>
       </View>
-  
+      
       {/* Modals */}
       <SearchModal visible={searchModalVisible} onDismiss={hideSearchModal} onSearch={handleSearch} />
       <NewProduct visible={newProductModalVisible} onDismiss={hideNewProductModal} onAdd={handleAddProduct} />
+      <DeleteModal visible={deleteModalVisible} onDismiss={hideDeleteModal} onDelete={handleDeleteProduct} />
     </SafeAreaView>
   );
 }
