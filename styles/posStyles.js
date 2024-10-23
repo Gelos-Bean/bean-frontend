@@ -91,4 +91,31 @@ export default styles = StyleSheet.create({
     tableCell: {
       fontSize: 16,
     },
+    cardStyle: {
+      maxWidth: '20%',
+      maxHeight: '40%',
+    },
+    tabBar: {
+      backgroundColor: 'lightgray',
+    },
+    indicatorStyle: {
+      backgroundColor: 'darkred',
+    },
+    content: {
+      flex: 1,
+      justifyContent: 'center'
+    },
+    tabBar: {
+      flexDirection: 'row',
+      alignContent: 'stretch'
+    },
+    tabButton:{
+      borderRadius:0,
+    },
+    activeTab: {
+      backgroundColor: 'darkred', 
+    },
+    inactiveTab: {
+      backgroundColor: 'gray', // Color for the inactive tabs
+    },
   });

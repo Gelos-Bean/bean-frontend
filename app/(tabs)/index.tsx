@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,143 +6,136 @@ import {
   Alert,
 } from 'react-native';
 import Header from '../../components/Header.jsx';
-
-import { Avatar, Button, Card, Text } from 'react-native-paper';
-import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
+import { ToggleButton, Button, Text, Card, IconButton, MD3Colors } from 'react-native-paper';
+import styles from '../../styles/posStyles';
 
 const Separator = () => <View style={styles.separator} />;
 
-const App = () => (
+const App = () => {
+  
+  const [selectedTab, setSelectedTab] = React.useState('Entrees');
+
+  type Option = {
+    _id: string;
+    name: string;
+    price: number;
+  }
+  
+  type Product = {
+    _id: string;
+    name: string;
+    price: number;
+    course: string;
+    options?: {item: Option}[]; //optional
+    image?: string;    //optional
+  };
+
+  return (
   <SafeAreaView style={styles.container}>
-    
-    <Header
-      title={"Home"}
+    <Header title={"Home"}
       location={"Sydney"}
       username={null} />
-
     <Separator />
-    <View style={styles.cardContainer}>
-      <Card>
-        <Card.Cover source={{ uri: 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }} />
-        <Card.Title title="Card Title" subtitle="Card Subtitle" />
-        <Card.Content>
-          <Text variant="titleLarge">Card title</Text>
-          <Text variant="bodyMedium">Card content</Text>
-        </Card.Content>
-      </Card>
-      <Card>
-        <Card.Cover source={{ uri: 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }} />
-        <Card.Title title="Card Title" subtitle="Card Subtitle" />
-        <Card.Content>
-          <Text variant="titleLarge">Card title</Text>
-          <Text variant="bodyMedium">Card content</Text>
-        </Card.Content>
-      </Card>
-      <Card>
-        <Card.Cover source={{ uri: 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }} />
-        <Card.Title title="Card Title" subtitle="Card Subtitle" />
-        <Card.Content>
-          <Text variant="titleLarge">Card title</Text>
-          <Text variant="bodyMedium">Card content</Text>
-        </Card.Content>
-      </Card>
-      <Card>
-        <Card.Cover source={{ uri: 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }} />
-        <Card.Title title="Card Title" subtitle="Card Subtitle" />
-        <Card.Content>
-          <Text variant="titleLarge">Card title</Text>
-          <Text variant="bodyMedium">Card content</Text>
-        </Card.Content>
-      </Card>
-      <Card>
-        <Card.Cover source={{ uri: 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }} />
-        <Card.Title title="Card Title" subtitle="Card Subtitle" />
-        <Card.Content>
-          <Text variant="titleLarge">Card title</Text>
-          <Text variant="bodyMedium">Card content</Text>
-        </Card.Content>
-      </Card>
-      <Card>
-        <Card.Cover source={{ uri: 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }} />
-        <Card.Title title="Card Title" subtitle="Card Subtitle" />
-        <Card.Content>
-          <Text variant="titleLarge">Card title</Text>
-          <Text variant="bodyMedium">Card content</Text>
-        </Card.Content>
-      </Card>
-    </View>    
-    <Separator />
-    <View>
-      <Text style={styles.title}>
-       .{/* All interaction for the component are disabled.*/}
-      </Text>
-    </View>
-    <Separator />
-    <View>
-      {/*This layout strategy lets the title define the width of the button.*/}
-      <View style={styles.fixToText}>
-        <Button icon="minus-box" mode="contained" onPress={() => console.log('Pressed')}>
-          Void Item
-        </Button>
-        <Button icon="minus-box-multiple" mode="contained" onPress={() => console.log('Pressed')}>
-          Void Order
-        </Button>
-        <Button icon="pencil" mode="contained" onPress={() => console.log('Pressed')}>
-          Free Text
-        </Button>
-        <Button icon="magnify" mode="contained" onPress={() => console.log('Pressed')}>
-          Search
-        </Button>
+    <View style={styles.body}>
+      <View style={styles.mainContainer}>
+        <View style={styles.tabBar}>
+          <Button
+            style={[
+              styles.tabButton,
+              selectedTab === 'Entrees' ? styles.activeTab : styles.inactiveTab
+            ]}
+            mode="contained"
+            onPress={() => setSelectedTab('Entrees')}
+            disabled={selectedTab === 'Entrees'}>
+            Entrees
+          </Button>
+          <Button
+            style={[
+              styles.tabButton,
+              selectedTab === 'Mains' ? styles.activeTab : styles.inactiveTab
+            ]}
+            mode="contained"
+            onPress={() => setSelectedTab('Mains')}
+            disabled={selectedTab === 'Mains'}>
+            Mains
+          </Button>
+          <Button
+            style={[
+              styles.tabButton,
+              selectedTab === 'Desserts' ? styles.activeTab : styles.inactiveTab
+            ]}
+            mode="contained"
+            onPress={() => setSelectedTab('Desserts')}
+            disabled={selectedTab === 'Desserts'}>
+            Desserts
+          </Button>
+        </View>
+          <Card style={styles.cardStyle}>
+            <Card.Cover 
+              source={{ uri: 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }} 
+              style={{ height: 100 }}/>
+            <Card.Content>
+            <Text variant="titleLarge">Card title</Text>
+            <Text variant="bodyMedium">Example of extra text</Text>
+            </Card.Content>
+          </Card>
       </View>
-      <View style={styles.title}>
-        <Button icon="cash-register" mode="contained" onPress={() => console.log('Pressed')}>
-          Quick Pay
-        </Button>
-        <Button icon="send" mode="contained" onPress={() => console.log('Pressed')}>
-          Add to Tab
-        </Button>
-      </View>
-      <View style={styles.fixToText}>
-        <Button icon="home" mode="contained" onPress={() => console.log('Pressed')}>
-          Home
-        </Button>
+      <View style={styles.rightContainer}>
+        <View style={styles.numpadContainer}>
+          <Text>Numpad</Text>
+        </View>
+        <View style={[styles.buttonContainer]}>
+          <View style={styles.buttonRow}>
+            <IconButton style={styles.squareButton}
+              icon="plus-box"
+              iconColor='rgb(229 220 200)'
+              containerColor='rgb(156, 64, 77)'
+              mode="contained"
+              size={40}
+            />
+            <IconButton style={styles.squareButton}
+              icon="pencil"
+              iconColor='rgb(229 220 200)'
+              containerColor='rgb(156, 64, 77)'
+              mode="contained"
+              size={40}
+              onPress={() => console.log('Edit not implemented')}
+            />
+          </View>
+          <View style={styles.buttonRow}>
+            <IconButton style={styles.squareButton}
+              icon="magnify"
+              iconColor='rgb(229 220 200)'
+              containerColor='rgb(156, 64, 77)'
+              mode="contained"
+              size={40}
+            />
+            <IconButton style={styles.squareButton}
+              icon="delete"
+              iconColor='rgb(229 220 200)'
+              containerColor='rgb(156, 64, 77)'
+              mode="contained"
+              size={40}
+            />
+          </View>
+          <View style={styles.buttonRow}>
+            <Button style={[styles.squareButton, styles.wideButton]}
+              mode="contained"
+              icon="poll">              
+              Report
+            </Button>
+            <IconButton style={styles.roundButton}
+              icon="home-roof"
+              iconColor='rgb(229 220 200)'
+              containerColor='rgb(156, 64, 77)'
+              mode="contained"
+              size={40}
+            />
+          </View>
+        </View>
       </View>
     </View>
   </SafeAreaView>
-);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    marginHorizontal: 16,
-  },
-  header:{
-    position: 'absolute', 
-    left: 0,
-    right: 0,
-    top: 20
-  },
-  title: {
-    textAlign: 'center',
-    marginVertical: 8,
-  },
-  fixToText: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  cardContainer: {
-    flexDirection: 'row',
-    left: 0,
-    width: 900,
-    justifyContent: 'space-between',
-    
-  },
-  separator: {
-    marginVertical: 8,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-});
+)};
 
 export default App;

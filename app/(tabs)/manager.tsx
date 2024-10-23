@@ -14,8 +14,7 @@ import DeleteModal from '../../components/modals/deleteProduct'
 import styles from '../../styles/posStyles';
 
 import Home from '../(tabs)/index'
-
-
+import Header from '../../components/Header'
 
 
 const Manager = () => {
@@ -145,12 +144,13 @@ const Manager = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text>Heading</Text>
-      </View>
+      <Header title={"Manager"}
+        location={"Sydney"}
+        username={null}/>
+      <Separator />
       <View style={styles.body}>
         <View style={styles.mainContainer}>
-          <Text style={styles.title}>Product Details</Text>
+          <Text variant="displaySmall">Product Details</Text>
           {/* only show this bit if there are products */}
           {products && products.length > 0 && (
           <View>
