@@ -1,12 +1,11 @@
 import React from 'react';
 import {
   StyleSheet,
-  // Button,
   View,
   SafeAreaView,
-  // Text,
   Alert,
 } from 'react-native';
+import Header from '../../components/Header.jsx';
 
 import { Avatar, Button, Card, Text } from 'react-native-paper';
 import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
@@ -15,16 +14,12 @@ const Separator = () => <View style={styles.separator} />;
 
 const App = () => (
   <SafeAreaView style={styles.container}>
-    <View>
-    <View style={styles.fixToText}>
-        <Text>Logo</Text>
-        <Text>Location</Text>
-        <Text>Username</Text>
-      </View>
-      <Text style={styles.title}>
-        Home
-      </Text>     
-    </View>
+    
+    <Header
+      title={"Home"}
+      location={"Sydney"}
+      username={null} />
+
     <Separator />
     <View style={styles.cardContainer}>
       <Card>
@@ -79,14 +74,12 @@ const App = () => (
     <Separator />
     <View>
       <Text style={styles.title}>
-        All interaction for the component are disabled.
+       .{/* All interaction for the component are disabled.*/}
       </Text>
     </View>
     <Separator />
     <View>
-      <Text style={styles.title}>
-        This layout strategy lets the title define the width of the button.
-      </Text>
+      {/*This layout strategy lets the title define the width of the button.*/}
       <View style={styles.fixToText}>
         <Button icon="minus-box" mode="contained" onPress={() => console.log('Pressed')}>
           Void Item
