@@ -20,9 +20,9 @@ export default theme = {
       "onError": "rgb(255, 255, 255)",
       "errorContainer": "rgb(255, 218, 214)",
       "onErrorContainer": "rgb(65, 0, 2)",
-      "background": "rgb(255, 251, 255)",
+      "background": "rgb(252, 248, 242)",
       "onBackground": "rgb(32, 26, 26)",
-      "surface": "rgb(255, 251, 255)",
+      "surface": "rgb(252, 248, 242)",
       "onSurface": "rgb(32, 26, 26)",
       "surfaceVariant": "rgb(244, 221, 222)",
       "onSurfaceVariant": "rgb(82, 67, 68)",
@@ -42,11 +42,11 @@ export default theme = {
         "level5": "rgb(241, 225, 230)"
       },
       "surfaceDisabled": "rgba(32, 26, 26, 0.12)",
-      "onSurfaceDisabled": "rgba(229 220 200)", //If updating whites then change this
+      "onSurfaceDisabled": "rgba(252, 248, 242)", //If updating whites then change this
       "backdrop": "rgba(59, 45, 46, 0.4)",
       "dark": "rgb(150, 65, 105)",
       "onDark": "rgb(255, 255, 255)",
       "darkContainer": "rgb(255, 217, 229)",
-      "onDarkContainer": "rgb(61, 0, 35)"
+      "onDarkContainer": "rgb(61, 0, 35)",
     }
   }

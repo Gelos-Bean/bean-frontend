@@ -7,9 +7,10 @@ import {
     Pressable
   } from 'react-native';
 import { Button, PaperProvider, MD3LightTheme as DefaultTheme } from 'react-native-paper';
-import customTheme from '../styles/theme'
-const theme = customTheme
+import customTheme from '../styles/theme';
+const theme = customTheme;
 
+const Separator = () => <View style={styles.separator} />;
 export default function Header({ title, location, username }){
   return (
     <View style={styles.container}>
@@ -21,17 +22,16 @@ export default function Header({ title, location, username }){
       <View style={styles.centreSection}>
         <View style={styles.fixToText}>
           <Text style={[ styles.textStyle] }>{ location }</Text>
+          <Text style={styles.title}>{title}</Text>
           <Text style={styles.textStyle}>{ username ? username : "User" } </Text>
         </View>
-        <Text style={styles.title}>{title}</Text>
       </View>
       <View style={styles.loginContainer}>
         <PaperProvider theme={theme}>
           <Button
             style={[styles.squareButton, styles.wideButton]}
             mode="contained"
-            icon="logout">
-            Log Out
+            icon="logout">Log Out
           </Button>
         </PaperProvider>
       </View>
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     marginTop: '2%',
-    height: 60,
+    height: 35,
   },
   logoContainer: {
     flex: 1,
@@ -68,12 +68,13 @@ const styles = StyleSheet.create({
   loginContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignContent:'center'
+    alignContent:'center',
+    marginBottom: 1,
+    marginLeft: 10
   },
   fixToText: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
   },
   textStyle: {
     fontSize: 16,
@@ -88,10 +89,13 @@ const styles = StyleSheet.create({
     borderRadius: 9,
   },
   wideButton:{
-    margin:10,
-    width: 150,
-    height: 45,
-    justifyContent:'center',
-    color:'rgb(229 220 200)'
+    width: 120,
+    height: 40,
+    color:'rgb(229 220 200)',
+  },
+  separator: {
+    marginVertical: 8,
+    borderBottomColor: '#737373',
+    borderBottomWidth: StyleSheet.hairlineWidth,
   }
 });

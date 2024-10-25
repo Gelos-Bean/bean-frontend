@@ -3,8 +3,10 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import {View} from 'react-native';
 
 import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
+import React from 'react';
 
 import customTheme from '../styles/theme'
 const theme = customTheme
@@ -29,10 +31,13 @@ export default function RootLayout() {
 
   return (
     <PaperProvider theme={theme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
     </PaperProvider>
   );
+
+  
+  
 }
