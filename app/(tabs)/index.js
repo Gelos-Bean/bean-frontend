@@ -12,6 +12,8 @@ import styles from '../../styles/posStyles';
 
 import AddTableModal from '../../components/modals/addTable.jsx'
 
+import Table from '../../classes/tableClass.js'
+
 const App = () => {
   
   // Add table modal
@@ -68,6 +70,90 @@ const App = () => {
       setSelectedProduct(null); // Deselect after removing
     }
   };
+
+// New table:
+async function AddTable(tableNum, pax, limit) {
+  try {
+    const table = {
+      tableNo: tableNum,
+      pax: pax,
+      limit: limit || null, 
+      products: [], 
+      total: 0
+    };
+    try {
+      const response = await fetch(`http://10.0.2.2:8080/tables/${tableNum}`, {
+      method: 'GET',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        Alert.alert('Error', `Table ${tableNum} already exists`);
+        return;
+      }
+      //Table number is free
+        try {
+          const tableJSON = JSON.stringify(table);
+          console.log(tableJSON);
+
+          const addResponse = await fetch(`http://10.0.2.2:8080/tables/add-table`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json', 
+            },
+            body: tableJSON
+          });
+
+        const addData = await addResponse.json();
+        if (addData.success) {
+          Alert.alert('Success', addData.msg);
+        } else {
+          Alert.alert('Error', addData.msg);
+        }
+        } catch (err) {
+          Alert.alert('Error', err)
+        }
+    } catch (err) {
+      Alert.alert('Error', 'Something went wrong when accessing tables');
+    }
+  } catch (err) {
+    Alert.alert('Error', 'Something went wrong when accessing tables');
+  }
+}
+
+  // Place order:
+  async function PlaceOrder() {
+    try {
+      
+    } catch (error) {
+      Alert.alert('Error', 'There was an issue placing the order. Operation aborted');
+    }
+    try {
+      const response = await fetch(`http://10.0.2.2:8080/products`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
+        Alert.alert('Error', errorMessage);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.success && Array.isArray(data.msg)) {
+        setProducts(data.msg);
+      } else {
+        const errorMessage = typeof data.msg === 'string' ? data.msg : 'No products found';
+        Alert.alert('Error', errorMessage);
+      }
+    } catch (err) {
+      console.error('Search error:', err);
+      Alert.alert('Error', 'Something went wrong');
+    }
+  }
 
   // On Load:
   useEffect(() => {
@@ -231,7 +317,7 @@ const App = () => {
                     containerColor='rgb(156, 64, 77)'
                     mode="contained"
                     size={30}
-                    // onPress={showAddTableModal}
+                    onPress={showAddTableModal}
                   />
           </View>
           <View style={[styles.buttonRow]}>
@@ -303,7 +389,7 @@ const App = () => {
         </View>
       </View>
     </Pressable>
-    <AddTableModal visible={addTableModalVisible} onDismiss={hideAddTableModal} />
+    <AddTableModal visible={addTableModalVisible} onDismiss={hideAddTableModal} onAdd={AddTable} />
       
   </SafeAreaView>
 )};
