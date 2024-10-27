@@ -13,7 +13,7 @@ export default function ViewAllTabs({ onSelectTab }) {
       async function fetchData(){ 
         
         try { 
-          const response = await fetch('http://localhost:8080/tables');
+          const response = await fetch('http://10.0.2.2:8080/tables');
           const tabs = await response.json();
     
     //------> Create functionality to display this error to user
