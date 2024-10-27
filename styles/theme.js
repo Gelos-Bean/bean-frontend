@@ -35,14 +35,14 @@ export default theme = {
       "inversePrimary": "rgb(255, 178, 184)",
       "elevation": {
         "level0": "transparent",
-        "level1": "rgb(250, 242, 246)",
+        "level1": "rgb(255, 255, 255)",
         "level2": "rgb(247, 236, 241)",
         "level3": "rgb(244, 230, 235)",
         "level4": "rgb(243, 229, 234)",
         "level5": "rgb(241, 225, 230)"
       },
       "surfaceDisabled": "rgba(32, 26, 26, 0.12)",
-      "onSurfaceDisabled": "rgba(252, 248, 242)", //If updating whites then change this
+      "onSurfaceDisabled": "rgb(0, 0, 0)",
       "backdrop": "rgba(59, 45, 46, 0.4)",
       "dark": "rgb(150, 65, 105)",
       "onDark": "rgb(255, 255, 255)",

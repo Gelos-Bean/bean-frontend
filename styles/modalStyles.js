@@ -6,14 +6,13 @@ export default styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: 22,
     },
     modalView: {
-      margin: 20,
+      display: 'flex',
+      flexDirection: 'column',
       backgroundColor: 'white',
-      borderRadius: 20,
+      borderRadius: 9,
       padding: 35,
-      alignItems: 'center',
       shadowColor: '#000',
       shadowOffset: {
         width: 0,
@@ -22,31 +21,22 @@ export default styles = StyleSheet.create({
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5,
-    },
-    button: {
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2,
+      justifyContent: 'space-between'
     },
     buttonClose: {
       backgroundColor: '#2196F3',
     },
-    textStyle: {
-      color: 'white',
-      fontWeight: 'bold',
-      textAlign: 'center',
-    },
     modalText: {
-      marginBottom: 15,
-      textAlign: 'center',
+      marginBottom: 30,
+      textAlign: 'left',
     },
     textInputStyle: {
-      backgroundColor: '#dcdcdc',
       width: 200,
       borderRadius: 20,
       height: 40,
       paddingLeft: 20,
-      marginBottom: 10,
+      borderWidth: 0.5,
+      margin: '1%',
     },
     dropdownItem: {
       padding: 10,
@@ -76,5 +66,28 @@ export default styles = StyleSheet.create({
     fixToText: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+    },
+    squareButton:{
+      borderRadius: 9,
+    },
+    buttonText:{
+      textAlign: 'center',
+      alignContent: 'center',
+      justifyContent: 'center'
+    },
+    roundButton:{
+      margin: '1%',
+    },
+    wideButton:{
+      margin: '1%',
+      width: 125,
+      justifyContent:'center',
+      color:'rgb(229 220 200)'
+    },
+    inputContainer:{
+      flexDirection: 'row',
+      justifyContent:'center',
+      alignSelf:'center',
+      marginBottom: 1
     }
   });

@@ -57,11 +57,14 @@ export default styles = StyleSheet.create({
     buttonRow:{
       flexDirection: 'row',
       justifyContent:'space-between',
-      flex:1
     },
     squareButton:{
       borderRadius: 9,
-      marginBottom: '1%',
+    },
+    buttonText:{
+      textAlign: 'center',
+      alignContent: 'center',
+      justifyContent: 'center'
     },
     roundButton:{
       marginBottom: '1%',
@@ -82,10 +85,20 @@ export default styles = StyleSheet.create({
       justifyContent: 'space-between',
     },
     cardContainer: {
-      flexDirection: 'row',
-      left: 0,
-      width: 900,
-      justifyContent: 'space-between',
+      flexDirection: 'row', flexWrap: 'wrap',
+    },
+    cardStyle: {
+      margin: '1%',
+      width: 125
+    },
+    cardCover: {
+      height: 100,
+      borderBottomRightRadius: 0,
+      borderBottomLeftRadius: 0,
+    },
+    cardBody: {
+      textAlign: 'center',
+      padding: 100
     },
     separator: {
       marginVertical: 8,
@@ -112,10 +125,6 @@ export default styles = StyleSheet.create({
     tableCell: {
       fontSize: 16,
     },
-    cardStyle: {
-      maxWidth: '20%',
-      maxHeight: '40%',
-    },
     tabBar: {
       backgroundColor: 'lightgray',
     },
@@ -133,12 +142,6 @@ export default styles = StyleSheet.create({
     tabButton:{
       borderRadius:0,
     },
-    activeTab: {
-      backgroundColor: 'darkred', 
-    },
-    inactiveTab: {
-      backgroundColor: 'gray', // Color for the inactive tabs
-    },
     displayPortal:{
       flexDirection: 'row',
       margin:'1%',
@@ -151,7 +154,7 @@ export default styles = StyleSheet.create({
       flex:1
     },
     tableContainer:{
-      flex: 1,
+      flex: 3,
       margin:'1%',
       backgroundColor: '#FFFFFF',
       borderRadius: 9,
@@ -175,6 +178,17 @@ export default styles = StyleSheet.create({
       borderColor: 'rgb(156, 64, 77)',
       minHeight: 30,
       alignItems: 'center', 
+    },
+    highlightedRow: {
+      flexDirection: 'row',
+      borderBottomWidth: 1,
+      marginLeft:10,
+      marginRight:10,
+      borderColor: 'rgb(156, 64, 77)',
+      minHeight: 30,
+      alignItems: 'center', 
+      backgroundColor: 'rgb(156, 64, 77)',
+      color: 'white'
     },
     cell: {
       flex: 1,
