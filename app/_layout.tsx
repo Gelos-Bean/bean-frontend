@@ -3,10 +3,9 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import {View} from 'react-native';
+import React from 'react';
 
 import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
-import React from 'react';
 
 import customTheme from '../styles/theme'
 const theme = customTheme
