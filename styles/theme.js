@@ -1,5 +1,9 @@
-{
-    "colors": {
+
+import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
+
+export default theme = {
+    ...DefaultTheme,
+    colors: {
       "primary": "rgb(156, 64, 77)",
       "onPrimary": "rgb(255, 255, 255)",
       "primaryContainer": "rgb(255, 218, 219)",
@@ -16,9 +20,9 @@
       "onError": "rgb(255, 255, 255)",
       "errorContainer": "rgb(255, 218, 214)",
       "onErrorContainer": "rgb(65, 0, 2)",
-      "background": "rgb(255, 251, 255)",
+      "background": "rgb(252, 248, 242)",
       "onBackground": "rgb(32, 26, 26)",
-      "surface": "rgb(255, 251, 255)",
+      "surface": "rgb(252, 248, 242)",
       "onSurface": "rgb(32, 26, 26)",
       "surfaceVariant": "rgb(244, 221, 222)",
       "onSurfaceVariant": "rgb(82, 67, 68)",
@@ -31,18 +35,18 @@
       "inversePrimary": "rgb(255, 178, 184)",
       "elevation": {
         "level0": "transparent",
-        "level1": "rgb(250, 242, 246)",
+        "level1": "rgb(255, 255, 255)",
         "level2": "rgb(247, 236, 241)",
         "level3": "rgb(244, 230, 235)",
         "level4": "rgb(243, 229, 234)",
         "level5": "rgb(241, 225, 230)"
       },
       "surfaceDisabled": "rgba(32, 26, 26, 0.12)",
-      "onSurfaceDisabled": "rgba(32, 26, 26, 0.38)",
+      "onSurfaceDisabled": "rgb(0, 0, 0)",
       "backdrop": "rgba(59, 45, 46, 0.4)",
       "dark": "rgb(150, 65, 105)",
       "onDark": "rgb(255, 255, 255)",
       "darkContainer": "rgb(255, 217, 229)",
-      "onDarkContainer": "rgb(61, 0, 35)"
+      "onDarkContainer": "rgb(61, 0, 35)",
     }
   }

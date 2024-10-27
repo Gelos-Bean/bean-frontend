@@ -14,8 +14,7 @@ import DeleteModal from '../../components/modals/deleteProduct'
 import styles from '../../styles/posStyles';
 
 import Home from '../(tabs)/index'
-
-
+import Header from '../../components/Header'
 
 
 const Manager = () => {
@@ -34,8 +33,9 @@ const Manager = () => {
   const showDeleteModal = () => setDeleteModalVisible(true);
   const hideDeleteModal = () => setDeleteModalVisible(false);
   
-  
-
+  function NavToHome(){
+    return <Home />
+  } 
   const Separator = () => <View style={styles.separator} />;
   //I had to define the data types for each property of Product to make the typescript happy
   type Option = {
@@ -145,111 +145,114 @@ const Manager = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text>Heading</Text>
-      </View>
+      <Header title={"Manager"}
+        location={"Sydney"}
+        username={null}/>
+      <Separator />
       <View style={styles.body}>
-        <View style={styles.mainContainer}>
-          <Text style={styles.title}>Product Details</Text>
-          {/* only show this bit if there are products */}
-          {products && products.length > 0 && (
-          <View>
-            {products.map((product, index) => (
-              product && (
-                <View key={index} style={styles.table}>
-                  <View style={styles.tableRow}>
-                    <Text style={styles.tableCell}>Name:</Text>
-                    <Text style={styles.tableCell}>{product.name}</Text>
+        <View style={{flexDirection: 'row', flex:1}}>
+          <View style={styles.mainContainer}>
+            <Text variant="displaySmall">Product Details</Text>
+            {/* only show this bit if there are products */}
+            {products && products.length > 0 && (
+            <View>
+              {products.map((product, index) => (
+                product && (
+                  <View key={index} style={styles.table}>
+                    <View style={styles.tableRow}>
+                      <Text style={styles.tableCell}>Name:</Text>
+                      <Text style={styles.tableCell}>{product.name}</Text>
+                    </View>
+                    <View style={styles.tableRow}>
+                      <Text style={styles.tableCell}>Price:</Text>
+                      <Text style={styles.tableCell}>${product.price}</Text>
+                    </View>
+                    <View style={styles.tableRow}>
+                      <Text style={styles.tableCell}>Course:</Text>
+                      <Text style={styles.tableCell}>{product.course}</Text>
+                    </View>
+                    <View style={styles.tableRow}>
+                      <Text style={styles.tableCell}>Image:</Text>
+                      {product.image ? (
+                        <Image source={{ uri: product.image }} style={{ width: 100, height: 100 }} />
+                      ) : (
+                        <Text>No image available</Text>
+                      )}
+                    </View>
+                    {product.options && product.options.length > 0 && (
+                    <View style={styles.tableRow}>
+                      <Text style={styles.tableCell}>Options:</Text>
+                      {product.options.map((option, optIndex) => (
+                        option && option.item && (
+                          <Text key={optIndex} style={styles.tableCell}>
+                            {option.item.name} - ${option.item.price}
+                          </Text>
+                        )
+                      ))}
+                    </View>
+                  )}
                   </View>
-                  <View style={styles.tableRow}>
-                    <Text style={styles.tableCell}>Price:</Text>
-                    <Text style={styles.tableCell}>${product.price}</Text>
-                  </View>
-                  <View style={styles.tableRow}>
-                    <Text style={styles.tableCell}>Course:</Text>
-                    <Text style={styles.tableCell}>{product.course}</Text>
-                  </View>
-                  <View style={styles.tableRow}>
-                    <Text style={styles.tableCell}>Image:</Text>
-                    {product.image ? (
-                      <Image source={{ uri: product.image }} style={{ width: 100, height: 100 }} />
-                    ) : (
-                      <Text>No image available</Text>
-                    )}
-                  </View>
-                  {product.options && product.options.length > 0 && (
-                  <View style={styles.tableRow}>
-                    <Text style={styles.tableCell}>Options:</Text>
-                    {product.options.map((option, optIndex) => (
-                      option && option.item && (
-                        <Text key={optIndex} style={styles.tableCell}>
-                          {option.item.name} - ${option.item.price}
-                        </Text>
-                      )
-                    ))}
-                  </View>
-                )}
-                </View>
-              )
-            ))}
-          </View>
-          )}      
-        </View>
-        <View style={styles.rightContainer}>
-          <View style={styles.numpadContainer}>
-            <Text>Numpad</Text>
-          </View>
-          <View style={[styles.buttonContainer]}>
-            <View style={styles.buttonRow}>
-              <IconButton style={styles.squareButton}
-                icon="plus-box"
-                iconColor='rgb(229 220 200)'
-                containerColor='rgb(156, 64, 77)'
-                mode="contained"
-                size={40}
-                onPress={showNewProductModal}
-              />
-              <IconButton style={styles.squareButton}
-                icon="pencil"
-                iconColor='rgb(229 220 200)'
-                containerColor='rgb(156, 64, 77)'
-                mode="contained"
-                size={40}
-                onPress={() => console.log('Edit not implemented')}
-              />
+                )
+              ))}
             </View>
-            <View style={styles.buttonRow}>
-              <IconButton style={styles.squareButton}
-                icon="magnify"
-                iconColor='rgb(229 220 200)'
-                containerColor='rgb(156, 64, 77)'
-                mode="contained"
-                size={40}
-                onPress={showSearchModal}
-              />
-              <IconButton style={styles.squareButton}
-                icon="delete"
-                iconColor='rgb(229 220 200)'
-                containerColor='rgb(156, 64, 77)'
-                mode="contained"
-                size={40}
-                onPress={showDeleteModal}
-              />
+            )}      
+          </View>
+          <View style={styles.rightContainer}>
+            <View style={styles.numpadContainer}>
+              <Text>Numpad</Text>
             </View>
-            <View style={styles.buttonRow}>
-              <Button style={[styles.squareButton, styles.wideButton]}
-                mode="contained"
-                icon="poll">              
-                Report
-              </Button>
-              <IconButton style={styles.roundButton}
-                icon="home-roof"
-                iconColor='rgb(229 220 200)'
-                containerColor='rgb(156, 64, 77)'
-                mode="contained"
-                size={40}
-                onPress={Home}
-              />
+            <View style={[styles.buttonContainer]}>
+              <View style={styles.buttonRow}>
+                <IconButton style={styles.squareButton}
+                  icon="plus-box"
+                  iconColor='rgb(229 220 200)'
+                  containerColor='rgb(156, 64, 77)'
+                  mode="contained"
+                  size={30}
+                  onPress={showNewProductModal}
+                />
+                <IconButton style={styles.squareButton}
+                  icon="pencil"
+                  iconColor='rgb(229 220 200)'
+                  containerColor='rgb(156, 64, 77)'
+                  mode="contained"
+                  size={30}
+                  onPress={() => console.log('Edit not implemented')}
+                />
+              </View>
+              <View style={styles.buttonRow}>
+                <IconButton style={styles.squareButton}
+                  icon="magnify"
+                  iconColor='rgb(229 220 200)'
+                  containerColor='rgb(156, 64, 77)'
+                  mode="contained"
+                  size={30}
+                  onPress={showSearchModal}
+                />
+                <IconButton style={styles.squareButton}
+                  icon="delete"
+                  iconColor='rgb(229 220 200)'
+                  containerColor='rgb(156, 64, 77)'
+                  mode="contained"
+                  size={30}
+                  onPress={showDeleteModal}
+                />
+              </View>
+              <View style={styles.buttonRow}>
+                <Button style={[styles.squareButton, styles.wideButton]}
+                  mode="contained"
+                  icon="poll">              
+                  Report
+                </Button>
+                <IconButton style={styles.roundButton}
+                  icon="home-roof"
+                  iconColor='rgb(229 220 200)'
+                  containerColor='rgb(156, 64, 77)'
+                  mode="contained"
+                  size={30}
+                  onPress={NavToHome}
+                />
+              </View>
             </View>
           </View>
         </View>

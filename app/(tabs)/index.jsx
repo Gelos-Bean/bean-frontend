@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import Header from '../../components/Header.jsx';
 import { Button, Text, Card, IconButton, MD3Colors, DataTable } from 'react-native-paper';
-import styles from '../../styles/posStyles';
+import styles from '../../styles/posStyles.js';
 
 import AddTableModal from '../../components/modals/addTable.jsx'
 
@@ -197,9 +197,9 @@ const App = () => {
               <Text variant='bodySmall' style={[styles.cell, styles.headerText, {flex:1}]}>Price</Text>
               <Text variant='bodySmall' style={[styles.cell, styles.headerText, {flex:1}]}>Quantity</Text>
             </View>
-
+          
             {/* Table Body - Create rows dynamically */}
-            {orderProducts.map((item) => (g
+            {orderProducts.map((item) => (
               <Pressable  key={item._id} 
                           onPress={() => setSelectedProduct(item)} 
                           style={[
