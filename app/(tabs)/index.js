@@ -10,8 +10,7 @@ import Header from '../../components/Header.jsx';
 import { Button, Text, Card, IconButton, MD3Colors, DataTable } from 'react-native-paper';
 import styles from '../../styles/posStyles';
 
-import addTableModal from '../../components/modals/addTable.jsx'
-import AddTableModal from '../../components/modals/addTable.jsx';
+import AddTableModal from '../../components/modals/addTable.jsx'
 
 const App = () => {
   
@@ -232,7 +231,7 @@ const App = () => {
                     containerColor='rgb(156, 64, 77)'
                     mode="contained"
                     size={30}
-                    onPress={showAddTableModal}
+                    // onPress={showAddTableModal}
                   />
           </View>
           <View style={[styles.buttonRow]}>

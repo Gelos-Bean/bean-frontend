@@ -9,11 +9,11 @@ const AddTableModal = ({ visible, onDismiss, onSearch }) => {
   
   const [tableNum, setTableNum] = React.useState(0);
   const [pax, setPax] = React.useState(0);
-  const [Limit, setLimit] = React.useState(null);
+  const [limit, setLimit] = React.useState(null);
 
   const handleAdd = () => {
-    onSearch(inputValue);
-    onDismiss(); 
+    onAdd(tableNum, pax, limit);
+    onDismiss();
   };
 
   return (
@@ -25,6 +25,7 @@ const AddTableModal = ({ visible, onDismiss, onSearch }) => {
             <Text variant="labelLarge">Table number*</Text>
               <View style={styles.inputContainer}>
                 <TextInput
+                  placeholder={tableNum}
                   value={tableNum}
                   onChangeText={setTableNum}
                   style={[styles.textInputStyle, {width: 150}]}/>
@@ -33,46 +34,50 @@ const AddTableModal = ({ visible, onDismiss, onSearch }) => {
                   iconColor='#ffff'
                   containerColor='rgb(156, 64, 77)'
                   mode="contained"
-                  size={25}/>
+                  size={25}
+                  onPress={() => setTableNum(tableNum + 1)}/>
                 <IconButton style={styles.roundButton}
                   icon="chevron-down"
                   iconColor='#ffff'
                   containerColor='rgb(156, 64, 77)'
                   mode="contained"
-                  size={25}/>
+                  size={25}
+                  onPress={() => setTableNum(tableNum - 1)}/>
               </View>
               <Text variant="labelLarge">Pax*</Text>
               <View style={styles.inputContainer}>
                 <TextInput
-                  value={inputValue}
-                  onChangeText={setInputValue}
+                  value={pax}
+                  onChangeText={setPax}
                   style={[styles.textInputStyle, {width: 150}]}/>
                 <IconButton style={styles.roundButton}
                   icon="chevron-up"
                   iconColor='#ffff'
                   containerColor='rgb(156, 64, 77)'
                   mode="contained"
-                  size={25}/>
+                  size={25}
+                  onPress={() => setPax(pax + 1)}/>
                 <IconButton style={styles.roundButton}
                   icon="chevron-down"
                   iconColor='#ffff'
                   containerColor='rgb(156, 64, 77)'
                   mode="contained"
-                  size={25}/>
+                  size={25}
+                  onPress={() => setPax(pax - 1)}/>
               </View>
               <Text variant="labelLarge">Limit</Text>
               <View style={styles.inputContainer}>
                 <TextInput
-                        placeholder="Product"
-                        value={inputValue}
-                        onChangeText={setInputValue}
+                        placeholder="Optional"
+                        value={limit}
+                        onChangeText={setLimit}
                         style={[styles.textInputStyle, {width: 275}]}
                     />
               </View>
               <View style={styles.inputContainer}>
                 <Button style={[styles.squareButton, styles.wideButton]}
                   mode="contained"
-                  onPress={() => orderProducts.forEach((ep) => console.log(ep.name))}>                   
+                  onPress={() => onDismiss()}>                   
                   Cancel
                 </Button>
                 <Button style={[styles.squareButton, styles.wideButton]}
