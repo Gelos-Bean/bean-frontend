@@ -43,7 +43,7 @@ export default styles = StyleSheet.create({
       borderRadius: 9,
       justifyContent: 'center',
       flexDirection: 'column',
-      flex:3
+      flex:4
     },
     wideButtonContainer:{
       margin:'1%',
