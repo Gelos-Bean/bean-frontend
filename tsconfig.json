@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "components/DialpadKeypad.jsx", "hooks/findProduct.js"  ]
+, "components/DialpadKeypad.jsx", "hooks/findProduct.js", "app/orders.jsx"  ]
 }
