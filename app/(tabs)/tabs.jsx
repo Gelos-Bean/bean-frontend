@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Pressable, ScrollView, SafeAreaView } from 'react-native';
-import { Button, IconButton, Text } from 'react-native-paper'
+import { Button, IconButton, Text, Checkbox } from 'react-native-paper'
 
 import Header from '../../components/Header.jsx';
 import styles from '../../styles/posStyles';
@@ -11,7 +11,7 @@ import PaymentScreen from '../../components/tab/PaymentScreen.jsx';
 const Separator = () => <View style={styles.separator} />;
 
 
-const App = () => {
+const Tabs = () => {
   const [selectView, setSelectView] = useState(null);
 
   const handleSelectedTab = (tabNo) => {
@@ -116,4 +116,4 @@ const App = () => {
   );
 };
 
-export default App; 
+export default Tabs; 
