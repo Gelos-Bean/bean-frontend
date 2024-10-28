@@ -6,13 +6,13 @@ import {
   ScrollView,
   Pressable
 } from 'react-native';
-import Header from '../../components/Header.jsx';
+import Header from '../components/Header.jsx';
 import { Button, Text, Card, IconButton, MD3Colors, DataTable } from 'react-native-paper';
-import styles from '../../styles/posStyles';
+import styles from '../styles/posStyles';
 
-import AddTableModal from '../../components/modals/addTable.jsx'
-import SelectTableModal from '../../components/modals/selectTable.jsx'
-import OptionModal from '../../components/modals/options.jsx'
+import AddTableModal from '../components/modals/addTable.jsx'
+import SelectTableModal from '../components/modals/selectTable.jsx'
+import OptionModal from '../components/modals/options.jsx'
 
 const Home = () => {
   
