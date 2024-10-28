@@ -3,15 +3,15 @@ import { View, Pressable, ScrollView, SafeAreaView } from 'react-native';
 import { Button, IconButton, Text, Checkbox } from 'react-native-paper'
 
 import Header from '../../components/Header.jsx';
-import styles from '../../styles/posStyles';
-import ViewAllTabs from '../../components/tab/ViewAllTabs.jsx';
-import ViewOneTab from '../../components/tab/ViewOneTab.jsx';
-import PaymentScreen from '../../components/tab/PaymentScreen.jsx';
+import styles from '../../styles/posStyles.js';
+import ViewAllTabs from './ViewAllTabs.jsx';
+import ViewOneTab from './ViewOneTab.jsx';
+import PaymentScreen from './PaymentScreen.jsx';
 
 const Separator = () => <View style={styles.separator} />;
 
 
-const Tabs = () => {
+export default function Tabs(){
   const [selectView, setSelectView] = useState(null);
 
   const handleSelectedTab = (tabNo) => {
@@ -115,5 +115,3 @@ const Tabs = () => {
     </View> 
   );
 };
-
-export default Tabs; 

@@ -6,24 +6,28 @@ import {
   ScrollView,
   Pressable
 } from 'react-native';
-import Header from '../../components/Header.jsx';
+import Header from '../components/Header.jsx';
 import { Button, Text, Card, IconButton, MD3Colors, DataTable } from 'react-native-paper';
-import styles from '../../styles/posStyles';
+import styles from '../styles/posStyles.js';
 
-import AddTableModal from '../../components/modals/addTable.jsx'
-
-import Table from '../../classes/tableClass.js'
+import AddTableModal from '../components/modals/addTable.jsx'
+import SelectTableModal from '../components/modals/selectTable.jsx'
 
 const App = () => {
   
-  // Add table modal
+  // Modals
   const [addTableModalVisible, setAddTableModalVisible] = useState(false);
   const showAddTableModal = () => setAddTableModalVisible(true);
   const hideAddTableModal = () => setAddTableModalVisible(false);
 
+  const [selectTableModalVisible, setSelectTableModalVisible] = useState(false);
+  const showSelectTableModal = () => setSelectTableModalVisible(true);
+  const hideSelectTableModal = () => setSelectTableModalVisible(false);
+
   const Separator = () => <View style={styles.separator} />;
   
-  const [products, setProducts] = useState([]); // Use state to store products
+  //Products
+  const [products, setProducts] = useState([]); 
   async function PopulateProducts() {
     try {
       const response = await fetch(`http://10.0.2.2:8080/products`, {
@@ -50,16 +54,24 @@ const App = () => {
       Alert.alert('Error', 'Something went wrong');
     }
   }
+  const [selectedCourse, setSelectedCourse] = React.useState('Starter');
 
-  // Properties to make an order
+  // Make an order
   const [orderProducts, setOrderProducts] = useState([])
   const [total, setTotal] = useState(0);
 
-  const [selectedTable, setSelectedTable] = React.useState(null);
-  const [selectedCourse, setSelectedCourse] = React.useState('Starter');
-
   // Modify order
   const [selectedProduct, setSelectedProduct] = React.useState(null);
+
+  const addToOrder = () => {
+    var quantity = (orderProducts.find((p) => p._id > selectedProduct._id)) + 1;
+    const item = {
+      product: selectedProduct,
+      quantity: quantity,
+    }
+    console.log(item);
+  }
+
   const voidItem = () => {
 
     if(!selectedProduct){
@@ -71,15 +83,44 @@ const App = () => {
     }
   };
 
+  //Tables:
+ const [tables, setTables] = React.useState([])
+ const [selectedTable, setSelectedTable] = React.useState(null);
+
+ //Populate tables
+ async function PopulateTables() {
+  try {
+    const response = await fetch(`http://10.0.2.2:8080/tables`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
+      Alert.alert('Error', errorMessage);
+      return;
+    }
+
+    const data = await response.json();
+
+    if (data.success) {
+      setTables(data.msg);
+    } else {
+      const errorMessage = typeof data.msg === 'string' ? data.msg : 'Error collating tables';
+      Alert.alert('Error', errorMessage);
+    }
+  } catch (err) {
+    Alert.alert('Error', err);
+  }
+}
+
 // New table:
 async function AddTable(tableNum, pax, limit) {
   try {
     const table = {
       tableNo: tableNum,
       pax: pax,
-      limit: limit || null, 
-      products: [], 
-      total: 0
+      limit: limit
     };
     try {
       const response = await fetch(`http://10.0.2.2:8080/tables/${tableNum}`, {
@@ -97,7 +138,7 @@ async function AddTable(tableNum, pax, limit) {
           const tableJSON = JSON.stringify(table);
           console.log(tableJSON);
 
-          const addResponse = await fetch(`http://10.0.2.2:8080/tables/add-table`, {
+          const addResponse = await fetch(`http://10.0.2.2:8080/add-table`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json', 
@@ -107,57 +148,58 @@ async function AddTable(tableNum, pax, limit) {
 
         const addData = await addResponse.json();
         if (addData.success) {
-          Alert.alert('Success', addData.msg);
+          setSelectedTable(table);
         } else {
           Alert.alert('Error', addData.msg);
         }
         } catch (err) {
-          Alert.alert('Error', err)
+          Alert.alert('Error', err.message)
         }
     } catch (err) {
-      Alert.alert('Error', 'Something went wrong when accessing tables');
+      Alert.alert('Error', err.message);
     }
   } catch (err) {
-    Alert.alert('Error', 'Something went wrong when accessing tables');
+    Alert.alert('Error', err.message);
   }
+}
+
+// Select existing table:
+function SelectTable(table){
+  setSelectedTable(table)
 }
 
   // Place order:
   async function PlaceOrder() {
-    try {
-      
-    } catch (error) {
-      Alert.alert('Error', 'There was an issue placing the order. Operation aborted');
+    const order = {
+      table: selectedTable,
+      products: orderProducts
     }
     try {
-      const response = await fetch(`http://10.0.2.2:8080/products`, {
-        method: 'GET',
-      });
+      const orderJSON = JSON.stringify(order);
+          console.log(orderJSON);
 
-      if (!response.ok) {
-        const error = await response.json();
-        const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
-        Alert.alert('Error', errorMessage);
-        return;
-      }
-
-      const data = await response.json();
-
-      if (data.success && Array.isArray(data.msg)) {
-        setProducts(data.msg);
-      } else {
-        const errorMessage = typeof data.msg === 'string' ? data.msg : 'No products found';
-        Alert.alert('Error', errorMessage);
-      }
-    } catch (err) {
-      console.error('Search error:', err);
-      Alert.alert('Error', 'Something went wrong');
+          const response = await fetch(`http://10.0.2.2:8080/add-order`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json', 
+            },
+            body: orderJSON
+          });
+          const addData = await response.json();
+        if (addData.success) {
+          Alert.alert('Success', addData.msg);
+        } else {
+          Alert.alert('Error', addData.msg);
+        }
+    } catch (error) {
+      Alert.alert('Error', error.message);
     }
   }
 
   // On Load:
   useEffect(() => {
     PopulateProducts();
+    PopulateTables();
   }, []);
 
   // On orderProducts change:
@@ -165,34 +207,6 @@ async function AddTable(tableNum, pax, limit) {
     const newTotal = orderProducts.reduce((sum, product) => sum + product.price, 0);
     setTotal(newTotal);
   }, [orderProducts]); 
-//Test Order
-
-  const [items] = React.useState([
-    {
-      key: 1,
-      name: 'Cupcake',
-      price: 1,
-      quantity: 1,
-    },
-    {
-      key: 2,
-      name: 'Eclair',
-      price: 1,
-      quantity: 1,
-    },
-    {
-      key: 3,
-      name: 'Frozen yogurt',
-      price: 1,
-      quantity: 1,
-    },
-    {
-      key: 4,
-      name: 'Gingerbread',
-      price: 1,
-      quantity: 1,
-    },
-   ]);
 
   return (
   <SafeAreaView style={styles.container}>
@@ -253,7 +267,7 @@ async function AddTable(tableNum, pax, limit) {
           .map((product) => (
             <Card key={product._id} 
                   style={styles.cardStyle}
-                  onPress={() => setOrderProducts([...orderProducts, product])}>
+                  onPress={() => {setOrderProducts([...orderProducts, product]), addToOrder}}>
               <Card.Cover 
                 source={{ uri: product.image || 'https://www.pngkey.com/png/detail/233-2332677_image-500580-placeholder-transparent.png' }} 
                 style={styles.cardCover}
@@ -308,8 +322,14 @@ async function AddTable(tableNum, pax, limit) {
                 <Text variant='labelLarge'>${total.toFixed(2)}</Text>
               </View>
               <View style={styles.displayPortal}>
-                <Text variant='bodySmall'>Tab:</Text>
-                <Text variant='labelLarge'>{selectedTable}</Text>
+                <Text variant='bodySmall'>Table:</Text>
+                <Text variant='labelLarge'>{selectedTable === null ? '-' : selectedTable.tableNo}</Text>
+                <IconButton
+                  icon="close-circle-outline"
+                  iconColor='#000000'
+                  size={20}
+                  onPress={() => setSelectedTable(null)}
+                />
               </View>
               <IconButton style={[styles.squareButton, {}]}
                     icon="plus"
@@ -363,6 +383,17 @@ async function AddTable(tableNum, pax, limit) {
               />
               <Text variant='bodySmall'>Search</Text>
             </View>
+            <View style={styles.buttonText}>
+              <IconButton style={styles.squareButton}
+                icon="table-furniture"
+                iconColor='#ffff'
+                containerColor='rgb(156, 64, 77)'
+                mode="contained"
+                size={30}
+                onPress={showSelectTableModal}
+              />
+              <Text variant='bodySmall'>Table</Text>
+            </View>
           </View>
             
             <View style={styles.buttonRow}>
@@ -374,7 +405,7 @@ async function AddTable(tableNum, pax, limit) {
               <Button style={[styles.squareButton, styles.wideButton]}
                 mode="contained"
                 icon="send"
-                onPress={() => orderProducts.forEach((ep) => console.log(ep.name))}>                   
+                onPress={PlaceOrder}>                   
                 Add to Tab
               </Button>
               <IconButton style={styles.roundButton}
@@ -389,7 +420,10 @@ async function AddTable(tableNum, pax, limit) {
         </View>
       </View>
     </Pressable>
+    {/* Modals */}
     <AddTableModal visible={addTableModalVisible} onDismiss={hideAddTableModal} onAdd={AddTable} />
+    <SelectTableModal visible={selectTableModalVisible} onDismiss={hideSelectTableModal} 
+                      tables={tables} onSelect={SelectTable}/>
       
   </SafeAreaView>
 )};

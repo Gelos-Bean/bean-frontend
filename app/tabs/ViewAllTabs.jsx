@@ -41,8 +41,7 @@ export default function ViewAllTabs({ onSelectTab }) {
             <DataTable.Header>
                 {headers.map((header, index) => (                  
                     <DataTable.Title key={index}><Text>{header}</Text></DataTable.Title>
-                    <DataTable.Title key={index}><Text>{header}</Text></DataTable.Title>
-                ))}            
+                    ))}            
             </DataTable.Header>
         
             {tables && Array.isArray(tables) && tables.length > 0 ? (
