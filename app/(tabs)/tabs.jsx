@@ -11,7 +11,7 @@ import PaymentScreen from '../../components/tab/PaymentScreen.jsx';
 const Separator = () => <View style={styles.separator} />;
 
 
-const Tabs = () => {
+const App = () => {
   const [selectView, setSelectView] = useState(null);
 
   const handleSelectedTab = (tabNo) => {
@@ -30,19 +30,14 @@ const Tabs = () => {
       <Separator />
       <View style={styles.body}>
         <View style={{flexDirection: 'row', flex:1}}>
-
           <View style={styles.mainContainer}>
             <ScrollView style={{flexDirection: 'column'}}> 
               {selectView ? (
-                <ViewOneTab 
-                  tabId={ selectView } 
-                  onExit={handleViewAllTabs} 
-                  />
+                <ViewOneTab tabId={ selectView } onExit={handleViewAllTabs} />
                 ) : <ViewAllTabs onSelectTab={handleSelectedTab} />
               }
             </ScrollView>
           </View>     
-
           <View style={styles.rightContainer}>
             <View style={styles.numpadContainer}>
                 <PaymentScreen />
@@ -62,7 +57,6 @@ const Tabs = () => {
                     onPress={() => console.log(`Not yet implemented`)}
                   />
             </View>
-
             <View style={styles.buttonRow}>
               <View style={styles.buttonText}>
                 <IconButton style={styles.squareButton}
@@ -93,7 +87,7 @@ const Tabs = () => {
                   containerColor='rgb(156, 64, 77)'
                   mode="contained"
                   size={30}
-                  onPress={() => deleteOrder({tabId})}
+                  onPress={() => console.log(`Not yet implemented`)}
                 />
                 <Text variant='bodySmall'>Clear Tab</Text>
               </View>
@@ -122,4 +116,4 @@ const Tabs = () => {
   );
 };
 
-export default Tabs; 
+export default App; 
