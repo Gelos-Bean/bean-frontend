@@ -12,28 +12,34 @@ export default function ViewAllTabs({ onSelectTab }) {
         fetchData();
       },[]);
       
-      async function fetchData(){ 
+    async function fetchData(){ 
         
-        try { 
-          const response = await fetch('http://10.0.2.2:8080/tables');
-          const tabs = await response.json();
-    
-    //------> Create functionality to display this error to user
-          if (!tabs.success) {
-            console.log("Error loading data");
-            return;
-          }
+      try { 
+        const response = await fetch('http://localhost:8080/tables');
+        const tabs = await response.json();
+  
+  //------> Create functionality to display this error to user
+        if (!tabs.success) {
+          console.log("Error loading data");
+          return;
+        }
             
-          setTables(tabs.msg);
+        setTables(tabs.msg);
     
-        } catch(err) {
-          console.log(err);
-        } 
-      }
+      } catch(err) {
+        console.log(err);
+      } 
+    }
 
-      function handleCheckbox(tabId){
-        setChecked({tabId});
-      }
+    function formatTime(formatDate) {
+      const date = new Date(formatDate);
+      const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+      return date.toLocaleTimeString([], options);
+  }
+
+    function handleCheckbox(tabId){
+      setChecked({tabId});
+    }
 
     return (
       <>
@@ -50,7 +56,7 @@ export default function ViewAllTabs({ onSelectTab }) {
                           onPress={() => {onSelectTab(item.tableNo)}}>
                       <DataTable.Cell><Text>{item.tableNo}</Text></DataTable.Cell>
                       <DataTable.Cell>
-                        <Text>{ item.openedAt ? item.openedAt.split('T')[1].replace('.000Z', '') : ""}</Text>
+                        <Text>{ item.openedAt ? formatTime(openedAt) : ""}</Text>
                       </DataTable.Cell>
                       <DataTable.Cell><Text>{item.pax}</Text></DataTable.Cell>
                       <DataTable.Cell><Text>{`$${item.total}`}</Text></DataTable.Cell>
