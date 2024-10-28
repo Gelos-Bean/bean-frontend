@@ -48,18 +48,18 @@ export default function ViewOneTab({ tabId, onExit }) {
 
             <DataTable>
                 <DataTable.Header>
-                    <DataTable.Title>Products</DataTable.Title>
-                    <DataTable.Title>Quantity</DataTable.Title>
-                    <DataTable.Title>Cost</DataTable.Title>
+                    <DataTable.Title><Text>Products</Text></DataTable.Title>
+                    <DataTable.Title><Text>Quantity</Text></DataTable.Title>
+                    <DataTable.Title><Text>Cost</Text></DataTable.Title>
                     
                 </DataTable.Header>
                 {tabItems.products&& tabItems.products.map((prod, index) => {
                     return (
                         <>
                             <DataTable.Row key={index}>
-                                <DataTable.Cell>{prod.item.name}</DataTable.Cell>
-                                <DataTable.Cell>{prod.quantity}</DataTable.Cell>
-                                <DataTable.Cell>{prod.item.price}</DataTable.Cell>
+                                <DataTable.Cell><Text>{prod.item.name}</Text></DataTable.Cell>
+                                <DataTable.Cell><Text>{prod.quantity}</Text></DataTable.Cell>
+                                <DataTable.Cell><Text>{prod.item.price}</Text></DataTable.Cell>
                             </DataTable.Row>
 
                             {prod.selectedOptions.length > 0 && 

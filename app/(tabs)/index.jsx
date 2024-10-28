@@ -8,20 +8,26 @@ import {
 } from 'react-native';
 import Header from '../../components/Header.jsx';
 import { Button, Text, Card, IconButton, MD3Colors, DataTable } from 'react-native-paper';
-import styles from '../../styles/posStyles.js';
+import styles from '../../styles/posStyles';
 
 import AddTableModal from '../../components/modals/addTable.jsx'
+import SelectTableModal from '../../components/modals/selectTable.jsx'
 
 const App = () => {
   
-  // Add table modal
+  // Modals
   const [addTableModalVisible, setAddTableModalVisible] = useState(false);
   const showAddTableModal = () => setAddTableModalVisible(true);
   const hideAddTableModal = () => setAddTableModalVisible(false);
 
+  const [selectTableModalVisible, setSelectTableModalVisible] = useState(false);
+  const showSelectTableModal = () => setSelectTableModalVisible(true);
+  const hideSelectTableModal = () => setSelectTableModalVisible(false);
+
   const Separator = () => <View style={styles.separator} />;
   
-  const [products, setProducts] = useState([]); // Use state to store products
+  //Products
+  const [products, setProducts] = useState([]); 
   async function PopulateProducts() {
     try {
       const response = await fetch(`http://10.0.2.2:8080/products`, {
@@ -48,16 +54,24 @@ const App = () => {
       Alert.alert('Error', 'Something went wrong');
     }
   }
+  const [selectedCourse, setSelectedCourse] = React.useState('Starter');
 
-  // Properties to make an order
+  // Make an order
   const [orderProducts, setOrderProducts] = useState([])
   const [total, setTotal] = useState(0);
 
-  const [selectedTable, setSelectedTable] = React.useState(null);
-  const [selectedCourse, setSelectedCourse] = React.useState('Starter');
-
   // Modify order
   const [selectedProduct, setSelectedProduct] = React.useState(null);
+
+  const addToOrder = () => {
+    var quantity = (orderProducts.find((p) => p._id > selectedProduct._id)) + 1;
+    const item = {
+      product: selectedProduct,
+      quantity: quantity,
+    }
+    console.log(item);
+  }
+
   const voidItem = () => {
 
     if(!selectedProduct){
@@ -69,9 +83,124 @@ const App = () => {
     }
   };
 
+  //Tables:
+ const [tables, setTables] = React.useState([])
+ const [selectedTable, setSelectedTable] = React.useState(null);
+
+ //Populate tables
+ async function PopulateTables() {
+  try {
+    const response = await fetch(`http://10.0.2.2:8080/tables`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
+      Alert.alert('Error', errorMessage);
+      return;
+    }
+
+    const data = await response.json();
+
+    if (data.success) {
+      setTables(data.msg);
+    } else {
+      const errorMessage = typeof data.msg === 'string' ? data.msg : 'Error collating tables';
+      Alert.alert('Error', errorMessage);
+    }
+  } catch (err) {
+    Alert.alert('Error', err);
+  }
+}
+
+// New table:
+async function AddTable(tableNum, pax, limit) {
+  try {
+    const table = {
+      tableNo: tableNum,
+      pax: pax,
+      limit: limit,
+      openedAt: new Date()
+    };
+    try {
+      const response = await fetch(`http://10.0.2.2:8080/tables/${tableNum}`, {
+      method: 'GET',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        Alert.alert('Error', `Table ${tableNum} already exists`);
+        return;
+      }
+      //Table number is free
+        try {
+          const tableJSON = JSON.stringify(table);
+          console.log(tableJSON);
+
+          const addResponse = await fetch(`http://10.0.2.2:8080/tables/add-table`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json', 
+            },
+            body: tableJSON
+          });
+
+        const addData = await addResponse.json();
+        if (addData.success) {
+          setSelectedTable(table);
+        } else {
+          Alert.alert('Error', addData.msg);
+        }
+        } catch (err) {
+          Alert.alert('Error', err.message)
+        }
+    } catch (err) {
+      Alert.alert('Error', err.message);
+    }
+  } catch (err) {
+    Alert.alert('Error', err.message);
+  }
+}
+
+// Select existing table:
+function SelectTable(table){
+  setSelectedTable(table)
+}
+
+  // Place order:
+  async function PlaceOrder() {
+    const order = {
+      table: selectedTable,
+      products: orderProducts
+    }
+    try {
+      const orderJSON = JSON.stringify(order);
+          console.log(orderJSON);
+
+          const response = await fetch(`http://10.0.2.2:8080/order/add-order`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json', 
+            },
+            body: orderJSON
+          });
+          const addData = await response.json();
+        if (addData.success) {
+          Alert.alert('Success', addData.msg);
+        } else {
+          Alert.alert('Error', addData.msg);
+        }
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  }
+
   // On Load:
   useEffect(() => {
     PopulateProducts();
+    PopulateTables();
   }, []);
 
   // On orderProducts change:
@@ -79,34 +208,6 @@ const App = () => {
     const newTotal = orderProducts.reduce((sum, product) => sum + product.price, 0);
     setTotal(newTotal);
   }, [orderProducts]); 
-//Test Order
-
-  const [items] = React.useState([
-    {
-      key: 1,
-      name: 'Cupcake',
-      price: 1,
-      quantity: 1,
-    },
-    {
-      key: 2,
-      name: 'Eclair',
-      price: 1,
-      quantity: 1,
-    },
-    {
-      key: 3,
-      name: 'Frozen yogurt',
-      price: 1,
-      quantity: 1,
-    },
-    {
-      key: 4,
-      name: 'Gingerbread',
-      price: 1,
-      quantity: 1,
-    },
-   ]);
 
   return (
   <SafeAreaView style={styles.container}>
@@ -167,7 +268,7 @@ const App = () => {
           .map((product) => (
             <Card key={product._id} 
                   style={styles.cardStyle}
-                  onPress={() => setOrderProducts([...orderProducts, product])}>
+                  onPress={() => {setOrderProducts([...orderProducts, product]), addToOrder}}>
               <Card.Cover 
                 source={{ uri: product.image || 'https://www.pngkey.com/png/detail/233-2332677_image-500580-placeholder-transparent.png' }} 
                 style={styles.cardCover}
@@ -197,7 +298,7 @@ const App = () => {
               <Text variant='bodySmall' style={[styles.cell, styles.headerText, {flex:1}]}>Price</Text>
               <Text variant='bodySmall' style={[styles.cell, styles.headerText, {flex:1}]}>Quantity</Text>
             </View>
-          
+
             {/* Table Body - Create rows dynamically */}
             {orderProducts.map((item) => (
               <Pressable  key={item._id} 
@@ -222,8 +323,14 @@ const App = () => {
                 <Text variant='labelLarge'>${total.toFixed(2)}</Text>
               </View>
               <View style={styles.displayPortal}>
-                <Text variant='bodySmall'>Tab:</Text>
-                <Text variant='labelLarge'>{selectedTable}</Text>
+                <Text variant='bodySmall'>Table:</Text>
+                <Text variant='labelLarge'>{selectedTable === null ? '-' : selectedTable.tableNo}</Text>
+                <IconButton
+                  icon="close-circle-outline"
+                  iconColor='#000000'
+                  size={20}
+                  onPress={() => setSelectedTable(null)}
+                />
               </View>
               <IconButton style={[styles.squareButton, {}]}
                     icon="plus"
@@ -231,7 +338,7 @@ const App = () => {
                     containerColor='rgb(156, 64, 77)'
                     mode="contained"
                     size={30}
-                    // onPress={showAddTableModal}
+                    onPress={showAddTableModal}
                   />
           </View>
           <View style={[styles.buttonRow]}>
@@ -277,6 +384,17 @@ const App = () => {
               />
               <Text variant='bodySmall'>Search</Text>
             </View>
+            <View style={styles.buttonText}>
+              <IconButton style={styles.squareButton}
+                icon="table-furniture"
+                iconColor='#ffff'
+                containerColor='rgb(156, 64, 77)'
+                mode="contained"
+                size={30}
+                onPress={showSelectTableModal}
+              />
+              <Text variant='bodySmall'>Table</Text>
+            </View>
           </View>
             
             <View style={styles.buttonRow}>
@@ -288,7 +406,7 @@ const App = () => {
               <Button style={[styles.squareButton, styles.wideButton]}
                 mode="contained"
                 icon="send"
-                onPress={() => orderProducts.forEach((ep) => console.log(ep.name))}>                   
+                onPress={PlaceOrder}>                   
                 Add to Tab
               </Button>
               <IconButton style={styles.roundButton}
@@ -303,7 +421,10 @@ const App = () => {
         </View>
       </View>
     </Pressable>
-    <AddTableModal visible={addTableModalVisible} onDismiss={hideAddTableModal} />
+    {/* Modals */}
+    <AddTableModal visible={addTableModalVisible} onDismiss={hideAddTableModal} onAdd={AddTable} />
+    <SelectTableModal visible={selectTableModalVisible} onDismiss={hideSelectTableModal} 
+                      tables={tables} onSelect={SelectTable}/>
       
   </SafeAreaView>
 )};
