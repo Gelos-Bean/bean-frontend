@@ -120,8 +120,7 @@ async function AddTable(tableNum, pax, limit) {
     const table = {
       tableNo: tableNum,
       pax: pax,
-      limit: limit,
-      openedAt: new Date()
+      limit: limit
     };
     try {
       const response = await fetch(`http://10.0.2.2:8080/tables/${tableNum}`, {
@@ -139,7 +138,7 @@ async function AddTable(tableNum, pax, limit) {
           const tableJSON = JSON.stringify(table);
           console.log(tableJSON);
 
-          const addResponse = await fetch(`http://10.0.2.2:8080/tables/add-table`, {
+          const addResponse = await fetch(`http://10.0.2.2:8080/add-table`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json', 
@@ -179,7 +178,7 @@ function SelectTable(table){
       const orderJSON = JSON.stringify(order);
           console.log(orderJSON);
 
-          const response = await fetch(`http://10.0.2.2:8080/order/add-order`, {
+          const response = await fetch(`http://10.0.2.2:8080/add-order`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json', 
