@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { DataTable } from 'react-native-paper';
+import { Text } from 'react-native';
+import { DataTable, Checkbox } from 'react-native-paper';
 
 export default function ViewAllTabs({ onSelectTab }) {
 
-    const headers = ["Tab", "Arrival", "PAX", "Total", "Status"];
+    const headers = ["Tab", "Arrival", "PAX", "Total", "Selected"];
     const [tables, setTables] = useState([{}]);
+    const [checked, setChecked] = useState({});
 
     useEffect(() => {
         fetchData();
@@ -29,12 +31,23 @@ export default function ViewAllTabs({ onSelectTab }) {
         } 
       }
 
+
+      function handleCheckbox(tabId, previousState){
+      /*  ...previousState
+        {
+          tabId: previousState
+        }
+
+        setChecked({tabId});*/
+      }
+      
+
     return (
       <>
         <DataTable>
             <DataTable.Header>
                 {headers.map((header, index) => (                  
-                    <DataTable.Title key={index}>{header}</DataTable.Title>
+                    <DataTable.Title key={index}><Text>{header}</Text></DataTable.Title>
                 ))}            
             </DataTable.Header>
         
@@ -42,11 +55,16 @@ export default function ViewAllTabs({ onSelectTab }) {
               tables.map((item, index) => (
                   <DataTable.Row key={index}
                           onPress={() => {onSelectTab(item.tableNo)}}>
-                      <DataTable.Cell>{item.tableNo}</DataTable.Cell>
-                      <DataTable.Cell>{ item.openedAt ? item.openedAt.split('T')[1].replace('.000Z', '') : ""}</DataTable.Cell>
-                      <DataTable.Cell>{item.pax}</DataTable.Cell>
-                      <DataTable.Cell>${item.total}</DataTable.Cell>
-                      <DataTable.Cell>Status</DataTable.Cell>
+                      <DataTable.Cell><Text>{item.tableNo}</Text></DataTable.Cell>
+                      <DataTable.Cell><Text>{ item.openedAt ? item.openedAt.split('T')[1].replace('.000Z', '') : ""}</Text></DataTable.Cell>
+                      <DataTable.Cell><Text>{item.pax}</Text></DataTable.Cell>
+                      <DataTable.Cell><Text>{`$${item.total}`}</Text></DataTable.Cell>
+                      <DataTable.Cell><Checkbox 
+                          status={checked[item.index] ? 'checked' : 'unchecked'}
+                          onPress={() => {
+                            handleCheckbox(item.index);
+                          }}
+                        /></DataTable.Cell>
                   </DataTable.Row>
               ))
             ) : null}
