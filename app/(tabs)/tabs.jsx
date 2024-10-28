@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Pressable, ScrollView, SafeAreaView } from 'react-native';
+import { Button, IconButton, Text } from 'react-native-paper'
 
 import Header from '../../components/Header.jsx';
 import styles from '../../styles/posStyles';
@@ -7,7 +8,10 @@ import ViewAllTabs from '../../components/tab/ViewAllTabs.jsx';
 import ViewOneTab from '../../components/tab/ViewOneTab.jsx';
 import PaymentScreen from '../../components/tab/PaymentScreen.jsx';
 
-const App = () => {
+const Separator = () => <View style={styles.separator} />;
+
+
+const Tabs = () => {
   const [selectView, setSelectView] = useState(null);
 
   const handleSelectedTab = (tabNo) => {
@@ -19,65 +23,103 @@ const App = () => {
   }
 
   return (
-    <>
+    <View style={styles.container}>
       <Header title={"Tabs"} 
         location={"Sydney"} 
         username={null} />
-
-
+      <Separator />
+      <View style={styles.body}>
         <View style={{flexDirection: 'row', flex:1}}>
 
- 
-        <View style={styles.mainContainer}>
-              <ScrollView> 
-                {selectView ? (
-                  <ViewOneTab tabId={ selectView } onExit={handleViewAllTabs} />
-                  ) : <ViewAllTabs onSelectTab={handleSelectedTab} />
-                }
-              </ScrollView>
-          </View>
-        
+          <View style={styles.mainContainer}>
+            <ScrollView style={{flexDirection: 'column'}}> 
+              {selectView ? (
+                <ViewOneTab 
+                  tabId={ selectView } 
+                  onExit={handleViewAllTabs} 
+                  />
+                ) : <ViewAllTabs onSelectTab={handleSelectedTab} />
+              }
+            </ScrollView>
+          </View>     
+
           <View style={styles.rightContainer}>
             <View style={styles.numpadContainer}>
                 <PaymentScreen />
             </View>
-
-            <View style={styles.buttonContainer}>
-              <View style={styles.buttonRow}>
-                <View>
-                  <Text>Select Tab</Text>
-                  <Pressable style={styles.squareButton}>
-                    <Text style={styles.pressText}>+</Text>
-                  </Pressable>
+          <View style={styles.buttonContainer}>
+            <View style={styles.buttonRow}>
+              <View style={styles.displayPortal}>
+                  <Text variant='bodySmall'>Tab:</Text>
+                  <Text variant='labelLarge'>{null}</Text>
                 </View>
+              <IconButton style={[styles.squareButton, {}]}
+                    icon="plus"
+                    iconColor='#ffff'
+                    containerColor='rgb(156, 64, 77)'
+                    mode="contained"
+                    size={30}
+                    onPress={() => console.log(`Not yet implemented`)}
+                  />
+            </View>
 
-                <View style={{flexDirection: "column"}}>
-                  <Pressable style={styles.squareButton}>
-                    <Text style={styles.pressText}>View Tab</Text>
-                  </Pressable>
-                  <Pressable style={styles.squareButton}>
-                    <Text style={styles.pressText}>Call Away</Text>
-                  </Pressable>
-                </View>
-
-                <Pressable style={styles.squareButton}>
-                  <Text style={styles.pressText}>Add To Tab</Text>
-                </Pressable>
+            <View style={styles.buttonRow}>
+              <View style={styles.buttonText}>
+                <IconButton style={styles.squareButton}
+                  icon="eye"
+                  iconColor='#ffff'
+                  containerColor='rgb(156, 64, 77)'
+                  mode="contained"
+                  size={30}
+                  onPress={() => console.log(`Not yet implemented`)}
+                />
+                <Text variant='bodySmall'>View Tab</Text>
               </View>
-
-              <View style={styles.menuOptions}>
-                <Pressable style={styles.squareButton}>
-                  <Text style={styles.pressText}>Menu?</Text>
-                </Pressable>
-                <Pressable style={styles.squareButton}>
-                  <Text style={styles.pressText}>Home</Text>
-                </Pressable>
+              <View style={styles.buttonText}>
+                <IconButton style={styles.squareButton}
+                  icon="send"
+                  iconColor='#ffff'
+                  containerColor='rgb(156, 64, 77)'
+                  mode="contained"
+                  size={30}
+                  onPress={() => console.log(`Not yet implemented`)}
+                />
+                <Text variant='bodySmall'>Call Away</Text>
+              </View>
+              <View style={styles.buttonText}>
+                <IconButton style={styles.squareButton}
+                  icon="broom"
+                  iconColor='#ffff'
+                  containerColor='rgb(156, 64, 77)'
+                  mode="contained"
+                  size={30}
+                  onPress={() => deleteOrder({tabId})}
+                />
+                <Text variant='bodySmall'>Clear Tab</Text>
+              </View>
+            </View>
+              <View style={styles.buttonRow}>
+                <Button style={[styles.squareButton, styles.wideButton]}
+                  mode="contained"
+                  icon="tag-plus"
+                  onPress={() => console.log(`Not yet implemented`)}>              
+                  Add Order
+                </Button>
+                <IconButton style={styles.roundButton}
+                  icon="home-roof"
+                  iconColor='#ffff'
+                  containerColor='rgb(156, 64, 77)'
+                  mode="contained"
+                  size={30}
+                  onPress={() => console.log(`Not yet implemented`)}
+                />
               </View>
             </View>
           </View>
-        </View> 
-    </>
+        </View>
+      </View>
+    </View> 
   );
 };
 
-export default App; 
+export default Tabs; 
