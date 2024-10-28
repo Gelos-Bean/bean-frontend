@@ -16,7 +16,7 @@ const Orders = () => (
   <SafeAreaView style={styles.container}>
     <View style={styles.header}>
     <Header
-            title={"Manager"}
+            title={"Orders"}
             location={"Sydney"}
             username={null} />
     </View>
