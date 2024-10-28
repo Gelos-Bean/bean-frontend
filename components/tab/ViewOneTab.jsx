@@ -14,7 +14,7 @@ export default function ViewOneTab({ tabId, onExit }) {
 
     async function getTabData(id) {
         try {
-            const response = await fetch(`http://localhost:8080/tables/${id}`)
+            const response = await fetch(`http://10.0.2.2:8080/tables/${id}`)
             const tabData = await response.json();
 
             if(!tabData.success) {
