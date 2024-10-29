@@ -14,7 +14,7 @@ import AddTableModal from '../components/modals/addTable.jsx'
 import SelectTableModal from '../components/modals/selectTable.jsx'
 import OptionModal from '../components/modals/options.jsx'
 
-const Home = () => {
+const App = () => {
   
   // Modals
   const [addTableModalVisible, setAddTableModalVisible] = useState(false);
@@ -80,11 +80,13 @@ const Home = () => {
     }
   };
   const addToOrder = (product, options) => {
-    const existingProductIndex = orderProducts.findIndex(p => p._id === product._id && JSON.stringify(p.selectedOptions) === JSON.stringify(options));
+    const existingProductIndex = orderProducts.findIndex(p => p._id === product._id);
     
     if (existingProductIndex !== -1) {
       const updatedOrderProducts = [...orderProducts];
       updatedOrderProducts[existingProductIndex].quantity += 1;
+      updatedOrderProducts[existingProductIndex].price += updatedOrderProducts[existingProductIndex].price;
+
       setOrderProducts(updatedOrderProducts);
     } else {
       const newProduct = {
@@ -94,7 +96,6 @@ const Home = () => {
       };
       setOrderProducts([...orderProducts, newProduct]);
     }
-    
     setSelectedProduct(null);
     setSelectedOptions([]);
   };
@@ -463,4 +464,4 @@ const Home = () => {
   </SafeAreaView>
 )};
 
-export default Home;
+export default App;
