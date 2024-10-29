@@ -7,17 +7,16 @@ import {
 } from 'react-native';
 
 import { Avatar, Button, Card, Text } from 'react-native-paper';
-import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
-import Header from '../../components/Header.jsx';
+import Header from '../components/Header.jsx';
 
 const Separator = () => <View style={styles.separator} />;
 
-const App = () => (
+const Orders = () => (
   <SafeAreaView style={styles.container}>
     <View style={styles.header}>
     <Header
-            title={"Manager"}
+            title={"Orders"}
             location={"Sydney"}
             username={null} />
     </View>
@@ -57,4 +56,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Orders;

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Text } from 'react-native';
 import { DataTable, Checkbox } from 'react-native-paper';
 
-
 export default function ViewAllTabs({ onSelectTab }) {
 
     const headers = ["Tab", "Arrival", "PAX", "Total", "Select"];
@@ -42,7 +41,7 @@ export default function ViewAllTabs({ onSelectTab }) {
             <DataTable.Header>
                 {headers.map((header, index) => (                  
                     <DataTable.Title key={index}><Text>{header}</Text></DataTable.Title>
-                ))}            
+                    ))}            
             </DataTable.Header>
         
             {tables && Array.isArray(tables) && tables.length > 0 ? (

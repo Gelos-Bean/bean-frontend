@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { DataTable } from 'react-native-paper';
-import PaymentScreen from '../../components/tab/PaymentScreen.jsx';
 
 export default function ViewOneTab({ tabId, onExit }) {
     const [tabItems, setTabItems] = useState({});

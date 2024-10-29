@@ -6,18 +6,20 @@ import {
   Image
 } from 'react-native';
 
+import { useRouter } from 'expo-router';
 import { Button, Text, IconButton, MD3Colors } from 'react-native-paper';
-import SearchModal from '../../components/modals/searchModal';
-import NewProduct from '../../components/modals/newProduct';
-import DeleteModal from '../../components/modals/deleteProduct'
+import SearchModal from '../components/modals/searchModal';
+import NewProduct from '../components/modals/newProduct';
+import DeleteModal from '../components/modals/deleteProduct'
 
-import styles from '../../styles/posStyles';
+import styles from '../styles/posStyles';
 
-import Home from '../(tabs)/index'
-import Header from '../../components/Header'
+import Header from '../components/Header'
 
 
 const Manager = () => {
+  const router = useRouter();
+
   // Search product modal 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
   const showSearchModal = () => setSearchModalVisible(true);
@@ -33,9 +35,7 @@ const Manager = () => {
   const showDeleteModal = () => setDeleteModalVisible(true);
   const hideDeleteModal = () => setDeleteModalVisible(false);
   
-  function NavToHome(){
-    return <Home />
-  } 
+
   const Separator = () => <View style={styles.separator} />;
   //I had to define the data types for each property of Product to make the typescript happy
   type Option = {
@@ -250,7 +250,7 @@ const Manager = () => {
                   containerColor='rgb(156, 64, 77)'
                   mode="contained"
                   size={30}
-                  onPress={NavToHome}
+                  onPress={() => router.push('/' as const)}
                 />
               </View>
             </View>
