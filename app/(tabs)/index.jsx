@@ -80,7 +80,7 @@ const App = () => {
     }
   };
   const addToOrder = (product, options) => {
-    const existingProductIndex = orderProducts.findIndex(p => p._id === product._id && JSON.stringify(p.selectedOptions) === JSON.stringify(options));
+    const existingProductIndex = orderProducts.findIndex(p => p._id === product._id);
     
     if (existingProductIndex !== -1) {
       const updatedOrderProducts = [...orderProducts];
@@ -94,7 +94,7 @@ const App = () => {
       };
       setOrderProducts([...orderProducts, newProduct]);
     }
-    
+    console.log(orderProducts)
     setSelectedProduct(null);
     setSelectedOptions([]);
   };
