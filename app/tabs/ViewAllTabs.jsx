@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Text } from 'react-native';
-import { DataTable, Checkbox } from 'react-native-paper';
+import { DataTable } from 'react-native-paper';
 
 export default function ViewAllTabs({ onSelectTab }) {
 
-    const headers = ["Tab", "Arrival", "PAX", "Total", "Select"];
+    const headers = ["Tab", "Arrival", "PAX", "Total"];
     const [tables, setTables] = useState([{}]);
-    const [checked, setChecked] = useState({});
 
     useEffect(() => {
         fetchData();
@@ -35,10 +34,17 @@ export default function ViewAllTabs({ onSelectTab }) {
       const date = new Date(formatDate);
       const options = { hour: '2-digit', minute: '2-digit', hour12: true };
       return date.toLocaleTimeString([], options);
-  }
+    }
 
-    function handleCheckbox(tabId){
-      setChecked({tabId});
+    function sortBy(title){
+      const propertyName = headers.filter(h => h === title).toString();
+      console.log(`Prop Name ${propertyName}`);
+      console.log(tables);
+
+      const sortedData = [].concat(tables.sort((a, b) => (a.openedAt > b.openedAt) ? 1 : -1))
+      console.log(sortedData);
+      console.log(tables);
+
     }
 
     return (
@@ -46,8 +52,12 @@ export default function ViewAllTabs({ onSelectTab }) {
         <DataTable>
             <DataTable.Header>
                 {headers.map((header, index) => (                  
-                    <DataTable.Title key={index}><Text>{header}</Text></DataTable.Title>
-                    ))}            
+                    <DataTable.Title key={index} 
+                      sortDirection='descending'
+                      onPress={() => sortBy(header)}>
+                        <Text>{header}</Text>
+                    </DataTable.Title>
+                  ))}            
             </DataTable.Header>
         
             {tables && Array.isArray(tables) && tables.length > 0 ? (
@@ -56,16 +66,10 @@ export default function ViewAllTabs({ onSelectTab }) {
                           onPress={() => {onSelectTab(item.tableNo)}}>
                       <DataTable.Cell><Text>{item.tableNo}</Text></DataTable.Cell>
                       <DataTable.Cell>
-                        <Text>{ item.openedAt ? formatTime(openedAt) : ""}</Text>
+                        <Text>{ item.openedAt ? formatTime(item.openedAt) : ""}</Text>
                       </DataTable.Cell>
                       <DataTable.Cell><Text>{item.pax}</Text></DataTable.Cell>
                       <DataTable.Cell><Text>{`$${item.total}`}</Text></DataTable.Cell>
-                      <DataTable.Cell><Checkbox 
-                          status={checked[item.index] ? 'checked' : 'unchecked'}
-                          onPress={() => {
-                            handleCheckbox(item.index);
-                          }}
-                        /></DataTable.Cell>
                   </DataTable.Row>
               ))
             ) : null}

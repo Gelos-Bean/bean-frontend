@@ -3,7 +3,7 @@ import { View, Pressable, ScrollView, SafeAreaView } from 'react-native';
 import { Button, IconButton, Text, Checkbox } from 'react-native-paper'
 
 import Header from '../../components/Header.jsx';
-import styles from '../../posStyles.js';
+import styles from '../../styles/posStyles.js';
 import ViewAllTabs from './ViewAllTabs.jsx';
 import ViewOneTab from './ViewOneTab.jsx';
 import PaymentScreen from './PaymentScreen.jsx';
