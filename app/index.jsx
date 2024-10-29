@@ -85,6 +85,8 @@ const App = () => {
     if (existingProductIndex !== -1) {
       const updatedOrderProducts = [...orderProducts];
       updatedOrderProducts[existingProductIndex].quantity += 1;
+      updatedOrderProducts[existingProductIndex].price += updatedOrderProducts[existingProductIndex].price;
+
       setOrderProducts(updatedOrderProducts);
     } else {
       const newProduct = {
@@ -94,7 +96,6 @@ const App = () => {
       };
       setOrderProducts([...orderProducts, newProduct]);
     }
-    console.log(orderProducts)
     setSelectedProduct(null);
     setSelectedOptions([]);
   };
