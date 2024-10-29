@@ -38,31 +38,18 @@ const Manager = () => {
 
   const Separator = () => <View style={styles.separator} />;
   //I had to define the data types for each property of Product to make the typescript happy
-  type Option = {
-    _id: string;
-    name: string;
-    price: number;
-  }
-  
-  type Product = {
-    _id: string;
-    name: string;
-    price: number;
-    course: string;
-    options?: {item: Option}[]; //optional
-    image?: string;    //optional
-  };
 
-  const [products, setProducts] = useState<Product[]>([]); //Explicitly pointing the useState to the array, type AND allowing it to be null :S  
+
+  const [products, setProducts] = useState([]); //Explicitly pointing the useState to the array, type AND allowing it to be null :S  
 
   // Handle Add Product
-  const handleAddProduct = async (newProduct : Product) => { 
+  const handleAddProduct = async (newProduct) => { 
     try {
           // I have to manually restructure the JSON before sending to make sure that it is correctly referencing the options
           var productToAdd = undefined;
-          if(newProduct.options?.length! > 0){ // If things start breaking then look here
+          if(newProduct.options?.length > 0){ // If things start breaking then look here
             console.log('Options:', newProduct.options);
-            const structuredOptions = newProduct.options!.map((opt) => {
+            const structuredOptions = newProduct.options.map((opt) => {
               return { opt };
             });
           // Create the new product object with structured options
@@ -104,7 +91,7 @@ const Manager = () => {
   };
 
    // Function to handle search
-   const handleSearch = async (query: string) => {
+   const handleSearch = async (query) => {
     try {
       const response = await fetch(`http://10.0.2.2:8080/products/${query}`, {
         method: 'GET',
@@ -138,10 +125,10 @@ const Manager = () => {
   
 
   // Handle Edit Product
-  const handleEditProduct = async (id : string) => { };
+  const handleEditProduct = async (id) => { };
 
   // Handle Delete Product 
-  const handleDeleteProduct = async (id : string) => { console.log(`Deleting ID: ${id}`)};
+  const handleDeleteProduct = async (id) => { console.log(`Deleting ID: ${id}`)};
 
   return (
     <SafeAreaView style={styles.container}>
@@ -250,7 +237,7 @@ const Manager = () => {
                   containerColor='rgb(156, 64, 77)'
                   mode="contained"
                   size={30}
-                  onPress={() => router.push('/' as const)}
+                  onPress={() => router.push('/')}
                 />
               </View>
             </View>
