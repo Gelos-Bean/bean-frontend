@@ -28,6 +28,9 @@ const Home = () => {
   const [optionModalVisible, setOptionModalVisible] = useState(false);
 
 
+  const [optionModalVisible, setOptionModalVisible] = useState(false);
+
+
   const Separator = () => <View style={styles.separator} />;
   
   //Products
@@ -58,6 +61,7 @@ const Home = () => {
       Alert.alert('Error', 'Something went wrong');
     }
   }
+  const [selectedCourse, setSelectedCourse] = useState('Starter');
   const [selectedCourse, setSelectedCourse] = useState('Starter');
 
   // Make an order
@@ -93,7 +97,39 @@ const Home = () => {
         quantity: 1
       };
       setOrderProducts([...orderProducts, newProduct]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  //Add item to order
+  const handleProductSelect = (product) => {
+    if (product.options && product.options.length > 0) {
+      // If the product has options, open the modal to select options
+      setSelectedProduct(product);
+      setOptionModalVisible(true);
+    } else {
+      // If no options, directly add the product to orderProducts
+      addToOrder(product, []);
     }
+  };
+  const addToOrder = (product, options) => {
+    const existingProductIndex = orderProducts.findIndex(p => p._id === product._id);
+    
+    if (existingProductIndex !== -1) {
+      const updatedOrderProducts = [...orderProducts];
+      updatedOrderProducts[existingProductIndex].quantity += 1;
+      setOrderProducts(updatedOrderProducts);
+    } else {
+      const newProduct = {
+        ...product,
+        selectedOptions: options,
+        quantity: 1
+      };
+      setOrderProducts([...orderProducts, newProduct]);
+    }
+    console.log(orderProducts)
+    setSelectedProduct(null);
+    setSelectedOptions([]);
+  };
     console.log(orderProducts)
     setSelectedProduct(null);
     setSelectedOptions([]);
@@ -101,8 +137,22 @@ const Home = () => {
 
   const voidItem = () => {
     if (!selectedProduct) {
+    if (!selectedProduct) {
       Alert.alert('Error', 'Please select a product to void');
     } else {
+      const updatedOrderProducts = orderProducts
+        .map((p) => {
+          if (p._id === selectedProduct._id) {
+            if (p.quantity > 1) {
+              return { ...p, quantity: p.quantity - 1 };
+            }
+            return null;
+          }
+          return p;
+        })
+        .filter(p => p !== null); 
+  
+      setOrderProducts(updatedOrderProducts);
       const updatedOrderProducts = orderProducts
         .map((p) => {
           if (p._id === selectedProduct._id) {
@@ -120,11 +170,21 @@ const Home = () => {
   };
   
   
+  
+  
 
   //Tables:
   const [tables, setTables] = React.useState([])
   const [selectedTable, setSelectedTable] = React.useState(null);
+  const [tables, setTables] = React.useState([])
+  const [selectedTable, setSelectedTable] = React.useState(null);
 
+  //Populate tables
+  async function PopulateTables() {
+    try {
+      const response = await fetch(`http://10.0.2.2:8080/tables`, {
+        method: 'GET',
+      });
   //Populate tables
   async function PopulateTables() {
     try {
@@ -138,9 +198,26 @@ const Home = () => {
         Alert.alert('Error', errorMessage);
         return;
       }
+      if (!response.ok) {
+        const error = await response.json();
+        const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
+        Alert.alert('Error', errorMessage);
+        return;
+      }
 
       const data = await response.json();
+      const data = await response.json();
 
+      if (data.success) {
+        setTables(data.msg);
+      } else {
+        const errorMessage = typeof data.msg === 'string' ? data.msg : 'Error collating tables';
+        Alert.alert('Error', errorMessage);
+      }
+    } catch (err) {
+      Alert.alert('Error', err);
+    }
+  }
       if (data.success) {
         setTables(data.msg);
       } else {
@@ -164,7 +241,20 @@ const Home = () => {
         const response = await fetch(`http://10.0.2.2:8080/tables/${tableNum}`, {
         method: 'GET',
         });
+  // New table:
+  async function AddTable(tableNum, pax, limit) {
+    try {
+      const table = {
+        tableNo: tableNum,
+        pax: pax,
+        limit: limit
+      };
+      try {
+        const response = await fetch(`http://10.0.2.2:8080/tables/${tableNum}`, {
+        method: 'GET',
+        });
 
+        const data = await response.json();
         const data = await response.json();
 
         if (data.success) {
@@ -176,7 +266,23 @@ const Home = () => {
           try {
             const tableJSON = JSON.stringify(table);
             console.log(tableJSON);
+        if (data.success) {
+          Alert.alert('Error', `Table ${tableNum} already exists`);
+          return;
+        }
 
+        //Table number is free
+          try {
+            const tableJSON = JSON.stringify(table);
+            console.log(tableJSON);
+
+            const addResponse = await fetch(`http://10.0.2.2:8080/add-table`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json', 
+              },
+              body: tableJSON
+            });
             const addResponse = await fetch(`http://10.0.2.2:8080/add-table`, {
               method: 'POST',
               headers: {
@@ -201,7 +307,27 @@ const Home = () => {
       Alert.alert('Error', err.message);
     }
   }
+          const addData = await addResponse.json();
+          if (addData.success) {
+            setSelectedTable(table);
+          } else {
+            Alert.alert('Error', addData.msg);
+          }
+          } catch (err) {
+            Alert.alert('Error', err.message)
+          }
+      } catch (err) {
+        Alert.alert('Error', err.message);
+      }
+    } catch (err) {
+      Alert.alert('Error', err.message);
+    }
+  }
 
+  // Select existing table:
+  function SelectTable(table){
+    setSelectedTable(table)
+  }
   // Select existing table:
   function SelectTable(table){
     setSelectedTable(table)
@@ -257,6 +383,7 @@ const Home = () => {
                 onPress={() => setSelectedProduct(null)}>
     <View style={styles.body}>
       <View style={{flexDirection:'row', flex:2}}>
+      <View style={{flexDirection:'row', flex:2}}>
         <View style={styles.halfMainContainer}>
         <View style={styles.tabBar}>
           <Button
@@ -307,6 +434,7 @@ const Home = () => {
             <Card key={product._id} 
                   style={styles.cardStyle}
                   onPress={() => handleProductSelect(product)}>
+                  onPress={() => handleProductSelect(product)}>
               <Card.Cover 
                 source={{ uri: product.image || 'https://www.pngkey.com/png/detail/233-2332677_image-500580-placeholder-transparent.png' }} 
                 style={styles.cardCover}
@@ -319,6 +447,8 @@ const Home = () => {
       </ScrollView>
       </View>
       </View>
+      </View>
+      <View style={[styles.wideButtonContainer, {flex:1, flexDirection:'row'}]}>
       <View style={[styles.wideButtonContainer, {flex:1, flexDirection:'row'}]}>
         <View style={styles.tableContainer}>
         {/* Enable vertical scrolling */}
@@ -348,6 +478,7 @@ const Home = () => {
         </ScrollView>
         </View>
         
+        <View style={{flexDirection:'column',flex:2, margin:'1%'}}>
         <View style={{flexDirection:'column',flex:2, margin:'1%'}}>
           <View style={styles.buttonRow}>
               <View style={styles.displayPortal}>
@@ -455,8 +586,11 @@ const Home = () => {
     </Pressable>
     {/* Modals */}
     <AddTableModal    visible={addTableModalVisible} onDismiss={hideAddTableModal} onAdd={AddTable} />
+    <AddTableModal    visible={addTableModalVisible} onDismiss={hideAddTableModal} onAdd={AddTable} />
     <SelectTableModal visible={selectTableModalVisible} onDismiss={hideSelectTableModal} 
                       tables={tables} onSelect={SelectTable}/>
+    <OptionModal      visible={optionModalVisible} onDismiss={() => setOptionModalVisible(false)} 
+                      product={selectedProduct} addToOrder={addToOrder}/>
     <OptionModal      visible={optionModalVisible} onDismiss={() => setOptionModalVisible(false)} 
                       product={selectedProduct} addToOrder={addToOrder}/>
       
