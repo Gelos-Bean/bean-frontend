@@ -89,5 +89,11 @@ export default styles = StyleSheet.create({
       justifyContent:'center',
       alignSelf:'center',
       marginBottom: 1
+    },
+    optionRow:{
+      flexDirection:'row',
+      alignContent:'center',
+      margin: '1%',
+      justifyContent:'space-between',
     }
   });
