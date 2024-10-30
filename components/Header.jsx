@@ -31,7 +31,8 @@ export default function Header({ title, location, username }){
           <Button
             style={[styles.squareButton, styles.wideButton]}
             mode="contained"
-            icon="logout">Log Out
+            icon="logout"
+            disabled='true'>Log Out
           </Button>
         </PaperProvider>
       </View>
