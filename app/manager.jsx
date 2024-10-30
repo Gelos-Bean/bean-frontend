@@ -16,6 +16,8 @@ import styles from '../styles/posStyles';
 
 import Header from '../components/Header'
 
+const connection = 'http://localhost:8080';
+//'http://10.0.2.2:8080'
 
 const Manager = () => {
   const router = useRouter();
@@ -68,7 +70,7 @@ const Manager = () => {
         
         const productJSON = JSON.stringify(productToAdd);
         console.log(productJSON);
-        const response = await fetch(`http://10.0.2.2:8080/add-item`, {
+        const response = await fetch(`${connection}/add-item`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', 
@@ -93,7 +95,7 @@ const Manager = () => {
    // Function to handle search
    const handleSearch = async (query) => {
     try {
-      const response = await fetch(`http://10.0.2.2:8080/products/${query}`, {
+      const response = await fetch(`${connection}/products/${query}`, {
         method: 'GET',
       });
   
