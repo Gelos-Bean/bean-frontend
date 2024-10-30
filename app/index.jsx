@@ -34,7 +34,7 @@ const App = () => {
   const [products, setProducts] = useState([]); 
   async function PopulateProducts() {
     try {
-      const response = await fetch(`http://localhost:8080/products`, {
+      const response = await fetch(`http://10.0.2.2:8080/products`, {
         method: 'GET',
       });
 
