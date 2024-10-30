@@ -22,7 +22,6 @@ const Options = ({ visible, onDismiss, product, addToOrder }) => {
   return (
     <Modal animationType="slide" transparent={true} visible={visible} 
           onDismiss={() => {
-            setSelectedProduct(null);
             setCurrentOptions([]);
             onDismiss();
     }}>
