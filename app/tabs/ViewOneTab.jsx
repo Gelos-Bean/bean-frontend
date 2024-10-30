@@ -4,6 +4,9 @@ import { DataTable, Checkbox } from 'react-native-paper';
 
 export default function ViewOneTab({ tabId, onExit }) {
     const headers = ["Products", "Quantity", "Cost", "Select"];
+    const server = "http://localhost:8080";
+
+
     const [tabItems, setTabItems] = useState({});
     const [checked, setChecked] = useState({});
 
@@ -14,7 +17,7 @@ export default function ViewOneTab({ tabId, onExit }) {
 
     async function getTabData(id) {
         try {
-            const response = await fetch(`http://localhost:8080/tables/${id}`)
+            const response = await fetch(`${server}/tables/${id}`)
             const tabData = await response.json();
 
             if(!tabData.success) {

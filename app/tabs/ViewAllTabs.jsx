@@ -4,17 +4,20 @@ import { DataTable } from 'react-native-paper';
 
 export default function ViewAllTabs({ onSelectTab }) {
 
+    const server = "http://localhost:8080";
     const headers = ["Tab", "Arrival", "PAX", "Total"];
-    const [tables, setTables] = useState([{}]);
+    const [tables, setTables] = useState([]);
+
 
     useEffect(() => {
         fetchData();
       },[]);
+
       
     async function fetchData(){ 
         
       try { 
-        const response = await fetch('http://localhost:8080/tables');
+        const response = await fetch(`${server}/tables`);
         const tabs = await response.json();
   
   //------> Create functionality to display this error to user
@@ -35,16 +38,23 @@ export default function ViewAllTabs({ onSelectTab }) {
       return date.toLocaleTimeString([], options);
     }
 
-    function sortBy(title){
-      const propertyName = headers.filter(h => h === title).toString();
-      console.log(`Prop Name ${propertyName}`);
-      console.log(tables);
+    function sortBy(title) {
 
-      const sortedData = [].concat(tables.sort((a, b) => (a.openedAt > b.openedAt) ? 1 : -1))
-      console.log(sortedData);
-      console.log(tables);
+      let sortedData = [...tables];
 
-    }
+      if (title === "PAX") {
+          sortedData.sort((a, b) => (a.pax > b.pax ? 1 : -1));
+      } else if (title === "Total") {
+          sortedData.sort((a, b) => (a.total > b.total ? 1 : -1));
+      } else if (title === "Tab") {
+            sortedData.sort((a, b) => (a.tableNo > b.tableNo ? 1 : -1));
+      } else if (title === "Arrival") {
+          sortedData.sort((a, b) => (new Date(a.openedAt) > new Date(b.openedAt) ? 1 : -1));
+      }
+
+      setTables(sortedData);
+
+  }
 
     return (
       <>

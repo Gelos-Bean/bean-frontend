@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { View, Pressable, ScrollView, SafeAreaView } from 'react-native';
 import { Button, IconButton, Text, Checkbox } from 'react-native-paper'
+import { useRouter } from 'expo-router';
+
 
 import Header from '../../components/Header.jsx';
 import styles from '../../styles/posStyles.js';
@@ -12,6 +14,8 @@ const Separator = () => <View style={styles.separator} />;
 
 
 export default function Tabs(){
+  const router = useRouter();
+
   const [selectView, setSelectView] = useState(null);
 
   const handleSelectedTab = (tabNo) => {
@@ -27,7 +31,9 @@ export default function Tabs(){
       <Header title={"Tabs"} 
         location={"Sydney"} 
         username={null} />
+
       <Separator />
+
       <View style={styles.body}>
         <View style={{flexDirection: 'row', flex:1}}>
           <View style={styles.mainContainer}>
@@ -105,7 +111,7 @@ export default function Tabs(){
                   containerColor='rgb(156, 64, 77)'
                   mode="contained"
                   size={30}
-                  onPress={() => console.log(`Not yet implemented`)}
+                  onPress={() => router.push('/')}
                 />
               </View>
             </View>
