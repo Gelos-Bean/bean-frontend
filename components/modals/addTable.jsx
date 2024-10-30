@@ -9,15 +9,16 @@ const AddTableModal = ({ visible, onDismiss, onAdd }) => {
   const [pax, setPax] = React.useState(0);
   const [limit, setLimit] = React.useState("");
 
-  useEffect(() => {
-    setTableNum(0);
-    setPax(0);
-    setLimit("");
-  }, []);
+
 
   const handleAdd = () => {
-    onAdd(tableNum, pax, limit); 
-    onDismiss(setTableNum);
+    if (tableNum && pax) {
+      onAdd(tableNum, pax, limit); 
+      onDismiss(); 
+    } else {
+      Alert.alert('Error', 'Table number and pax are required');
+      console.log('Error', 'Table number and pax are required');
+    }
   };
 
   // Function to handle incrementing and decrementing values safely
@@ -102,7 +103,7 @@ const AddTableModal = ({ visible, onDismiss, onAdd }) => {
               placeholder="Optional"
               keyboardType="numeric"
               value={limit.toString()}
-              onChangeText={(value) => setLimit(value)}
+              onChangeText={(value) => setLimit(parseInt(value) || null)}
               style={[styles.textInputStyle, {width: 275}]}
             />
           </View>

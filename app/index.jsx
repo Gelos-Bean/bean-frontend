@@ -100,11 +100,10 @@ const App = () => {
     setSelectedOptions([]);
   };
   
-
-
   const voidItem = () => {
     if (!selectedProduct) {
       Alert.alert('Error', 'Please select a product to void');
+      console.log('Error', 'Please select a product to void')
     } else {
       const updatedOrderProducts = orderProducts
         .map((p) => {
@@ -122,8 +121,6 @@ const App = () => {
     }
   };
   
-  
-
   //Tables:
   const [tables, setTables] = React.useState([])
   const [selectedTable, setSelectedTable] = React.useState(null);
@@ -163,15 +160,18 @@ const App = () => {
         pax: pax,
         limit: limit
       };
+      console.log(table)
       try {
-        const response = await fetch(`${connection}/tables/${tableNum}`, {
+        const response = await fetch(`${connection}/tables/${table.tableNo}`, {
         method: 'GET',
         });
 
         const data = await response.json();
+        console.log(data)
 
         if (data.success) {
           Alert.alert('Error', `Table ${tableNum} already exists`);
+          console.log('Error', `Table ${tableNum} already exists`)
           return;
         }
 
@@ -180,7 +180,7 @@ const App = () => {
             const tableJSON = JSON.stringify(table);
             console.log(tableJSON);
 
-            const addResponse = await fetch(`${connection}/add-table`, {
+            const addResponse = await fetch(`${connection}/tables`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json', 
@@ -215,11 +215,13 @@ const App = () => {
     if(selectedTable === null)
     {
       Alert.alert('Error', 'Please select a table before placing an order')
+      console.log('Error', 'Please select a table before placing an order')
       return;
     }
-    if(orderProducts == [])
+    if(orderProducts.length === 0)
       {
         Alert.alert('Error', 'No products selected')
+        console.log('Error', 'No products selected')
         return;
       }
     const order = {

@@ -25,13 +25,13 @@ const SelectTableModal = ({ visible, onDismiss, tables, onSelect }) => {
 
           <Text variant="labelLarge">Table number*</Text>
           <List.Section style={{height:200}}>
-            
+          <ScrollView style={{flexDirection:'column'}}>
             <List.Accordion
               title="Tables"
               left={props => <List.Icon {...props} icon="table-furniture" />}
               expanded={expanded}
               onPress={handlePress}>
-                <ScrollView style={{flexDirection:'column'}}>
+                
                   {tables.map((table) => (
                     // <Pressable>
                       <List.Item  key={table._id}
@@ -40,9 +40,9 @@ const SelectTableModal = ({ visible, onDismiss, tables, onSelect }) => {
                                   onPress={() => setSelectedTable(table)}/>
                     // </Pressable>
                   ))}
-                </ScrollView>
+                
             </List.Accordion>
-            
+            </ScrollView>
           </List.Section>
           <View style={[styles.inputContainer,{marginTop:'5%'}]}>
             <Text variant="titleMedium">Selected table: {selectedTable === null ? '-' : selectedTable.tableNo}</Text>
