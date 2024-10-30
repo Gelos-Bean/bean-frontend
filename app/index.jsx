@@ -14,6 +14,9 @@ import AddTableModal from '../components/modals/addTable.jsx'
 import SelectTableModal from '../components/modals/selectTable.jsx'
 import OptionModal from '../components/modals/options.jsx'
 
+const connection = 'http://localhost:8080';
+//'http://10.0.2.2:8080'
+
 const App = () => {
   
   // Modals
@@ -34,7 +37,7 @@ const App = () => {
   const [products, setProducts] = useState([]); 
   async function PopulateProducts() {
     try {
-      const response = await fetch(`http://10.0.2.2:8080/products`, {
+      const response = await fetch(`${connection}/products`, {
         method: 'GET',
       });
 
@@ -128,7 +131,7 @@ const App = () => {
   //Populate tables
   async function PopulateTables() {
     try {
-      const response = await fetch(`http://10.0.2.2:8080/tables`, {
+      const response = await fetch(`${connection}/tables`, {
         method: 'GET',
       });
 
@@ -161,7 +164,7 @@ const App = () => {
         limit: limit
       };
       try {
-        const response = await fetch(`http://10.0.2.2:8080/tables/${tableNum}`, {
+        const response = await fetch(`${connection}/tables/${tableNum}`, {
         method: 'GET',
         });
 
@@ -177,7 +180,7 @@ const App = () => {
             const tableJSON = JSON.stringify(table);
             console.log(tableJSON);
 
-            const addResponse = await fetch(`http://10.0.2.2:8080/add-table`, {
+            const addResponse = await fetch(`${connection}/add-table`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json', 
@@ -229,7 +232,7 @@ const App = () => {
     };
   
     try {
-      const response = await fetch('http://10.0.2.2:8080/add-order', {
+      const response = await fetch(`${connection}/add-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(order)
