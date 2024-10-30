@@ -7,8 +7,15 @@ import styles from '../../styles/modalStyles';
 const Options = ({ visible, onDismiss, product, addToOrder }) => {
   const [currentOptions, setCurrentOptions] = useState([]);
 
+  useEffect(() => {
+    if (visible) {
+      setCurrentOptions([]); // Clear any previously selected options
+    }
+  }, [visible]);
+
   const handleSelect = () => {
-    addToOrder(product, currentOptions); 
+    const selectedOptions = product.options.filter(option => currentOptions.includes(option._id));
+    addToOrder(product, selectedOptions); 
     onDismiss();
   };
 
