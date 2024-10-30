@@ -19,8 +19,7 @@ export default function ViewAllTabs({ onSelectTab }) {
   
   //------> Create functionality to display this error to user
         if (!tabs.success) {
-          console.log("Error loading data");
-          return;
+          return console.log(`Error: ${tabs.msg}`);
         }
             
         setTables(tabs.msg);
