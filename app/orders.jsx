@@ -8,6 +8,9 @@ import Header from '../components/Header.jsx';
 
 const Separator = () => <View style={styles.separator} />;
 
+const connection = 'http://localhost:8080';
+//'http://10.0.2.2:8080'
+
 export default function Orders(){
   const [orders, setOrders] = useState({});
 
@@ -17,7 +20,7 @@ export default function Orders(){
 
   async function getOrders() {
     try{
-      const response = await fetch('http://localhost:8080/orders');
+      const response = await fetch(`${connection}/orders`);
       const orders = await response.json(); 
 
       if(!orders.success) {

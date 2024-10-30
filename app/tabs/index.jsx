@@ -12,6 +12,9 @@ import PaymentScreen from './PaymentScreen.jsx';
 
 const Separator = () => <View style={styles.separator} />;
 
+const connection = 'http://localhost:8080';
+//'http://10.0.2.2:8080'
+
 
 export default function Tabs(){
   const router = useRouter();

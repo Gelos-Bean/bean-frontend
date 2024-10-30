@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { Text } from 'react-native';
 import { DataTable } from 'react-native-paper';
 
+const connection = 'http://localhost:8080';
+//'http://10.0.2.2:8080'
+
 export default function ViewAllTabs({ onSelectTab }) {
 
-    const server = "http://localhost:8080";
     const headers = ["Tab", "Arrival", "PAX", "Total"];
     const [tables, setTables] = useState([]);
 
@@ -17,7 +19,7 @@ export default function ViewAllTabs({ onSelectTab }) {
     async function fetchData(){ 
         
       try { 
-        const response = await fetch(`${server}/tables`);
+        const response = await fetch(`${connection}/tables`);
         const tabs = await response.json();
   
   //------> Create functionality to display this error to user
