@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Pressable } from 'react-native';
-import { DataTable } from 'react-native-paper';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { DataTable, Checkbox } from 'react-native-paper';
 
 export default function ViewOneTab({ tabId, onExit }) {
+    const headers = ["Products", "Quantity", "Cost", "Select"];
     const [tabItems, setTabItems] = useState({});
+    const [checked, setChecked] = useState({});
+
 
     useEffect(() => {
         getTabData(tabId);
@@ -11,7 +14,7 @@ export default function ViewOneTab({ tabId, onExit }) {
 
     async function getTabData(id) {
         try {
-            const response = await fetch(`http://10.0.2.2:8080/tables/${id}`)
+            const response = await fetch(`http://localhost:8080/tables/${id}`)
             const tabData = await response.json();
 
             if(!tabData.success) {
@@ -25,41 +28,59 @@ export default function ViewOneTab({ tabId, onExit }) {
         }
     }
 
+    function formatTime(formatDate) {
+        const date = new Date(formatDate);
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        return date.toLocaleTimeString([], options);
+      }
+
+      function handleCheckbox(tabId){
+        setChecked({tabId});
+      }
     
     return (
         <View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
+            <View style={styles.header}>
                 <Text>Table #{tabItems.tableNo}</Text>
-                <Pressable 
-                    onPress={() => {onExit()}}
-                    >X</Pressable>
+                <Pressable onPress={() => {onExit()}}><Text>X</Text></Pressable>
             </View>
-            <View>
-                <Text>Arrival: {tabItems.openedAt}</Text>
+            <View style={styles.header}>
+                <Text>Arrival: {tabItems.openedAt ? formatTime(tabItems.openedAt) : "" }</Text>
                 <Text>PAX: {tabItems.pax}</Text>
-                <Text>Total: {tabItems.total}</Text>
+                <Text>Total: ${tabItems.total}</Text>
             </View>
 
 
             <DataTable>
+
                 <DataTable.Header>
-                    <DataTable.Title><Text>Products</Text></DataTable.Title>
-                    <DataTable.Title><Text>Quantity</Text></DataTable.Title>
-                    <DataTable.Title><Text>Cost</Text></DataTable.Title>
-                    
+                    {headers.map((header, index) => (                  
+                        <DataTable.Title key={index}>
+                            <Text>{header}</Text>
+                        </DataTable.Title>
+                    ))}            
                 </DataTable.Header>
-                {tabItems.products && tabItems.products.length > 0 && tabItems.products.map((prod, index) => {
+
+                    
+                {tabItems.products && tabItems.products.length > 0 ? ( tabItems.products.map((prod, index) => {
                     return (
                         <>
                             <DataTable.Row key={index}>
                                 <DataTable.Cell><Text>{prod.item.name}</Text></DataTable.Cell>
                                 <DataTable.Cell><Text>{prod.quantity}</Text></DataTable.Cell>
                                 <DataTable.Cell><Text>{`$${prod.item.price}`}</Text></DataTable.Cell>
+                                <DataTable.Cell>
+                                    <Checkbox 
+                                        status={'unchecked'}
+                                        onPress={() => {
+                                            handleCheckbox(index);
+                                        }}/>
+                                </DataTable.Cell>
                             </DataTable.Row>
 
                             {prod.selectedOptions.length > 0 && 
                                 prod.selectedOptions.map((op, i) => (
-                                <DataTable.Row key={i}>
+                                <DataTable.Row key={`${index}-${i}`}>
                                     <DataTable.Cell>
                                         <Text style={{ fontSize: 12}}>{`\t${op.name}`}</Text>
                                     </DataTable.Cell>
@@ -67,15 +88,34 @@ export default function ViewOneTab({ tabId, onExit }) {
                                     <DataTable.Cell>
                                         <Text style={{fontSize: 12}}>{`$${op.price}`}</Text>
                                     </DataTable.Cell>
+                                    <DataTable.Cell><Checkbox 
+                                        status={'unchecked'}
+                                        onPress={() => {
+                                            handleCheckbox(index);
+                                        }}/>
+                                    </DataTable.Cell>
                                 </DataTable.Row>
                                 ))
                             }
                             
                         </>
                         )
-                    })
+                    })) : null 
                 }
             </DataTable>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+
+        paddingStart: 20,
+        paddingEnd: 30,
+        marginTop: 10,
+        marginBottom: 10
+    }
+})
