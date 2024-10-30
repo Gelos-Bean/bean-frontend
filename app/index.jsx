@@ -214,7 +214,7 @@ const App = () => {
       Alert.alert('Error', 'Please select a table before placing an order')
       return;
     }
-    if(orderProducts === [])
+    if(orderProducts == [])
       {
         Alert.alert('Error', 'No products selected')
         return;
@@ -430,6 +430,7 @@ const App = () => {
                 containerColor='rgb(156, 64, 77)'
                 mode="contained"
                 size={30}
+                disabled={true}
               />
               <Text variant='bodySmall'>Free Text</Text>
             </View>
@@ -440,6 +441,7 @@ const App = () => {
                 containerColor='rgb(156, 64, 77)'
                 mode="contained"
                 size={30}
+                disabled={true}
               />
               <Text variant='bodySmall'>Search</Text>
             </View>
@@ -459,7 +461,8 @@ const App = () => {
             <View style={styles.buttonRow}>
               <Button style={[styles.squareButton, styles.wideButton]}
                 mode="contained"
-                icon="credit-card-outline">              
+                icon="credit-card-outline"
+                disabled={true}>              
                 Quick Pay
               </Button>
               <Button style={[styles.squareButton, styles.wideButton]}
@@ -474,6 +477,7 @@ const App = () => {
                 containerColor='rgb(156, 64, 77)'
                 mode="contained"
                 size={30}
+                disabled={true}
               />
               </View>
             </View>   
