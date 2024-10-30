@@ -71,22 +71,19 @@ const App = () => {
   //Add item to order
   const handleProductSelect = (product) => {
     if (product.options && product.options.length > 0) {
-      // If the product has options, open the modal to select options
       setSelectedProduct(product);
       setOptionModalVisible(true);
     } else {
-      // If no options, directly add the product to orderProducts
       addToOrder(product, []);
     }
   };
+
   const addToOrder = (product, options) => {
-    const existingProductIndex = orderProducts.findIndex(p => p._id === product._id);
+    const existingProductIndex = orderProducts.findIndex(p => p._id === product._id && JSON.stringify(p.selectedOptions) === JSON.stringify(options));
     
     if (existingProductIndex !== -1) {
       const updatedOrderProducts = [...orderProducts];
       updatedOrderProducts[existingProductIndex].quantity += 1;
-      updatedOrderProducts[existingProductIndex].price += updatedOrderProducts[existingProductIndex].price;
-
       setOrderProducts(updatedOrderProducts);
     } else {
       const newProduct = {
@@ -99,6 +96,8 @@ const App = () => {
     setSelectedProduct(null);
     setSelectedOptions([]);
   };
+  
+
 
   const voidItem = () => {
     if (!selectedProduct) {
@@ -210,31 +209,44 @@ const App = () => {
 
   // Place order:
   async function PlaceOrder() {
-    const order = {
-      table: selectedTable,
-      products: orderProducts
+    if(selectedTable === null)
+    {
+      Alert.alert('Error', 'Please select a table before placing an order')
+      return;
     }
+    if(orderProducts === [])
+      {
+        Alert.alert('Error', 'No products selected')
+        return;
+      }
+    const order = {
+      table: selectedTable, 
+      products: orderProducts.map(item => ({
+        item: item._id,
+        selectedOptions: item.selectedOptions.map(option => option._id),
+        quantity: item.quantity
+      }))
+    };
+  
     try {
-      const orderJSON = JSON.stringify(order);
-          console.log(orderJSON);
-
-          const response = await fetch(`http://10.0.2.2:8080/add-order`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json', 
-            },
-            body: orderJSON
-          });
-          const addData = await response.json();
-        if (addData.success) {
-          Alert.alert('Success', addData.msg);
-        } else {
-          Alert.alert('Error', addData.msg);
-        }
+      const response = await fetch('http://10.0.2.2:8080/add-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(order)
+      });
+  
+      const data = await response.json();
+      if (data.success) {
+        setOrderProducts([]);
+        setSelectedTable(null);
+      } else {
+        Alert.alert('Error', data.msg);
+      }
     } catch (error) {
       Alert.alert('Error', error.message);
     }
   }
+  
 
   // On Load:
   useEffect(() => {
@@ -244,9 +256,15 @@ const App = () => {
 
   // On orderProducts change:
   useEffect(() => {
-    const newTotal = orderProducts.reduce((sum, product) => sum + product.price, 0);
+    const newTotal = orderProducts.reduce((sum, product) => {
+      // Calculate product price including selected options
+      const productTotal = product.price + 
+        (product.selectedOptions?.reduce((optionSum, option) => optionSum + option.price, 0) || 0);
+      return sum + (productTotal * product.quantity);
+    }, 0);
     setTotal(newTotal);
-  }, [orderProducts]); 
+  }, [orderProducts]);
+
 
   return (
   <SafeAreaView style={styles.container}>
@@ -322,32 +340,40 @@ const App = () => {
       </View>
       <View style={[styles.wideButtonContainer, {flex:1, flexDirection:'row'}]}>
         <View style={styles.tableContainer}>
-        {/* Enable vertical scrolling */}
-        <ScrollView>
-          <View style={styles.table}>
-            {/* Table Header */}
-            <View style={styles.headerRow}>
-              <Text variant='bodySmall' style={[styles.cell, styles.headerText, {flex:2}]}>Product</Text>
-              <Text variant='bodySmall' style={[styles.cell, styles.headerText, {flex:1}]}>Price</Text>
-              <Text variant='bodySmall' style={[styles.cell, styles.headerText, {flex:1}]}>Quantity</Text>
-            </View>
+          <ScrollView>
+            <View style={styles.table}>
+              <View style={styles.headerRow}>
+                <Text variant="bodySmall" style={[styles.cell, styles.headerText, { flex: 2 }]}>Product</Text>
+                <Text variant="bodySmall" style={[styles.cell, styles.headerText, { flex: 1 }]}>Price</Text>
+                <Text variant="bodySmall" style={[styles.cell, styles.headerText, { flex: 1 }]}>Quantity</Text>
+              </View>
 
-            {/* Table Body - Create rows dynamically */}
-            {orderProducts.map((item) => (
-              <Pressable  key={item._id} 
-                          onPress={() => setSelectedProduct(item)} 
-                          style={[
-                            styles.row, 
-                            selectedProduct && selectedProduct._id === item._id && styles.highlightedRow
-                          ]}>
-                <Text variant='bodyMedium' style={[styles.cell, {flex:2}]}>{item.name}</Text>
-                <Text variant='bodyMedium' style={[styles.cell, {flex:1}]}>${item.price}</Text>
-                <Text variant='bodyMedium' style={[styles.cell, {flex:1}]}>x{item.quantity}</Text>
-              </Pressable>
-            ))}
-          </View>
-        </ScrollView>
+              {orderProducts.map((item, index) => (
+                <View key={`${item._id}-${index}`}>
+                  <Pressable onPress={() => setSelectedProduct(item)} style={styles.row}>
+                    <Text variant="bodyMedium" style={[styles.cell, { flex: 2 }]}>{item.name}</Text>
+                    <Text variant="bodyMedium" style={[styles.cell, { flex: 1 }]}>
+                      ${(item.price + (item.selectedOptions?.reduce((sum, opt) => sum + opt.price, 0) || 0)) * item.quantity}
+                    </Text>
+                    <Text variant="bodyMedium" style={[styles.cell, { flex: 1 }]}>x{item.quantity}</Text>
+                  </Pressable>
+
+                  {item.selectedOptions && item.selectedOptions.length > 0 && (
+                    <View style={[styles.row, { paddingLeft: '5%' }]}>
+                      <Text variant="bodySmall">Options:</Text>
+                      {item.selectedOptions.map((option) => (
+                        <Text key={option._id} variant="bodySmall">
+                          - {option.name} (${option.price})
+                        </Text>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              ))}
+            </View>
+          </ScrollView>
         </View>
+
         
         <View style={{flexDirection:'column',flex:2, margin:'1%'}}>
           <View style={styles.buttonRow}>
