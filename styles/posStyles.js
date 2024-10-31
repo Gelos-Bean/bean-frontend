@@ -188,7 +188,10 @@ export default styles = StyleSheet.create({
       minHeight: 30,
       alignItems: 'center', 
       backgroundColor: 'rgb(156, 64, 77)',
-      color: 'white'
+      color: 'rgb(255, 255, 255)'
+    },
+    highlightedText: {
+      color: 'rgb(255, 255, 255)',
     },
     cell: {
       flex: 1,
