@@ -62,7 +62,7 @@ export default function ViewAllTabs({ onSelectTab }) {
         <DataTable>
             <DataTable.Header>
                 {headers.map((header, index) => (                  
-                    <DataTable.Title key={index} 
+                    <DataTable.Title key={index}
                       sortDirection='descending'
                       onPress={() => sortBy(header)}>
                         <Text>{header}</Text>
