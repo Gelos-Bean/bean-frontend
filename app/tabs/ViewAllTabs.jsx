@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Text } from 'react-native';
 import { DataTable } from 'react-native-paper';
+import { connection } from '../../config/config.json';
 
-const connection = 'http://localhost:8080';
-//'http://10.0.2.2:8080'
 
 export default function ViewAllTabs({ onSelectTab }) {
 
