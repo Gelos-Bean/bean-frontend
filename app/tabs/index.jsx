@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Pressable, ScrollView, SafeAreaView } from 'react-native';
 import { Button, IconButton, Text, Checkbox } from 'react-native-paper'
 import { useRouter } from 'expo-router';
-
+import { connection } from '../../config/config.json';
 
 import Header from '../../components/Header.jsx';
 import styles from '../../styles/posStyles.js';
@@ -11,9 +11,6 @@ import ViewOneTab from './ViewOneTab.jsx';
 import PaymentScreen from './PaymentScreen.jsx';
 
 const Separator = () => <View style={styles.separator} />;
-
-const connection = 'http://localhost:8080';
-//'http://10.0.2.2:8080'
 
 
 export default function Tabs(){

@@ -1,4 +1,4 @@
-# Bean Scene POS UI
+# Nimble Merchant POS
 
 __Author:__  
 - Ben Kindon  
@@ -26,3 +26,6 @@ Press r | reload app
 Press m | toggle menu
 Press o | open project code in your editor
 ```
+
+5. To run android emulator + server `npm run start-all`
+6. To run web + server `npm run start-all-w`

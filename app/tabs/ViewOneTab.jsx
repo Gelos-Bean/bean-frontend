@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { DataTable, Checkbox } from 'react-native-paper';
-
-const connection = 'http://localhost:8080';
-//'http://10.0.2.2:8080'
+import { connection } from '../../config/config.json';
 
 export default function ViewOneTab({ tabId, onExit }) {
     const headers = ["Products", "Quantity", "Cost", "Select"];

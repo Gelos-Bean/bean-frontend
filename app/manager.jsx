@@ -8,6 +8,7 @@ import {
 
 import { useRouter } from 'expo-router';
 import { Button, Text, IconButton, MD3Colors } from 'react-native-paper';
+import { connection } from '../config/config.json';
 import SearchModal from '../components/modals/searchModal';
 import NewProduct from '../components/modals/newProduct';
 import DeleteModal from '../components/modals/deleteProduct'
@@ -15,9 +16,6 @@ import DeleteModal from '../components/modals/deleteProduct'
 import styles from '../styles/posStyles';
 
 import Header from '../components/Header'
-
-const connection = 'http://localhost:8080';
-//'http://10.0.2.2:8080'
 
 const Manager = () => {
   const router = useRouter();
