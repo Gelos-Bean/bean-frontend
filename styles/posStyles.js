@@ -21,6 +21,13 @@ export default styles = StyleSheet.create({
       borderRadius: 9,
       flex: 3,
     },
+    fullMainContainer:{
+      margin:'1%',
+      padding: 5,
+      backgroundColor: '#fcf8f2',
+      borderRadius: 9,
+      flex:1
+    },
     halfMainContainer:{
       margin:'1%',
       padding: 10,
@@ -188,7 +195,10 @@ export default styles = StyleSheet.create({
       minHeight: 30,
       alignItems: 'center', 
       backgroundColor: 'rgb(156, 64, 77)',
-      color: 'white'
+      color: 'rgb(255, 255, 255)'
+    },
+    highlightedText: {
+      color: 'rgb(255, 255, 255)',
     },
     cell: {
       flex: 1,
@@ -198,5 +208,50 @@ export default styles = StyleSheet.create({
     headerText: {
 
     },
+    orderContainer: {
+      marginHorizontal:'auto'
+    },
+    orderStyle: {
+      marginVertical: 5,
+      marginHorizontal: 30,
+      padding: 10,
+      justifyContent: 'space-between',
+      height: 260,
+      width: 250
+    },
+    orderHeader: {
+      flexDirection:'row',
+      justifyContent:'space-between', 
+    },
+    orderBody: {
+      padding: 100
+    },
+    orderButtons: {
+      flexDirection: 'row',
+      justifyContent:'space-around'
+    },
+    courseSection: {
+      marginVertical: 8 
+    },
+    courseTitle: { 
+      fontWeight: 'bold', 
+      fontSize: 16, 
+      marginVertical: 4 
+    },
+    productContainer: { 
+      marginLeft: 10, 
+      marginTop: 5 
+    },
+    optionsContainer: { 
+      marginLeft: 15 
+    },
+    optionText: { 
+      color: 'grey' 
+    },
+    paginationControls: {
+      flexDirection:'row',
+      gap: 50,
+      alignSelf:'center',
+    }
     
   });

@@ -158,14 +158,12 @@ const App = () => {
         pax: pax,
         limit: limit
       };
-      console.log(table)
       try {
         const response = await fetch(`${connection}/tables/${table.tableNo}`, {
         method: 'GET',
         });
 
         const data = await response.json();
-        console.log(data)
 
         if (data.success) {
           Alert.alert('Error', `Table ${tableNum} already exists`);
@@ -176,7 +174,6 @@ const App = () => {
         //Table number is free
           try {
             const tableJSON = JSON.stringify(table);
-            console.log(tableJSON);
 
             const addResponse = await fetch(`${connection}/tables`, {
               method: 'POST',
@@ -186,15 +183,28 @@ const App = () => {
               body: tableJSON
             });
 
-          const addData = await addResponse.json();
-          if (addData.success) {
-            setSelectedTable(table);
-          } else {
-            Alert.alert('Error', addData.msg);
-          }
-          } catch (err) {
-            Alert.alert('Error', err.message)
-          }
+            const addData = await addResponse.json();
+            if (addData.success) {
+              
+              const newTableResponse = await fetch(`${connection}/tables/${table.tableNo}`, {
+                method: 'GET',
+              });
+
+              const newTableData = await newTableResponse.json();
+
+              if (newTableData.success) {
+                setSelectedTable(newTableData.msg);
+                console.log(`New table created and selected:`, newTableData.msg);
+              } else {
+                Alert.alert('Error', `Unable to retrieve newly created table`);
+              }
+
+            } else {
+              Alert.alert('Error', addData.msg);
+            }
+            } catch (err) {
+              Alert.alert('Error', err.message)
+            }
       } catch (err) {
         Alert.alert('Error', err.message);
       }
@@ -353,12 +363,26 @@ const App = () => {
 
               {orderProducts.map((item, index) => (
                 <View key={`${item._id}-${index}`}>
-                  <Pressable onPress={() => setSelectedProduct(item)} style={styles.row}>
-                    <Text variant="bodyMedium" style={[styles.cell, { flex: 2 }]}>{item.name}</Text>
-                    <Text variant="bodyMedium" style={[styles.cell, { flex: 1 }]}>
+                  <Pressable onPress={() => setSelectedProduct(item)} 
+                  style={[styles.row,
+                          selectedProduct && selectedProduct._id === item._id && styles.highlightedRow
+                        ]}>
+                    <Text variant="bodyMedium" style={[styles.cell,
+                                                        { flex: 2 },
+                                                        selectedProduct && selectedProduct._id === item._id && styles.highlightedText
+                                                        ]}>
+                      {item.name}</Text>
+                    <Text variant="bodyMedium" style={[styles.cell,
+                                                        { flex: 2 },
+                                                        selectedProduct && selectedProduct._id === item._id && styles.highlightedText
+                                                      ]}>
                       ${(item.price + (item.selectedOptions?.reduce((sum, opt) => sum + opt.price, 0) || 0)) * item.quantity}
                     </Text>
-                    <Text variant="bodyMedium" style={[styles.cell, { flex: 1 }]}>x{item.quantity}</Text>
+                    <Text variant="bodyMedium" style={[styles.cell,
+                                                        { flex: 2 },
+                                                        selectedProduct && selectedProduct._id === item._id && styles.highlightedText
+                                                      ]}>
+                      x{item.quantity}</Text>
                   </Pressable>
 
                   {item.selectedOptions && item.selectedOptions.length > 0 && (
@@ -376,8 +400,6 @@ const App = () => {
             </View>
           </ScrollView>
         </View>
-
-        
         <View style={{flexDirection:'column',flex:2, margin:'1%'}}>
           <View style={styles.buttonRow}>
               <View style={styles.displayPortal}>
@@ -493,7 +515,6 @@ const App = () => {
                       tables={tables} onSelect={SelectTable}/>
     <OptionModal      visible={optionModalVisible} onDismiss={() => setOptionModalVisible(false)} 
                       product={selectedProduct} addToOrder={addToOrder}/>
-      
   </SafeAreaView>
 )};
 
