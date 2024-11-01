@@ -64,6 +64,7 @@ const App = () => {
   // Make an order
   const [orderProducts, setOrderProducts] = useState([])
   const [total, setTotal] = useState(0);
+  const [comment, setComment] = useState('');
 
   // Modify order
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -238,7 +239,8 @@ const App = () => {
         item: item._id,
         selectedOptions: item.selectedOptions.map(option => option._id),
         quantity: item.quantity
-      }))
+      })),
+      comment:comment
     };
   
     try {
@@ -250,6 +252,7 @@ const App = () => {
   
       const data = await response.json();
       if (data.success) {
+        await AddProductsToTable();
         setOrderProducts([]);
         setSelectedTable(null);
       } else {
@@ -260,6 +263,36 @@ const App = () => {
     }
   }
   
+  async function AddProductsToTable() {
+    const updatedProducts = [
+      ...selectedTable.products,
+      ...orderProducts.map(product => ({
+        item: product._id, 
+        selectedOptions: product.selectedOptions || [], 
+        quantity: product.quantity,
+        _id: product._id 
+      }))
+    ];
+    const updatedTable = {
+      ...selectedTable, 
+      products: updatedProducts, 
+    };
+
+    try {
+      const response = await fetch(`${connection}/tables/${selectedTable._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedTable),
+      });
+  
+      const data = await response.json();
+      if (!data.success) {
+        Alert.alert('Error', data.msg);
+      }
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  }
 
   // On Load:
   useEffect(() => {
@@ -343,7 +376,7 @@ const App = () => {
                 source={{ uri: product.image || 'https://www.pngkey.com/png/detail/233-2332677_image-500580-placeholder-transparent.png' }} 
                 style={styles.cardCover}
               />
-              <Card.Content styles={styles.cardBody}>
+              <Card.Content>
                 <Text variant="bodySmall">{product.name}</Text>
               </Card.Content>
             </Card>
@@ -373,13 +406,13 @@ const App = () => {
                                                         ]}>
                       {item.name}</Text>
                     <Text variant="bodyMedium" style={[styles.cell,
-                                                        { flex: 2 },
+                                                        { flex: 1 },
                                                         selectedProduct && selectedProduct._id === item._id && styles.highlightedText
                                                       ]}>
                       ${(item.price + (item.selectedOptions?.reduce((sum, opt) => sum + opt.price, 0) || 0)) * item.quantity}
                     </Text>
                     <Text variant="bodyMedium" style={[styles.cell,
-                                                        { flex: 2 },
+                                                        { flex: 1 },
                                                         selectedProduct && selectedProduct._id === item._id && styles.highlightedText
                                                       ]}>
                       x{item.quantity}</Text>
@@ -418,9 +451,8 @@ const App = () => {
               </View>
               <IconButton style={[styles.squareButton, {}]}
                     icon="plus"
-                    iconColor='#ffff'
-                    containerColor='rgb(156, 64, 77)'
                     mode="contained"
+                  selected={true}
                     size={30}
                     onPress={showAddTableModal}
                   />
@@ -429,9 +461,8 @@ const App = () => {
              <View style={styles.buttonText}>
               <IconButton style={styles.squareButton}
                   icon="minus-circle"
-                  iconColor='#ffff'
-                  containerColor='rgb(156, 64, 77)'
                   mode="contained"
+                  selected={true}
                   onPress={() => voidItem()}
                   size={30}
                 />
@@ -440,9 +471,8 @@ const App = () => {
             <View style={styles.buttonText}>
               <IconButton style={styles.squareButton}
                 icon="minus-circle-multiple"
-                iconColor='#ffff'
-                containerColor='rgb(156, 64, 77)'
                 mode="contained"
+                selected={true}
                 size={30}
                 onPress={() => setOrderProducts([])}
               />
@@ -451,9 +481,8 @@ const App = () => {
             <View style={styles.buttonText}>
               <IconButton style={styles.squareButton}
                 icon="pencil"
-                iconColor='#ffff'
-                containerColor='rgb(156, 64, 77)'
                 mode="contained"
+                selected={true}
                 size={30}
                 disabled={true}
               />
@@ -462,9 +491,8 @@ const App = () => {
             <View style={styles.buttonText}>
               <IconButton style={styles.squareButton}
                 icon="magnify"
-                iconColor='#ffff'
-                containerColor='rgb(156, 64, 77)'
                 mode="contained"
+                selected={true}
                 size={30}
                 disabled={true}
               />
@@ -473,9 +501,8 @@ const App = () => {
             <View style={styles.buttonText}>
               <IconButton style={styles.squareButton}
                 icon="table-furniture"
-                iconColor='#ffff'
-                containerColor='rgb(156, 64, 77)'
                 mode="contained"
+                selected={true}
                 size={30}
                 onPress={showSelectTableModal}
               />
@@ -498,9 +525,8 @@ const App = () => {
               </Button>
               <IconButton style={styles.roundButton}
                 icon="home-roof"
-                iconColor='#ffff'
-                containerColor='rgb(156, 64, 77)'
                 mode="contained"
+                selected={true}
                 size={30}
                 disabled={true}
               />

@@ -21,7 +21,7 @@ export default function Header({ title, location, username }){
       </View>
       <View style={styles.centreSection}>
         <View style={styles.fixToText}>
-          <Text style={[ styles.textStyle] }>{ location }</Text>
+          <Text style={styles.textStyle}>{ location }</Text>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.textStyle}>{ username ? username : "User" } </Text>
         </View>
@@ -55,8 +55,8 @@ const styles = StyleSheet.create({
   logo: {
     marginLeft: 10,
     height: '100%',
-    width: '80%',
-    resizeMode: 'contain'
+    width: '100%',
+    resizeMode: 'contain',
   },
   centreSection: {
     flex:4,
@@ -79,12 +79,14 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     fontSize: 16,
+    margin:'auto'
   },
 
   title: {
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 20,
+    margin:'auto'
   },
   squareButton:{
     borderRadius: 9,
@@ -93,6 +95,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 40,
     color:'rgb(229 220 200)',
+    margin:'auto'
   },
   separator: {
     marginVertical: 8,
