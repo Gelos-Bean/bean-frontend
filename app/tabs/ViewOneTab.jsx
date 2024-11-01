@@ -9,13 +9,21 @@ import Payment from '../../components/tab/Payment.jsx';
 export default function ViewOneTab({ tabId, onExit }) {
     const headers = ["Products", "Quantity", "Cost", "Select"];
    
-    const [checked, setChecked] = useState({});
     const [tabItems, setTabItems] = useState({});
+    const [checked, setChecked] = useState({});
     const [paySelect, setPaySelect] = useState(0.00);
-    
+    const [total, setTotal] = useState(0.00);
+
     useEffect(() => {
         getTabData(tabId);
     },[tabId])
+
+    useEffect(() => {
+        if (tabItems && tabItems.total) {
+            setTotal(Number(tabItems.total.toFixed(2)));
+        }
+    }, [tabItems]);
+
 
     async function getTabData(id) {
         try {
@@ -25,6 +33,8 @@ export default function ViewOneTab({ tabId, onExit }) {
             if(!tabData.success) {
                 return console.log("Error loading tab " + tabData.msg);              
             }
+
+            console.log(tabData);
 
             setTabItems(tabData.msg);
 
@@ -121,7 +131,8 @@ export default function ViewOneTab({ tabId, onExit }) {
                 <View style={{flex: 3}}>
                     <Payment 
                         paySelect={ paySelect }
-                        total = { tabItems.total }
+                        total = { total }
+
                     />
                 </View>
             </View>

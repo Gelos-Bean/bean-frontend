@@ -89,7 +89,7 @@ export default function ViewAllTabs({ onSelectTab }) {
                         <Text>{item.pax}</Text>
                         </DataTable.Cell>
                       <DataTable.Cell>
-                        <Text>{`$${item.total}`}</Text>
+                        <Text>{`$${item.total.toFixed(2)}`}</Text>
                       </DataTable.Cell>
                   </DataTable.Row>
               ))

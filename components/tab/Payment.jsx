@@ -5,12 +5,11 @@ import { IconButton, TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
-export default function PaymentScreen({ paySelect }) {
-    const total = 150; 
+export default function PaymentScreen({ paySelect, total }) {
     const tips = [5, 10, 15];
 
     const [email, setEmail] = useState("");
-    const [remaining, setRemaining] = useState(total.toFixed(2));
+    const [remaining, setRemaining] = useState(total);
 
     const [pressed, setPressed] = useState({
         5: false,
