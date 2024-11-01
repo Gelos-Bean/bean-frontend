@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Text } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import { connection } from '../../config/config.json';
+import TabBtnMenu from '../../components/tab/TabBtnMenu.jsx';
+
+import styles from '../../styles/posStyles.js';
 
 
 export default function ViewAllTabs({ onSelectTab }) {
@@ -57,12 +60,14 @@ export default function ViewAllTabs({ onSelectTab }) {
 
   }
 
-    return (
-      <>
-        <DataTable>
+  return (
+    <>
+      <View style={styles.mainContainer}>
+        <ScrollView>
+          <DataTable>
             <DataTable.Header>
                 {headers.map((header, index) => (                  
-                    <DataTable.Title key={index} 
+                    <DataTable.Title key={index}
                       sortDirection='descending'
                       onPress={() => sortBy(header)}>
                         <Text>{header}</Text>
@@ -74,18 +79,31 @@ export default function ViewAllTabs({ onSelectTab }) {
               tables.map((item, index) => (
                   <DataTable.Row key={index}
                           onPress={() => {onSelectTab(item.tableNo)}}>
-                      <DataTable.Cell><Text>{item.tableNo}</Text></DataTable.Cell>
+                      <DataTable.Cell>
+                        <Text>{item.tableNo}</Text>
+                      </DataTable.Cell>
                       <DataTable.Cell>
                         <Text>{ item.openedAt ? formatTime(item.openedAt) : ""}</Text>
                       </DataTable.Cell>
-                      <DataTable.Cell><Text>{item.pax}</Text></DataTable.Cell>
-                      <DataTable.Cell><Text>{`$${item.total}`}</Text></DataTable.Cell>
+                      <DataTable.Cell>
+                        <Text>{item.pax}</Text>
+                        </DataTable.Cell>
+                      <DataTable.Cell>
+                        <Text>{`$${item.total.toFixed(2)}`}</Text>
+                      </DataTable.Cell>
                   </DataTable.Row>
               ))
             ) : null}
     
-        </DataTable>
+          </DataTable>
+        </ScrollView>
+      </View>
+      <View style={styles.rightContainer}>
+          <View style={{flex: 3}}>
+            <TabBtnMenu />
+          </View>
+      </View>
     </>
-    )
+  )
 }
 
