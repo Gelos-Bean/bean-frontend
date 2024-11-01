@@ -5,13 +5,12 @@ import { IconButton, TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
-export default function PaymentScreen({ props }) {
+export default function PaymentScreen({ paySelect }) {
     const total = 150; 
     const tips = [5, 10, 15];
 
     const [email, setEmail] = useState("");
     const [remaining, setRemaining] = useState(total.toFixed(2));
-    const [selected, setSelected] = useState(' -');
 
     const [pressed, setPressed] = useState({
         5: false,
@@ -92,7 +91,7 @@ export default function PaymentScreen({ props }) {
             <View style={pStyles.box}>
                 <Pressable style={[pStyles.btn, pStyles.textSpacing]}>
                     <Text style={pStyles.btnText}>Pay Selected: </Text>
-                    <Text style={pStyles.btnText}>${selected}</Text>
+                    <Text style={pStyles.btnText}>${paySelect.toFixed(2)}</Text>
                 </Pressable>
                 <Pressable style={[pStyles.btn, pStyles.textSpacing]}>
                     <Text style={pStyles.btnText}>Pay Remaining: </Text>
@@ -101,8 +100,8 @@ export default function PaymentScreen({ props }) {
             </View>
             <View style={pStyles.box}>
                 <View style={[pStyles.total, pStyles.textSpacing]}>
-                    <Text>Total: </Text>
-                    <Text>${remaining}</Text>
+                    <Text style={{fontWeight: '600', fontSize: '1.2rem'}}>Total: </Text>
+                    <Text style={{fontSize: '1.3rem'}}>${remaining}</Text>
                 </View>
             </View>
             <View style={pStyles.box}>
@@ -195,7 +194,7 @@ const pStyles = StyleSheet.create({
         backgroundColor: '#ffffff',
         borderRadius: 6,
         padding: 10,
-        paddingVertical: 20,
+        paddingVertical: 10,
     },
 
     eContainer: {
