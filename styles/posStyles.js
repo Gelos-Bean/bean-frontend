@@ -10,7 +10,6 @@ export default styles = StyleSheet.create({
     },
     body: {
       flex:1,
-      flexDirection: 'column',
       marginRight:'5%',
       marginLeft:'5%'
     },
@@ -21,8 +20,16 @@ export default styles = StyleSheet.create({
       borderRadius: 9,
       flex: 3,
     },
-    fullMainContainer:{
+    managerMainContainer:{
       margin:'1%',
+      padding: '1%',
+      backgroundColor: '#fcf8f2',
+      borderRadius: 9,
+      flex: 4,
+    },
+    fullMainContainer:{
+      marginHorizontal: '1%',
+      marginBottom: '1%',
       padding: 5,
       backgroundColor: '#fcf8f2',
       borderRadius: 9,
@@ -43,27 +50,36 @@ export default styles = StyleSheet.create({
     numpadContainer:{
       flex:8
     },
+    managerButtonContainer:{
+      margin:'1%',
+      padding:'1%',
+      backgroundColor: '#fcf8f2',
+      borderRadius: 9,
+      justifyContent: 'center',
+      alignContent:'center',
+      flex:1
+    },
     buttonContainer:{
       margin:'1%',
-      padding: 10,
+      padding:'1%',
+      backgroundColor: '#fcf8f2',
+      borderRadius: 9,
+      justifyContent: 'space-between',
+      flex:4
+    },
+    wideButtonContainer:{
+      margin:'1%',
+      padding:'1%',
       backgroundColor: '#fcf8f2',
       borderRadius: 9,
       justifyContent: 'center',
       flexDirection: 'column',
       flex:4
     },
-    wideButtonContainer:{
-      margin:'1%',
-      padding: 2,
-      backgroundColor: '#fcf8f2',
-      borderRadius: 9,
-      justifyContent: 'center',
-      flexDirection: 'column',
-      flex:1
-    },
     buttonRow:{
       flexDirection: 'row',
       justifyContent:'space-between',
+      alignContent:'center',
     },
     squareButton:{
       borderRadius: 9,
@@ -81,7 +97,12 @@ export default styles = StyleSheet.create({
       width: 175,
       height: 45,
       justifyContent:'center',
-      color:'rgb(229 220 200)'
+    },
+    managerButton:{
+      margin: '1%',
+      width: '48%',
+      height: 45,
+      justifyContent:'center',
     },
     title: {
       textAlign: 'center',
@@ -92,20 +113,17 @@ export default styles = StyleSheet.create({
       justifyContent: 'space-between',
     },
     cardContainer: {
-      flexDirection: 'row', flexWrap: 'wrap',
+      flexDirection: 'row', 
+      flexWrap: 'wrap',  
     },
     cardStyle: {
       margin: '1%',
-      width: 125
+      width: '18%'
     },
     cardCover: {
       height: 100,
       borderBottomRightRadius: 0,
       borderBottomLeftRadius: 0,
-    },
-    cardBody: {
-      textAlign: 'center',
-      padding: 100
     },
     separator: {
       marginVertical: 8,
@@ -166,16 +184,11 @@ export default styles = StyleSheet.create({
       backgroundColor: '#FFFFFF',
       borderRadius: 9,
     },
-    table: {
-
-    },
     headerRow: {
       flexDirection: 'row',
-      paddingTop: 10,
-      borderColor: '#ccc',
-      textAlign: 'left',
-      marginLeft:10,
-      marginRight:10,
+      margin: '1%',
+      justifyContent:'flex-start',
+      alignContent:'flex-start',
     },
     row: {
       flexDirection: 'row',
@@ -206,10 +219,12 @@ export default styles = StyleSheet.create({
       textAlign: 'left',
     },
     headerText: {
-
+      flex: 1,
+      padding: 3,
+      textAlign: 'left',
     },
     orderContainer: {
-      marginHorizontal:'auto'
+
     },
     orderStyle: {
       marginVertical: 5,
@@ -250,8 +265,22 @@ export default styles = StyleSheet.create({
     },
     paginationControls: {
       flexDirection:'row',
-      gap: 50,
-      alignSelf:'center',
-    }
+      paddingHorizontal: '10%',
+      justifyContent: 'space-between'
+    },
+    controlContainer:{
+      flexDirection:'row',
+      justifyContent: 'space-between',
+      width: '30%'
+    },
+    textInputStyle: {
+      width: 200,
+      borderRadius: 999,
+      height: 40,
+      textAlign: 'center',
+      borderWidth: 0.5,
+      margin: '1%',
+      backgroundColor:'#ffff',
+    },
     
   });
