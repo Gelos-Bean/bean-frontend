@@ -6,12 +6,11 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 export default function PaymentScreen({ props }) {
-    const testTotal = 150; 
+    const total = 150; 
     const tips = [5, 10, 15];
 
     const [email, setEmail] = useState("");
-    const [total, setTotal] = useState(testTotal.toFixed(2));
-    const [remaining, setRemaining] = useState(testTotal.toFixed(2));
+    const [remaining, setRemaining] = useState(total.toFixed(2));
     const [selected, setSelected] = useState(' -');
 
     const [pressed, setPressed] = useState({
@@ -21,21 +20,21 @@ export default function PaymentScreen({ props }) {
     });
 
     function handleButtonPress(amt) {
-        const decimalAmt = amt / 100;
-        setPressed((prevState) => ({
-            ...prevState,
-            [amt]: !prevState[amt]
-        }));
+        const pressedCount = Object.values(pressed).filter((value) => value).length;
+        if (pressedCount === 1 && !pressed[amt]) return;
         
-        if(!pressed[amt]) {
-            setTotal(total * decimalAmt);
-            console.log(total);
-        } else {
-            setTotal(total * (1 + decimalAmt));
-            console.log(total)
-        }
+        const decimalAmt = amt / 100;
+        
+        setPressed((prevState) => {
+            const newPressedState = { 
+                ...prevState, 
+                [amt]: !prevState[amt] 
+            };
+            let setRemain = newPressedState[amt] ? total * (1 + decimalAmt) : total; 
 
-       
+            setRemaining(setRemain.toFixed(2)); 
+            return newPressedState;
+        });
     }
     
     function handleSendEmail(){
@@ -58,7 +57,7 @@ export default function PaymentScreen({ props }) {
                             return (
                                 <Pressable 
                                     key={amt}
-                                    style={[pStyles.btn, pStyles.smallBtn]}
+                                    style={!pressed[amt] ? pStyles.unpressedBtn : [pStyles.unpressedBtn, pStyles.pressedBtn] }
                                     onPress={() => handleButtonPress(amt)}>
                                     <Text style={[pStyles.btnText, pStyles.smallBtnText]}>{`${amt}%`}</Text>
                                 </Pressable>
@@ -158,8 +157,22 @@ const pStyles = StyleSheet.create({
         fontWeight: 600,
         marginLeft: 10,
     },
-    smallBtn: {
-        alignItems: 'center'
+    unpressedBtn: {
+        flex: 1,
+        backgroundColor: '#58656d',
+        borderRadius: 6,
+        alignItems: 'center',
+
+        padding: 12,
+        margin: 3,
+    },
+    pressedBtn: {
+        backgroundColor: '#4e90a4', 
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+
     },
     smallBtnText: {
         marginLeft: 0
