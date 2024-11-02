@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, ScrollView } from 'react-native';
+import { Text, View, Alert, ScrollView } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import { connection } from '../../config/config.json';
 
 import TabBtnMenu from '../../components/tab/TabBtnMenu.jsx';
 import AddTableModal from '../../components/modals/addTable.jsx';
+import SelectTableModal from '../../components/modals/selectTable.jsx';
 
 import styles from '../../styles/posStyles.js';
 
@@ -14,13 +15,16 @@ export default function ViewAllTabs({ onSelectTab }) {
   const headers = ["Tab", "Arrival", "PAX", "Total"];
   const [tables, setTables] = useState([]);
   const [newTable, setNewTable] = useState({});
+  const [selectTable, setSelectedTable] = useState('');
   const [viewTableModal, setViewTableModal] = useState(false);
+  const [viewSelectTableModal, setSelectTableModal] = useState(false);
+
 
 
   useEffect(() => {
       fetchData();
     },[tables]);
-
+    
       
   async function fetchData(){ 
       
@@ -39,6 +43,38 @@ export default function ViewAllTabs({ onSelectTab }) {
       console.log(err);
     } 
   }
+
+
+  async function addNewTable(nTableNo, nPax, nLimit) {
+    try { 
+      const createTable = {
+        tableNo: nTableNo,
+        pax: nPax,
+        limit: nLimit
+      }
+
+      const response = await fetch(`${connection}/add-table`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(createTable)
+      });
+
+      const data = await response.json();
+
+      if(!data.success) {
+        console.log(`heh? ${data.msg}`);
+        return Alert.alert(data.msg);
+      }
+      
+      console.log(data._id);
+
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
 
   function formatTime(formatDate) {
     const date = new Date(formatDate);
@@ -105,7 +141,7 @@ export default function ViewAllTabs({ onSelectTab }) {
       <View style={styles.rightContainer}>
           <View style={{flex: 3}}>
             <TabBtnMenu 
-              setNewTable={setNewTable}
+              tableNo={newTable.tableNo}
               setViewTableModal={setViewTableModal}
             />
           </View>
@@ -113,7 +149,12 @@ export default function ViewAllTabs({ onSelectTab }) {
       <AddTableModal    
         visible={viewTableModal}
         setVisibility={setViewTableModal}
-        onAdd={setNewTable}
+        onAdd={addNewTable}
+      />
+      <SelectTableModal
+        visible={viewSelectTableModal}
+        setVisibility={setSelectTableModal}
+        onSelect={onSelectTab}
       />
     </>
   );
