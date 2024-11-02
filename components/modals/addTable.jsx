@@ -13,6 +13,10 @@ const AddTableModal = ({ visible, setVisibility, onAdd }) => {
   const handleAdd = () => {
     if (tableNum && pax) {
       onAdd(tableNum, pax, limit); 
+//---------> Reset modal values on successful save
+      setTableNum(0);
+      setPax(0);
+      setLimit('');
       setVisibility(false);  
     } else {
       Alert.alert('Error', 'Table number and pax are required');
