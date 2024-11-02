@@ -56,6 +56,28 @@ export default function TabBtnMenu({ tableNo, setViewTableModal }) {
               <Text variant='bodySmall'>Call Away</Text>
             </View>
         </View>
+        <View style={[styles.buttonRow]}>
+          <View style={styles.buttonText}>
+            <IconButton style={styles.squareButton}
+              icon="minus-circle"
+              mode="contained"
+              selected={true}
+              onPress={() => voidItem()}
+              size={30}
+            />
+            <Text variant='bodySmall'>Void Item</Text>
+          </View>
+          <View style={styles.buttonText}>
+            <IconButton style={styles.squareButton}
+              icon="minus-circle-multiple"
+              mode="contained"
+              selected={true}
+              size={30}
+              onPress={() => setOrderProducts([])}
+            />
+            <Text variant='bodySmall'>Void Order</Text>
+          </View>
       </View>
+    </View>
   )
 };
