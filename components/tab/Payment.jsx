@@ -11,28 +11,32 @@ export default function PaymentScreen({ paySelect, total }) {
     const [email, setEmail] = useState("");
     const [remaining, setRemaining] = useState(total);
 
-    const [pressed, setPressed] = useState({
-        5: false,
-        10: false,
-        15: false,
-    });
+    const [pressed, setPressed] = useState(
+        tips.reduce((acc, tip) => ({
+            ...acc,
+            [tip]: false
+        }), {})
+    );
 
     function handleButtonPress(amt) {
-        const pressedCount = Object.values(pressed).filter((value) => value).length;
-        if (pressedCount === 1 && !pressed[amt]) return;
-        
         const decimalAmt = amt / 100;
-        
-        setPressed((prevState) => {
-            const newPressedState = { 
-                ...prevState, 
-                [amt]: !prevState[amt] 
-            };
-            let setRemain = newPressedState[amt] ? total * (1 + decimalAmt) : total; 
 
-            setRemaining(setRemain.toFixed(2)); 
+        setPressed((prevState) => {
+            const wasSelected = prevState[amt];
+            const newPressedState = Object.fromEntries(
+                tips.map(tip => [tip, false])
+            );
+            
+            newPressedState[amt] = !wasSelected;
+
+            const updatedTotal = !wasSelected ? 
+                total * (1 + decimalAmt) : 
+                total;
+    
+            setRemaining(updatedTotal.toFixed(2));
             return newPressedState;
         });
+
     }
     
     function handleSendEmail(){
