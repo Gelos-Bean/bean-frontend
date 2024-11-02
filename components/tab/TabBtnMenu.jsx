@@ -5,38 +5,10 @@ import connection from '../../config/config.json';
 import styles from '../../styles/posStyles.js';
 
 
-export default function TabBtnMenu({ setViewTableModal }) {
+export default function TabBtnMenu({ tableNo, setViewTableModal }) {
  
   function handleTableModal() {
     setViewTableModal(true);
-  }
-
-  async function addNewTable(tTableNo, tPax, tLimit) {
-    try { 
-      const createTable = {
-        tableNo: tTableNo,
-        pax: tPax,
-        limit: tLimit    
-      }
-
-      const response = await fetch(`${connection}/add-table`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(createTable)
-      });
-
-      if(!response.success) {
-        console.log(response.msg);
-        return Alert.alert(response.msg);
-      }
-      
-      console.log(response._id);
-
-    } catch (err) {
-      console.log(err.message);
-    }
   }
 
   return (
@@ -44,7 +16,7 @@ export default function TabBtnMenu({ setViewTableModal }) {
           <View style={styles.buttonRow}>
             <View style={styles.displayPortal}>
               <Text variant='bodySmall'>Tab:</Text>
-              <Text variant='labelLarge'>{null}</Text>
+              <Text variant='labelLarge'>{tableNo ? tableNo : '--'}</Text>
             </View>
             <IconButton style={[styles.squareButton, {}]}
                     icon="plus"
