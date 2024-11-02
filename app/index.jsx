@@ -18,9 +18,8 @@ import OptionModal from '../components/modals/options.jsx'
 const App = () => {
   
   // Modals
-  const [addTableModalVisible, setAddTableModalVisible] = useState(false);
-  const showAddTableModal = () => setAddTableModalVisible(true);
-  const hideAddTableModal = () => setAddTableModalVisible(false);
+// ---> NB Cut down extra function calls for setting visible state of add table model
+  const [viewTableModal, setViewTableModal] = useState(false);
 
   const [selectTableModalVisible, setSelectTableModalVisible] = useState(false);
   const showSelectTableModal = () => setSelectTableModalVisible(true);
@@ -454,7 +453,7 @@ const App = () => {
                     mode="contained"
                   selected={true}
                     size={30}
-                    onPress={showAddTableModal}
+                    onPress={() => setViewTableModal(true)}
                   />
           </View>
           <View style={[styles.buttonRow]}>
@@ -536,7 +535,8 @@ const App = () => {
       </View>
     </Pressable>
     {/* Modals */}
-    <AddTableModal    visible={addTableModalVisible} onDismiss={hideAddTableModal} onAdd={AddTable} />
+{/* NB passed viewTable state & it's setter to TableModal */}
+    <AddTableModal    visible={viewTableModal} setVisibility={setViewTableModal} onAdd={AddTable} />
     <SelectTableModal visible={selectTableModalVisible} onDismiss={hideSelectTableModal} 
                       tables={tables} onSelect={SelectTable}/>
     <OptionModal      visible={optionModalVisible} onDismiss={() => setOptionModalVisible(false)} 
