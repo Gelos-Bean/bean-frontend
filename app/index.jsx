@@ -14,6 +14,7 @@ import styles from '../styles/posStyles';
 import AddTableModal from '../components/modals/addTable.jsx'
 import SelectTableModal from '../components/modals/selectTable.jsx'
 import OptionModal from '../components/modals/options.jsx'
+import SearchModal from '../components/modals/searchModal.jsx';
 
 const App = () => {
   
@@ -21,6 +22,7 @@ const App = () => {
   const [viewAddTableModal, setViewAddTableModal] = useState(false);
   const [selectTableModal, setSelectTableModal] = useState(false);
   const [optionModalVisible, setOptionModalVisible] = useState(false);
+  const [searchModalVisible, setSearchModalVisible] = useState(false);
 
 
   const Separator = () => <View style={styles.separator} />;
@@ -428,7 +430,7 @@ const App = () => {
                 mode="contained"
                 selected={true}
                 size={30}
-                disabled={true}
+                onPress={() => setSearchModalVisible(true)}
               />
               <Text variant='bodySmall'>Search</Text>
             </View>
@@ -475,6 +477,8 @@ const App = () => {
                       tables={tables} onSelect={setSelectedTable}/>
     <OptionModal      visible={optionModalVisible} onDismiss={() => setOptionModalVisible(false)} 
                       product={selectedProduct} addToOrder={addToOrder}/>
+    <SearchModal      visible={searchModalVisible} onDismiss={() => setSearchModalVisible(false)} 
+                      onSelect={handleProductSelect}/>
   </SafeAreaView>
 )};
 

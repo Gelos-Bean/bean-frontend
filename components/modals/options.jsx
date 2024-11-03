@@ -33,8 +33,8 @@ const Options = ({ visible, onDismiss, product, addToOrder }) => {
           <Text variant="labelLarge">Options:</Text>
           
           {product.options.map(option => (
-            <View key={option._id} style={styles.optionRow}>
-              <Text>{option.name} - ${option.price}</Text>
+            <View key={option._id} style={[styles.inputContainer, {justifyContent:'space-between', paddingHorizontal:'10%'}]}>
+              <Text variant="bodyLarge">{option.name} - ${option.price}</Text>
               <Checkbox
                 status={currentOptions.includes(option._id) ? 'checked' : 'unchecked'}
                 onPress={() => {
@@ -51,10 +51,10 @@ const Options = ({ visible, onDismiss, product, addToOrder }) => {
 
         </>
       ) : (
-        <Text variant="bodyMedium">No product selected.</Text>
+        <Text variant="bodyLarge">No product selected.</Text>
       )}
           {/* Buttons */}
-          <View style={styles.inputContainer}>
+          <View style={styles.bottomButtonRow}>
             <Button
               style={[styles.squareButton, styles.wideButton]}
               mode="contained"
