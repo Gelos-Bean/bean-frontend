@@ -38,81 +38,87 @@ const AddTableModal = ({ visible, setVisibility, onAdd }) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text variant='headlineMedium' style={styles.modalText}>New table</Text>
-
-          <Text variant="labelLarge">Table number*</Text>
+          <Text variant="bodyLarge">Table number*</Text>
           <View style={styles.inputContainer}>
             <TextInput
               placeholder="0"
               keyboardType="numeric"
               value={tableNum.toString()} 
               onChangeText={(value) => setTableNum(parseInt(value) || 0)}
-              style={[styles.textInputStyle, {width: 150}]}
+              style={[styles.textInputStyle, {flex:2}]}
             />
-            <IconButton
-              style={styles.roundButton}
-              icon="chevron-up"
-              iconColor='#ffff'
-              containerColor='rgb(156, 64, 77)'
-              mode="contained"
-              size={25}
-              onPress={() => incrementValue(setTableNum, tableNum)}
-            />
-            <IconButton
-              style={styles.roundButton}
-              icon="chevron-down"
-              iconColor='#ffff'
-              containerColor='rgb(156, 64, 77)'
-              mode="contained"
-              size={25}
-              onPress={() => decrementValue(setTableNum, tableNum)}
-              disabled={tableNum === 0}
-            />
+            <View style={{flex:1, flexDirection:'row'}}>
+              <IconButton
+                style={styles.roundButton}
+                icon="chevron-up"
+                iconColor='#ffff'
+                containerColor='rgb(156, 64, 77)'
+                mode="contained"
+                size={25}
+                onPress={() => incrementValue(setTableNum, tableNum)}
+              />
+              <IconButton
+                style={styles.roundButton}
+                icon="chevron-down"
+                iconColor='#ffff'
+                containerColor='rgb(156, 64, 77)'
+                mode="contained"
+                size={25}
+                onPress={() => decrementValue(setTableNum, tableNum)}
+                disabled={tableNum === 0}
+              />
+              </View>
+            
+            
           </View>
 
 
-          <Text variant="labelLarge">Pax*</Text>
+          <Text variant="bodyLarge">Pax*</Text>
           <View style={styles.inputContainer}>
             <TextInput
               placeholder="0"
               keyboardType="numeric"
               value={pax.toString()}
               onChangeText={(value) => setPax(parseInt(value) || 0)}
-              style={[styles.textInputStyle, {width: 150}]}
+              style={[styles.textInputStyle, {flex:2}]}
             />
-            <IconButton
-              style={styles.roundButton}
-              icon="chevron-up"
-              iconColor='#ffff'
-              containerColor='rgb(156, 64, 77)'
-              mode="contained"
-              size={25}
-              onPress={() => incrementValue(setPax, pax)}
-            />
-            <IconButton
-              style={styles.roundButton}
-              icon="chevron-down"
-              iconColor='#ffff'
-              containerColor='rgb(156, 64, 77)'
-              mode="contained"
-              size={25}
-              onPress={() => decrementValue(setPax, pax)}
-              disabled={pax === 0}
-            />
-          </View>
+            <View style={{flex:1, flexDirection:'row'}}>
+              <IconButton
+                style={styles.roundButton}
+                icon="chevron-up"
+                iconColor='#ffff'
+                containerColor='rgb(156, 64, 77)'
+                mode="contained"
+                size={25}
+                onPress={() => incrementValue(setPax, pax)}
+              />
+              <IconButton
+                style={styles.roundButton}
+                icon="chevron-down"
+                iconColor='#ffff'
+                containerColor='rgb(156, 64, 77)'
+                mode="contained"
+                size={25}
+                onPress={() => decrementValue(setPax, pax)}
+                disabled={pax === 0}
+              />
+            </View>
+            </View>
+            
 
-          <Text variant="labelLarge">Limit</Text>
+          <Text variant="bodyLarge">Limit</Text>
           <View style={styles.inputContainer}>
             <TextInput
               placeholder="Optional"
               keyboardType="numeric"
               value={limit.toString()}
               onChangeText={(value) => setLimit(parseInt(value) || null)}
-              style={[styles.textInputStyle, {width: 275}]}
+              style={[styles.textInputStyle, {width:'100%'}]}
             />
           </View>
 
           {/* Buttons */}
-          <View style={styles.inputContainer}>
+          <View style={styles.bottomButtonRow}>
             <Button
               style={[styles.squareButton, styles.wideButton]}
               mode="contained"

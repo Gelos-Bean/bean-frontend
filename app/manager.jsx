@@ -23,18 +23,12 @@ const Manager = () => {
 
   // Search product modal 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
-  const showSearchModal = () => setSearchModalVisible(true);
-  const hideSearchModal = () => setSearchModalVisible(false);
 
   // New product modal 
   const [newProductModalVisible, setNewProductModalVisible] = useState(false);
-  const showNewProductModal = () => setNewProductModalVisible(true);
-  const hideNewProductModal = () => setNewProductModalVisible(false);
 
   // Delete product modal
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const showDeleteModal = () => setDeleteModalVisible(true);
-  const hideDeleteModal = () => setDeleteModalVisible(false);
   
 
   const Separator = () => <View style={styles.separator} />;
@@ -127,37 +121,7 @@ const Manager = () => {
   };
 
    // Function to handle search
-   const handleSearch = async (query) => {
-    try {
-      const response = await fetch(`${connection}/products/${query}`, {
-        method: 'GET',
-      });
-  
-      if (!response.ok) {
-        const error = await response.json();
-        const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
-        Alert.alert('Error', errorMessage);
-        return;
-      }
-  
-      const data = await response.json();
-      console.log('Search Results:', data); // Ben dont forget to remove this
-      
-      
-
-      if (data.status && Array.isArray(data.msg)) {
-        setProducts(data.msg); // if array
-      } else if (data.status) {
-        setProducts([data.msg]); // add to array if only 1
-      } else {
-        const errorMessage = typeof data.msg === 'string' ? data.msg : 'No products found';
-        Alert.alert('Error', errorMessage);
-      }
-    } catch (err) {
-      console.error('Search error:', err);
-      Alert.alert('Error', 'Something went wrong');
-    }
-  };
+   
   
 
   // Handle Edit Product
@@ -226,12 +190,13 @@ const Manager = () => {
                   <Button style={[styles.squareButton, styles.managerButton]}
                       mode="contained"
                       icon="plus"
-                      onPress={showNewProductModal}>              
+                      onPress={() => setNewProductModalVisible(true)}>              
                       Add
                   </Button>
                   <Button style={[styles.squareButton, styles.managerButton]}
                       mode="contained"
-                      icon="pencil">              
+                      icon="pencil"
+                      disabled={true}>              
                       Edit
                   </Button>
                 </View>
@@ -239,13 +204,13 @@ const Manager = () => {
                   <Button style={[styles.squareButton, styles.managerButton]}
                         mode="contained"
                         icon="magnify"
-                        onPress={showSearchModal}>              
+                        onPress={() => setSearchModalVisible(true)}>              
                         Lookup
                     </Button>
                     <Button style={[styles.squareButton, styles.managerButton]}
                         mode="contained"
                         icon="delete"
-                        onPress={showDeleteModal}>              
+                        onPress={() => setDeleteModalVisible(true)}>              
                         Delete
                     </Button>
                   </View>
@@ -260,7 +225,8 @@ const Manager = () => {
                 <View style={styles.buttonRow}>
                   <Button style={[styles.squareButton, styles.managerButton, {width:'98%'}]}
                     mode="contained"
-                    icon="poll">              
+                    icon="poll"
+                    disabled={true}>              
                     Report
                   </Button>
                 </View>
@@ -269,9 +235,9 @@ const Manager = () => {
         </View>
       
       {/* Modals */}
-      <SearchModal visible={searchModalVisible} onDismiss={hideSearchModal} onSearch={handleSearch} />
-      <NewProduct visible={newProductModalVisible} onDismiss={hideNewProductModal} onAdd={handleAddProduct} />
-      <DeleteModal visible={deleteModalVisible} onDismiss={hideDeleteModal} onDelete={handleDeleteProduct} />
+      <SearchModal visible={searchModalVisible} onDismiss={() => setSearchModalVisible(false)} />
+      <NewProduct visible={newProductModalVisible} onDismiss={() => setNewProductModalVisible(false)} onAdd={handleAddProduct} />
+      <DeleteModal visible={deleteModalVisible} onDismiss={() => setDeleteModalVisible(false)} onDelete={handleDeleteProduct} />
     </SafeAreaView>
   );
 }

@@ -3,9 +3,7 @@ import { StyleSheet } from 'react-native';
 
 export default styles = StyleSheet.create({
     centeredView: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+      margin:'auto'
     },
     modalView: {
       display: 'flex',
@@ -21,17 +19,18 @@ export default styles = StyleSheet.create({
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5,
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      width:'30%'
     },
     buttonClose: {
       backgroundColor: '#2196F3',
     },
     modalText: {
-      marginBottom: 30,
+      marginVertical: '5%',
       textAlign: 'left',
     },
     textInputStyle: {
-      width: 200,
+      width: '100%',
       borderRadius: 20,
       height: 40,
       paddingLeft: 20,
@@ -86,14 +85,31 @@ export default styles = StyleSheet.create({
     },
     inputContainer:{
       flexDirection: 'row',
+      width: '100%',
       justifyContent:'center',
       alignSelf:'center',
-      marginBottom: 1
+      marginVertical: '2%',
+      marginHorizontal: '1%'
     },
-    optionRow:{
+    bottomButtonRow:{
       flexDirection:'row',
       alignContent:'center',
-      margin: '1%',
-      justifyContent:'space-between',
-    }
+      marginVertical: '5%',
+      justifyContent:'space-evenly',
+    },
+    resultsContainer:{
+      flexGrow: 1,
+      flexWrap: 'wrap',  
+      height: 150
+    },
+    cardStyle: {
+      marginHorizontal: '2%',
+      marginVertical:'1%',
+      width: '29%'
+    },
+    cardCover: {
+      height: 100,
+      borderBottomRightRadius: 0,
+      borderBottomLeftRadius: 0,
+    },
   });
