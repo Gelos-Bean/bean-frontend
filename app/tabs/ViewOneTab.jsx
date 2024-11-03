@@ -56,7 +56,9 @@ export default function ViewOneTab({ tabId, onExit }) {
 
         let selected = paySelect;
 
-        
+        if(qty > 1) {
+            cost *= qty;
+        }
 
         checked[item] ? Number(selected -= cost) : Number(selected += cost);  
         setPaySelect(selected);
