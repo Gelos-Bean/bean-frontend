@@ -7,7 +7,7 @@ export default function PaymentScreen({ paySelect, total }) {
     const tips = [5, 10, 15];
 
     const [email, setEmail] = useState("");
-    const [remaining, setRemaining] = useState(total);
+    const [remaining, setRemaining] = useState(total.toFixed(2));
 
     const [pressed, setPressed] = useState(
         tips.reduce((acc, tip) => ({
@@ -27,9 +27,7 @@ export default function PaymentScreen({ paySelect, total }) {
 
             newPressedState[amt] = !wasSelected;
 
-            const updatedTotal = !wasSelected ? 
-                total * (1 + decimalAmt) : 
-                total;
+            const updatedTotal = !wasSelected ? total * (1 + decimalAmt) : total;
 
             setRemaining(updatedTotal.toFixed(2));
             return newPressedState;

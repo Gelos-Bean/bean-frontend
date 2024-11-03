@@ -41,7 +41,7 @@ export default function TabBtnMenu({ tableNo, setViewTableModal, highlightOrder 
             icon="minus-circle"
             mode="contained"
             selected={true}
-            disabled={highlightOrder ? false : true}
+            disabled={highlightOrder ? true : false}
             onPress={() => voidItem()}
             size={30}
           />
@@ -54,7 +54,7 @@ export default function TabBtnMenu({ tableNo, setViewTableModal, highlightOrder 
               containerColor='rgb(156, 64, 77)'
               mode="contained"
               size={30}
-              disabled={highlightOrder ? false : true}
+              disabled={highlightOrder ? true : false}
               onPress={() => console.log(`Not yet implemented`)}
             />
             <Text variant='bodySmall'>Call Away</Text>

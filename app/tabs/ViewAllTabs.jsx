@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Alert, ScrollView, Pressable } from 'react-native';
-import { DataTable } from 'react-native-paper';
+import { View, Alert, ScrollView, Pressable } from 'react-native';
+import { DataTable, Text } from 'react-native-paper';
 import { connection } from '../../config/config.json';
 
 import TabBtnMenu from '../../components/tab/TabBtnMenu.jsx';
@@ -121,7 +121,7 @@ export default function ViewAllTabs({ onSelectTab }) {
                   key={index}
                   onPress={() => onSelectTab(item.tableNo)}
                   onLongPress={() => {
-                    setVoidOrder(true);
+                    setHighlightOrder(true);
                     console.log(`Long pressed: ${item.tableNo}`);
                   }}
                 >
