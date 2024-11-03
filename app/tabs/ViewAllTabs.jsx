@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Alert, ScrollView } from 'react-native';
+import { Text, View, Alert, ScrollView, Pressable } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import { connection } from '../../config/config.json';
 
@@ -18,7 +18,7 @@ export default function ViewAllTabs({ onSelectTab }) {
   const [selectTable, setSelectedTable] = useState('');
   const [viewTableModal, setViewTableModal] = useState(false);
   const [viewSelectTableModal, setSelectTableModal] = useState(false);
-
+  const [highlightOrder, setHighlightOrder] = useState(false);
 
 
   useEffect(() => {
@@ -117,21 +117,29 @@ export default function ViewAllTabs({ onSelectTab }) {
         
             {tables && Array.isArray(tables) && tables.length > 0 ? (
               tables.map((item, index) => (
-                  <DataTable.Row key={index}
-                          onPress={() => {onSelectTab(item.tableNo)}}>
-                      <DataTable.Cell>
-                        <Text>{item.tableNo}</Text>
-                      </DataTable.Cell>
-                      <DataTable.Cell>
-                        <Text>{ item.openedAt ? formatTime(item.openedAt) : ""}</Text>
-                      </DataTable.Cell>
-                      <DataTable.Cell>
-                        <Text>{item.pax}</Text>
-                        </DataTable.Cell>
-                      <DataTable.Cell>
-                        <Text>{`$${item.total.toFixed(2)}`}</Text>
-                      </DataTable.Cell>
+                <Pressable
+                  key={index}
+                  onPress={() => onSelectTab(item.tableNo)}
+                  onLongPress={() => {
+                    setVoidOrder(true);
+                    console.log(`Long pressed: ${item.tableNo}`);
+                  }}
+                >
+                  <DataTable.Row>
+                    <DataTable.Cell>
+                      <Text>{item.tableNo}</Text>
+                    </DataTable.Cell>
+                    <DataTable.Cell>
+                      <Text>{item.openedAt ? formatTime(item.openedAt) : ""}</Text>
+                    </DataTable.Cell>
+                    <DataTable.Cell>
+                      <Text>{item.pax}</Text>
+                    </DataTable.Cell>
+                    <DataTable.Cell>
+                      <Text>{`$${item.total.toFixed(2)}`}</Text>
+                    </DataTable.Cell>
                   </DataTable.Row>
+                </Pressable>
               ))
             ) : null}
     
@@ -139,23 +147,17 @@ export default function ViewAllTabs({ onSelectTab }) {
         </ScrollView>
       </View>
       <View style={styles.rightContainer}>
-          <View style={{flex: 3}}>
+      <View style={{flex: 1}} />
+          <View>
             <TabBtnMenu 
               tableNo={newTable.tableNo}
               setViewTableModal={setViewTableModal}
+              hightlightOrder={highlightOrder}
             />
           </View>
       </View>
-      <AddTableModal    
-        visible={viewTableModal}
-        setVisibility={setViewTableModal}
-        onAdd={addNewTable}
-      />
-      <SelectTableModal
-        visible={viewSelectTableModal}
-        setVisibility={setSelectTableModal}
-        onSelect={onSelectTab}
-      />
+      <AddTableModal visible={viewTableModal} setVisibility={setViewTableModal} onAdd={addNewTable} />
+      <SelectTableModal visible={viewSelectTableModal} setVisibility={setSelectTableModal} onSelect={onSelectTab} tables={tables} />
     </>
   );
 };
