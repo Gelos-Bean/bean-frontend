@@ -18,7 +18,6 @@ import OptionModal from '../components/modals/options.jsx'
 const App = () => {
   
   // Modals
-// ---> NB Cut down extra function calls for setting visible state of add table model
   const [viewAddTableModal, setViewAddTableModal] = useState(false);
   const [selectTableModal, setSelectTableModal] = useState(false);
   const [optionModalVisible, setOptionModalVisible] = useState(false);
@@ -166,16 +165,11 @@ const App = () => {
       const data = await addResponse.json();
 
       if (!data.success) {
-//---->NB Handles all errors, including tables already in the db
-// data msg should return the error message I've set up in the backend
-// or the systems err message. If that doesn't happen, or the 
-// system msg isn't human readable pls let me know :) 
         Alert.alert('Error', data.msg);
         console.log(`Error: ${data.msg}`);
         return;
       }
-//---->NB The _id of the table is being sent back in the response msg. 
-// So we now don't have to make two calls
+
       setSelectedTable({ tableNo: tableNum, _id: data._id });
       console.log(`New table created and selected:`, { tableNo: tableNum, _id: data._id });
   
@@ -201,8 +195,6 @@ const App = () => {
         return;
       }
 
-//---->NB added the calculated total to the order. The backend now
-// adds the total to the tables running total 
     const order = {
       table: selectedTable, 
       products: orderProducts.map(item => ({
@@ -225,12 +217,9 @@ const App = () => {
       if (!data.success) {
         return Alert.alert('Error', data.msg);
       }
-//NB----> Added this alert so we know the order has been sent to the kitchen 
       Alert.alert('Order sent to kitchen');
       console.log('Order sent to kitchen');
 
-//NB----> See notes just below for the AddProductsToTable function
-      //await AddProductsToTable();
       setOrderProducts([]);
       setSelectedTable(null);
 
@@ -238,45 +227,6 @@ const App = () => {
       Alert.alert('Error', error.message);
     }
   }
-  
-
-
-//NB--->If this function is adding products to Table in the DB, that's being handled in the backend
-// It was just incorrectly implemented >.< which I only realised after seeing this function 
-// I won't delete this function in case I'm misreading its purpose. But backend is handling
-// adding products to the tab
-// If removing this, make sure to remove await AddProductsToTable(); in the PlaceOrder function
-
-  /*async function AddProductsToTable() {
-    const updatedProducts = [
-      ...selectedTable.products,
-      ...orderProducts.map(product => ({
-        item: product._id, 
-        selectedOptions: product.selectedOptions || [], 
-        quantity: product.quantity,
-        _id: product._id 
-      }))
-    ];
-    const updatedTable = {
-      ...selectedTable, 
-      products: updatedProducts, 
-    };
-
-    try {
-      const response = await fetch(`${connection}/tables/${selectedTable._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedTable),
-      });
-  
-      const data = await response.json();
-      if (!data.success) {
-        Alert.alert('Error', data.msg);
-      }
-    } catch (error) {
-      Alert.alert('Error', error.message);
-    }
-  }*/
 
   // On Load:
   useEffect(() => {
@@ -520,7 +470,6 @@ const App = () => {
       </View>
     </Pressable>
     {/* Modals */}
-{/* NB passed viewTable state & it's setter to TableModal */}
     <AddTableModal    visible={viewAddTableModal} setVisibility={setViewAddTableModal} onAdd={AddTable} />
     <SelectTableModal visible={selectTableModal} setVisibility={setSelectTableModal} 
                       tables={tables} onSelect={setSelectedTable}/>
