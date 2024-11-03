@@ -1,20 +1,23 @@
-import * as React from 'react';
-import { useEffect } from 'react';
+import React, { useState } from 'react';
 import { Alert, Modal, StyleSheet, Pressable, View, TextInput } from 'react-native';
 import { Button, Text, IconButton } from 'react-native-paper';
 import styles from '../../styles/modalStyles';
 
-const AddTableModal = ({ visible, onDismiss, onAdd }) => {
-  const [tableNum, setTableNum] = React.useState(0);
-  const [pax, setPax] = React.useState(0);
-  const [limit, setLimit] = React.useState("");
+const AddTableModal = ({ visible, setVisibility, onAdd }) => {
+  const [tableNum, setTableNum] = useState(0);
+  const [pax, setPax] = useState(0);
+  const [limit, setLimit] = useState('');
 
 
 
   const handleAdd = () => {
     if (tableNum && pax) {
       onAdd(tableNum, pax, limit); 
-      onDismiss(); 
+//---------> Reset modal values on successful save
+      setTableNum(0);
+      setPax(0);
+      setLimit('');
+      setVisibility(false);  
     } else {
       Alert.alert('Error', 'Table number and pax are required');
       console.log('Error', 'Table number and pax are required');
@@ -31,7 +34,7 @@ const AddTableModal = ({ visible, onDismiss, onAdd }) => {
   };
 
   return (
-    <Modal animationType="slide" transparent={true} visible={visible} onDismiss={onDismiss}>
+    <Modal animationType="slide" transparent={true} visible={visible}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text variant='headlineMedium' style={styles.modalText}>New table</Text>
@@ -113,7 +116,7 @@ const AddTableModal = ({ visible, onDismiss, onAdd }) => {
             <Button
               style={[styles.squareButton, styles.wideButton]}
               mode="contained"
-              onPress={onDismiss}
+              onPress={() => {setVisibility(false)}}
             >
               Cancel
             </Button>

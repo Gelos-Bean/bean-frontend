@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
-import { DataTable, Checkbox } from 'react-native-paper';
+import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { DataTable, Checkbox, IconButton } from 'react-native-paper';
 import { connection } from '../../config/config.json';
 import styles from '../../styles/posStyles.js';
 import Payment from '../../components/tab/Payment.jsx';
@@ -34,8 +34,6 @@ export default function ViewOneTab({ tabId, onExit }) {
                 return console.log("Error loading tab " + tabData.msg);              
             }
 
-            console.log(tabData);
-
             setTabItems(tabData.msg);
 
         } catch (err) {
@@ -49,13 +47,19 @@ export default function ViewOneTab({ tabId, onExit }) {
         return date.toLocaleTimeString([], options);
     }
 
-    function handleCheckbox(item, cost){
+    function handleCheckbox(item, cost, qty){
         setChecked(prevState => ({
             ...prevState,
             [item] : !prevState[item]
         }))
 
-        let selected = paySelect; 
+
+        let selected = paySelect;
+
+        if(qty > 1) {
+            cost *= qty;
+        }
+
         checked[item] ? Number(selected -= cost) : Number(selected += cost);  
         setPaySelect(selected);
     }
@@ -64,14 +68,20 @@ export default function ViewOneTab({ tabId, onExit }) {
         <>
             <View style={styles.mainContainer}>
                 <ScrollView style={{flexDirection: 'column'}}> 
-                    <View style={tStyles.header}>
-                        <Text>Table #{tabItems.tableNo}</Text>
-                        <Pressable onPress={() => { onExit() }}><Text>X</Text></Pressable>
+                <View style={tStyles.header}>
+                        <Text style={tStyles.tableNum}>Table #{tabItems.tableNo}</Text>
+                        <IconButton style={[styles.squareButton, {}]}
+                            icon="close"
+                            mode="contained"
+                            selected={true}
+                            size={20}
+                            onPress={() => { onExit() }}
+                        />
                     </View>
-                    <View style={tStyles.header}>
-                        <Text>Arrival: {tabItems.openedAt ? formatTime(tabItems.openedAt) : "" }</Text>
-                        <Text>PAX: {tabItems.pax}</Text>
-                        <Text>Total: ${tabItems.total}</Text>
+                    <View style={tStyles.titleRow}>
+                        <Text style={tStyles.titleText}>Arrival: {tabItems.openedAt ? formatTime(tabItems.openedAt) : "" }</Text>
+                        <Text style={tStyles.titleText}>PAX: {tabItems.pax}</Text>
+                        <Text style={tStyles.titleText}>Total: ${total.toFixed(2)}</Text>
                     </View>
 
 
@@ -95,7 +105,7 @@ export default function ViewOneTab({ tabId, onExit }) {
                                         <DataTable.Cell>
                                             <Checkbox 
                                                 status={checked[index] ? 'checked' : 'unchecked'}
-                                                onPress={() => handleCheckbox(index, prod.item.price)}
+                                                onPress={() => handleCheckbox(index, prod.item.price, prod.quantity)}
                                             />
                                         </DataTable.Cell>
                                     </DataTable.Row>
@@ -145,10 +155,25 @@ const tStyles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
-
         paddingStart: 20,
         paddingEnd: 30,
         marginTop: 10,
-        marginBottom: 10
+        marginBottom: 10,
+        alignItems: 'center',
+    },
+    tableNum: {
+        fontSize: 28
+    },
+    titleRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingStart: 20,
+        paddingEnd: 30,
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    titleText: {
+        fontSize: 16,
     }
-})
+});

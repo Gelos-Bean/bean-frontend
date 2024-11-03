@@ -18,14 +18,8 @@ import OptionModal from '../components/modals/options.jsx'
 const App = () => {
   
   // Modals
-  const [addTableModalVisible, setAddTableModalVisible] = useState(false);
-  const showAddTableModal = () => setAddTableModalVisible(true);
-  const hideAddTableModal = () => setAddTableModalVisible(false);
-
-  const [selectTableModalVisible, setSelectTableModalVisible] = useState(false);
-  const showSelectTableModal = () => setSelectTableModalVisible(true);
-  const hideSelectTableModal = () => setSelectTableModalVisible(false);
-
+  const [viewAddTableModal, setViewAddTableModal] = useState(false);
+  const [selectTableModal, setSelectTableModal] = useState(false);
   const [optionModalVisible, setOptionModalVisible] = useState(false);
 
 
@@ -121,8 +115,8 @@ const App = () => {
   };
   
   //Tables:
-  const [tables, setTables] = React.useState([])
-  const [selectedTable, setSelectedTable] = React.useState(null);
+  const [tables, setTables] = useState([])
+  const [selectedTable, setSelectedTable] = useState(null);
 
   //Populate tables
   async function PopulateTables() {
@@ -157,67 +151,34 @@ const App = () => {
       const table = {
         tableNo: tableNum,
         pax: pax,
-        limit: limit
+        limit: limit,
       };
-      try {
-        const response = await fetch(`${connection}/tables/${table.tableNo}`, {
-        method: 'GET',
-        });
 
-        const data = await response.json();
+      const addResponse = await fetch(`${connection}/tables`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(table),
+      });
 
-        if (data.success) {
-          Alert.alert('Error', `Table ${tableNum} already exists`);
-          console.log('Error', `Table ${tableNum} already exists`)
-          return;
-        }
+      const data = await addResponse.json();
 
-        //Table number is free
-          try {
-            const tableJSON = JSON.stringify(table);
-
-            const addResponse = await fetch(`${connection}/tables`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json', 
-              },
-              body: tableJSON
-            });
-
-            const addData = await addResponse.json();
-            if (addData.success) {
-              
-              const newTableResponse = await fetch(`${connection}/tables/${table.tableNo}`, {
-                method: 'GET',
-              });
-
-              const newTableData = await newTableResponse.json();
-
-              if (newTableData.success) {
-                setSelectedTable(newTableData.msg);
-                console.log(`New table created and selected:`, newTableData.msg);
-              } else {
-                Alert.alert('Error', `Unable to retrieve newly created table`);
-              }
-
-            } else {
-              Alert.alert('Error', addData.msg);
-            }
-            } catch (err) {
-              Alert.alert('Error', err.message)
-            }
-      } catch (err) {
-        Alert.alert('Error', err.message);
+      if (!data.success) {
+        Alert.alert('Error', data.msg);
+        console.log(`Error: ${data.msg}`);
+        return;
       }
+
+      setSelectedTable({ tableNo: tableNum, _id: data._id });
+      console.log(`New table created and selected:`, { tableNo: tableNum, _id: data._id });
+  
     } catch (err) {
       Alert.alert('Error', err.message);
+      console.log('Error:', err.message);
     }
   }
-
-  // Select existing table:
-  function SelectTable(table){
-    setSelectedTable(table)
-  }
+    
 
   // Place order:
   async function PlaceOrder() {
@@ -233,6 +194,7 @@ const App = () => {
         console.log('Error', 'No products selected')
         return;
       }
+
     const order = {
       table: selectedTable, 
       products: orderProducts.map(item => ({
@@ -240,7 +202,8 @@ const App = () => {
         selectedOptions: item.selectedOptions.map(option => option._id),
         quantity: item.quantity
       })),
-      comment:comment
+      comment:comment,
+      total: total
     };
   
     try {
@@ -251,44 +214,15 @@ const App = () => {
       });
   
       const data = await response.json();
-      if (data.success) {
-        await AddProductsToTable();
-        setOrderProducts([]);
-        setSelectedTable(null);
-      } else {
-        Alert.alert('Error', data.msg);
-      }
-    } catch (error) {
-      Alert.alert('Error', error.message);
-    }
-  }
-  
-  async function AddProductsToTable() {
-    const updatedProducts = [
-      ...selectedTable.products,
-      ...orderProducts.map(product => ({
-        item: product._id, 
-        selectedOptions: product.selectedOptions || [], 
-        quantity: product.quantity,
-        _id: product._id 
-      }))
-    ];
-    const updatedTable = {
-      ...selectedTable, 
-      products: updatedProducts, 
-    };
-
-    try {
-      const response = await fetch(`${connection}/tables/${selectedTable._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedTable),
-      });
-  
-      const data = await response.json();
       if (!data.success) {
-        Alert.alert('Error', data.msg);
+        return Alert.alert('Error', data.msg);
       }
+      Alert.alert('Order sent to kitchen');
+      console.log('Order sent to kitchen');
+
+      setOrderProducts([]);
+      setSelectedTable(null);
+
     } catch (error) {
       Alert.alert('Error', error.message);
     }
@@ -454,7 +388,7 @@ const App = () => {
                     mode="contained"
                   selected={true}
                     size={30}
-                    onPress={showAddTableModal}
+                    onPress={() => setViewAddTableModal(true)}
                   />
           </View>
           <View style={[styles.buttonRow]}>
@@ -504,7 +438,7 @@ const App = () => {
                 mode="contained"
                 selected={true}
                 size={30}
-                onPress={showSelectTableModal}
+                onPress={() => setSelectTableModal(true)}
               />
               <Text variant='bodySmall'>Table</Text>
             </View>
@@ -536,9 +470,9 @@ const App = () => {
       </View>
     </Pressable>
     {/* Modals */}
-    <AddTableModal    visible={addTableModalVisible} onDismiss={hideAddTableModal} onAdd={AddTable} />
-    <SelectTableModal visible={selectTableModalVisible} onDismiss={hideSelectTableModal} 
-                      tables={tables} onSelect={SelectTable}/>
+    <AddTableModal    visible={viewAddTableModal} setVisibility={setViewAddTableModal} onAdd={AddTable} />
+    <SelectTableModal visible={selectTableModal} setVisibility={setSelectTableModal} 
+                      tables={tables} onSelect={setSelectedTable}/>
     <OptionModal      visible={optionModalVisible} onDismiss={() => setOptionModalVisible(false)} 
                       product={selectedProduct} addToOrder={addToOrder}/>
   </SafeAreaView>

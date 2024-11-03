@@ -1,24 +1,23 @@
-import * as React from 'react';
-import { useEffect } from 'react';
-import { Alert, Modal, StyleSheet, Pressable, View, TextInput, ScrollView } from 'react-native';
+import { useState } from 'react';
+import { Modal, View, ScrollView } from 'react-native';
 import { Button, Text, IconButton, List } from 'react-native-paper';
 import styles from '../../styles/modalStyles';
 
-const SelectTableModal = ({ visible, onDismiss, tables, onSelect }) => {
-  const [selectedTable, setSelectedTable] = React.useState(null);
+const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
+  const [selectedTable, setSelectedTable] = useState(null);
 
 
   const handleSelect = () => {
     onSelect(selectedTable); 
-    onDismiss();
+    setVisibility(false);
   };
 
-  const [expanded, setExpanded] = React.useState(true);
+  const [expanded, setExpanded] = useState(true);
 
   const handlePress = () => setExpanded(!expanded);
 
   return (
-    <Modal animationType="slide" transparent={true} visible={visible} onDismiss={onDismiss}>
+    <Modal animationType="slide" transparent={true} visible={visible} >
       <View style={styles.centeredView}>
         <View style={[styles.modalView, {height:600}]}>
           <Text variant='headlineMedium' style={styles.modalText}>Select table</Text>
@@ -52,7 +51,7 @@ const SelectTableModal = ({ visible, onDismiss, tables, onSelect }) => {
             <Button
               style={[styles.squareButton, styles.wideButton]}
               mode="contained"
-              onPress={onDismiss}
+              onPress={() => setVisibility(false)}
             >
               Cancel
             </Button>
