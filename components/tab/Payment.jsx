@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Alert, StyleSheet, Pressable } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import styles from '../../styles/posStyles';
 import { IconButton, TextInput } from 'react-native-paper';
+import PaymentOptions from '../../components/modals/payOptions.jsx'
 
-export default function PaymentScreen({ paySelect, total }) {
+export default function PaymentScreen({ paySelect, remaining, setRemaining, setItemPaid }) {
     const tips = [5, 10, 15];
 
     const [email, setEmail] = useState("");
-    const [remaining, setRemaining] = useState(total.toFixed(2));
-
+    const [paymentOptions, setPaymentOptions] = useState(false);
+    const [toPay, setToPay] = useState(0.00);
+    
     const [pressed, setPressed] = useState(
         tips.reduce((acc, tip) => ({
             ...acc,
@@ -18,7 +20,7 @@ export default function PaymentScreen({ paySelect, total }) {
     );
 
     function handleButtonPress(amt) {
-        const decimalAmt = amt / 100;
+        const decimalAmt = Number(amt / 100);
 
         setPressed((prevState) => {
             const wasSelected = prevState[amt];
@@ -28,11 +30,19 @@ export default function PaymentScreen({ paySelect, total }) {
 
             newPressedState[amt] = !wasSelected;
 
-            const updatedTotal = !wasSelected ? total * (1 + decimalAmt) : total;
+            const updatedTotal = !wasSelected ? Number(total) * Number(1 + decimalAmt) : Number(total);
 
             setRemaining(updatedTotal.toFixed(2));
             return newPressedState;
         });
+    }
+
+    function handlePayment(amt){
+        if (!amt){
+            return Alert.alert('Please select amount to pay');
+        }
+        setToPay(amt);
+        setPaymentOptions(true);
     }
 
     function handleSendEmail() {
@@ -87,21 +97,24 @@ export default function PaymentScreen({ paySelect, total }) {
                 <View style={pStyles.separator} />
 
                 <View style={pStyles.box}>
-                    <Pressable style={[pStyles.btn, pStyles.textSpacing]}
-                        onPress={() => console.log('Implement')}>
-                        <Text style={pStyles.btnText}>Pay Selected: </Text>
-                        <Text style={pStyles.btnText}>${paySelect.toFixed(2)}</Text>
-                    </Pressable>
-                    <Pressable style={ [pStyles.btn, pStyles.textSpacing, {marginBottom: 10}] }>
+                <Pressable
+                    style={[pStyles.btn, pStyles.textSpacing]}
+                    onPress={() => {
+                        handlePayment(paySelect);
+                    }}>
+                    <Text style={pStyles.btnText}>Pay Selected: </Text>
+                    <Text style={pStyles.btnText}>${parseFloat(paySelect).toFixed(2)}</Text>
+                </Pressable>
+
+                    <Pressable style={[pStyles.btn, pStyles.textSpacing, {marginBottom: 10}]}>
                         <Text style={pStyles.btnText}>Pay Remaining: </Text>
-                        <Text style={pStyles.btnText}>${remaining}</Text>
+                        <Text style={pStyles.btnText}>${parseFloat(remaining).toFixed(2)}</Text>
                     </Pressable>
                 </View>
-
                 <View style={pStyles.box}>
                     <View style={[pStyles.total, pStyles.textSpacing]}>
                         <Text variant='titleMedium'>Total: </Text>
-                        <Text variant='titleMedium'>${remaining}</Text>
+                        <Text variant='titleMedium'>${parseFloat(remaining).toFixed(2)}</Text>
                     </View>
                 </View>
 
@@ -147,6 +160,14 @@ export default function PaymentScreen({ paySelect, total }) {
                     <Text variant='bodySmall'>Void Order</Text>
                 </View>
             </View> 
+            <PaymentOptions 
+                visibility={paymentOptions}
+                setVisibility={setPaymentOptions}
+                toPay={toPay}
+                setToPay={setToPay}
+                remaining={remaining}
+                setRemaining={setRemaining}
+            />
         </>
     );
 };
