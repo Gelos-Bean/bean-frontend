@@ -1,5 +1,9 @@
-import * as React from 'react';
-import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, Modal, Pressable, View, TextInput, FlatList, ScrollView } from 'react-native';
+import { Button, Text, IconButton, List } from 'react-native-paper';
+import styles from '../../styles/modalStyles';
+import { connection } from '../../config/config.json';
+
 
 const NewProductModal = ({ visible, onDismiss, onAdd }) => {
   const [nameInput, setNameInput] = React.useState('');
@@ -9,6 +13,7 @@ const NewProductModal = ({ visible, onDismiss, onAdd }) => {
   const [searchTerm, setSearchTerm] = React.useState(''); 
   const [searchResults, setSearchResults] = React.useState([]); 
   const [imageInput, setImageInput] = React.useState('');
+  const [allOptions, setAllOptions] = useState([]);
 
   const courses = [
     { key: '1', value: 'Entree' },
@@ -16,11 +21,13 @@ const NewProductModal = ({ visible, onDismiss, onAdd }) => {
     { key: '3', value: 'Dessert' },
     { key: '4', value: 'Beverage' },
   ];
+  const [expanded, setExpanded] = useState(true);
+  const handlePress = () => setExpanded(!expanded);
 
   // Function to search for products from the DB based on the search term
   const searchProducts = async (query) => {
     try {
-      const response = await fetch(`http://10.0.2.2:8080/products/${query}`);
+      const response = await fetch(`${connection}/products/${query}`);
       const data = await response.json();
       if (response.ok) {
         setSearchResults(data.msg); 
@@ -64,54 +71,53 @@ const NewProductModal = ({ visible, onDismiss, onAdd }) => {
     <Modal animationType="slide" transparent={true} visible={visible} onDismiss={onDismiss}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <Text style={styles.modalText}>New Product</Text>
-
-          <Text>Product Name:</Text>
-          <TextInput
-            placeholder="Name"
-            value={nameInput}
-            onChangeText={setNameInput}
-            style={styles.textInputStyle}
-          />
-
-          <Text>Price:</Text>
-          <TextInput
-            placeholder="Price"
-            keyboardType="number-pad"
-            value={priceInput}
-            onChangeText={setPriceInput}
-            style={styles.textInputStyle}
-          />
+          <Text variant='headlineMedium' style={styles.modalText}>New Product</Text>
+          <Text Text variant="bodyLarge">Name*</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Name"
+              value={nameInput}
+              onChangeText={setNameInput}
+              style={styles.textInputStyle}
+            />
+          </View>
+          <Text Text variant="bodyLarge">Price*</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Price"
+              keyboardType="number-pad"
+              value={priceInput}
+              onChangeText={setPriceInput}
+              style={styles.textInputStyle}
+            />
+          </View>
+          <Text variant="bodyLarge">Course*</Text>
+          <List.Section style={{height:100}}>
+            <ScrollView style={{flexDirection:'column'}}>
+              <List.Accordion
+                title="Courses"
+                left={props => <List.Icon {...props} icon="food" />}
+                expanded={expanded}
+                onPress={handlePress}>
+                  {courses.map((course) => (
+                        <List.Item  key={course.key}
+                                    variant="bodySmall"
+                                    title={course.value}
+                                    />
+                    ))}  
+              </List.Accordion>
+            </ScrollView>
+          </List.Section>
+          <Text variant="bodyLarge">Options</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Search for options"
+              value={searchTerm}
+              onChangeText={setSearchTerm}
+              style={styles.textInputStyle}
+            />
+          </View>
           
-          <Text>Course:</Text>
-          <FlatList
-            data={courses}
-            keyExtractor={(item) => item.key}
-            renderItem={({ item }) => (
-              <Pressable onPress={() => setSelectedCourse(item.value)}>
-                <Text
-                  style={[
-                    styles.dropdownItem,
-                    selectedCourse === item.value && styles.selectedItem,
-                  ]}
-                >
-                  {item.value}
-                </Text>
-              </Pressable>
-            )}
-          />
-
-
-
-          
-
-          <Text>Options:</Text>
-          <TextInput
-            placeholder="Search for options"
-            value={searchTerm}
-            onChangeText={setSearchTerm}
-            style={styles.textInputStyle}
-          />
           {/* Dropdown for search results */}
           {searchResults.length > 0 && (
             <FlatList
@@ -136,98 +142,35 @@ const NewProductModal = ({ visible, onDismiss, onAdd }) => {
             </View>
           )}
 
-          <Text>Image:</Text>
-          <TextInput
-            placeholder="Image URL"
-            value={imageInput}
-            onChangeText={setImageInput}
-            style={styles.textInputStyle}
-          />
-
-          <Pressable style={[styles.button, styles.buttonClose]} onPress={onDismiss}>
-            <Text style={styles.textStyle}>Cancel</Text>
-          </Pressable>
-          <Pressable style={[styles.button, styles.buttonClose]} onPress={handleAdd}>
-            <Text style={styles.textStyle}>Add</Text>
-          </Pressable>
+          <Text variant="bodyLarge">Image</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Image URL"
+              value={imageInput}
+              onChangeText={setImageInput}
+              style={styles.textInputStyle}
+            />
+          </View>
+          <View style={styles.bottomButtonRow}>
+            <Button
+              style={[styles.squareButton, styles.wideButton]}
+              mode="contained"
+              onPress={onDismiss}
+            >
+              Cancel
+            </Button>
+            <Button
+              style={[styles.squareButton, styles.wideButton]}
+              mode="contained"
+              onPress={handleAdd}
+            >
+              Add
+            </Button>
+          </View>
         </View>
       </View>
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  textInputStyle: {
-    backgroundColor: '#dcdcdc',
-    width: 200,
-    borderRadius: 20,
-    height: 40,
-    paddingLeft: 20,
-    marginBottom: 10,
-  },
-  dropdownItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  dropdown: {
-    maxHeight: 150,
-    width: 200,
-    backgroundColor: '#fff',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-  },
-  selectedOptions: {
-    marginTop: 10,
-  },
-  dropdownItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  selectedItem: {
-    fontWeight: 'bold', // Bold the selected item
-    color: '#2196F3',   // Change color for highlight (optional)
-  }
-});
 
 export default NewProductModal;
