@@ -10,7 +10,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "start-all": "concurrently --raw \"expo start --android\" \"cd ../bean-api && npm run dev\"",
+    "start-all": "concurrently \"expo start --android\" \"cd ../bean-api && npm run dev\"",
     "start-all-w": "concurrently \"npx expo start --web\" \"cd ../bean-api && npm run dev\""
   },
   "jest": {
