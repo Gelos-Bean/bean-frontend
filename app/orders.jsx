@@ -86,7 +86,7 @@ export default function Orders() {
                       <Text variant="labelMedium">{`Pax: ${order.table ? order.table.pax : 'N/A'}`}</Text>
                     </View>
 
-                    <ScrollView contentContainerStyle={{ flexGrow:1, height:'13vh' }}>
+                    <ScrollView style={{height:'100%'}} contentContainerStyle={{ flexGrow:1 }}>
                       {Object.entries(groupedProducts).map(([course, products], courseIndex) => (
                         <View key={courseIndex} style={styles.courseSection}>
                           <Text variant="labelLarge">{course}</Text>
@@ -119,7 +119,6 @@ export default function Orders() {
                 );
               }}
             />
-            {/* Page controls */}
             <View style={styles.paginationControls}>
             <View style={styles.controlContainer}>
                 <Text variant='labelMedium' style={{marginVertical:'auto'}}>Toggle auto call away</Text>

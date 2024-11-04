@@ -20,7 +20,7 @@ export default styles = StyleSheet.create({
       shadowRadius: 4,
       elevation: 5,
       justifyContent: 'space-between',
-      width:'30vw'
+      width:'30%'
     },
     buttonClose: {
       backgroundColor: '#2196F3',

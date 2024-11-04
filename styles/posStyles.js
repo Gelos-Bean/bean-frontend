@@ -59,8 +59,7 @@ export default styles = StyleSheet.create({
       justifyContent: 'center',
       alignContent:'center',
       flex:1,
-      gap:'1%'
-    },
+      },
     buttonContainer:{
       margin:'1%',
       padding:'1%',
@@ -77,7 +76,6 @@ export default styles = StyleSheet.create({
       justifyContent: 'center',
       flexDirection: 'row',
       flex:2,
-      gap:'1%'
     },
     buttonColumn:{
       flexDirection:'column', 
@@ -86,14 +84,14 @@ export default styles = StyleSheet.create({
     },
     buttonRow:{
       flexDirection: 'row',
-      gap:'1%',
       justifyContent:'space-between',
       alignContent:'center',
-      flexWrap:'wrap'
+      flexWrap:'wrap',
+      paddingHorizontal:'1%'
     },
     squareButton:{
       borderRadius: 9,
-      margin:0
+      marginVertical:0
     },
     buttonText:{
       marginTop:'8%',
@@ -104,6 +102,8 @@ export default styles = StyleSheet.create({
     },
     wideButton:{
       height:46,
+      marginVertical:0,
+      marginHorizontal:'1%',
       flex:1,
       justifyContent:'center',
     },
@@ -181,12 +181,12 @@ export default styles = StyleSheet.create({
     },
     displayPortal:{
       flexDirection: 'row',
-      width: 175,
       height: 46,
       backgroundColor: '#FFFFFF',
       borderRadius: 9,
       justifyContent:'space-around',
       alignItems: 'center',
+      marginHorizontal:'1%',
       flex:1
     },
     tableContainer:{
@@ -234,18 +234,20 @@ export default styles = StyleSheet.create({
       textAlign: 'left',
     },
     orderContainer: {
+      display:'flex',
       justifyContent:'space-between', 
       alignContent:'space-between', 
-      gap:'1%',
-      flex:1
     },
     orderStyle: {
-      display:'flex',
-      flex:1,
-      marginHorizontal:'1%',
-      flexDirection:'column',
-      justifyContent:'space-between', 
-      padding:'1%',
+      flex: 1,
+      margin: '1%',
+      width: '22%',
+      maxWidth: '22%',
+      minWidth: 120,
+      height: 245, 
+      justifyContent: 'space-between',
+      padding: '1%',
+      borderRadius: 9,
     },
     orderHeader: {
       flexDirection:'row',
@@ -271,11 +273,13 @@ export default styles = StyleSheet.create({
     paginationControls: {
       flexDirection:'row',
       justifyContent: 'space-between',
+      display:'flex'
     },
     controlContainer:{
       flexDirection:'row',
       justifyContent:'center',
-      gap:'3%',
+      marginHorizontal:'1%',
+      bottom:0,
       flex:1
     },
     textInputStyle: {
