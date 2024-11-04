@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
-import { DataTable, Checkbox, IconButton } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { DataTable, Text, Checkbox, IconButton } from 'react-native-paper';
 import { connection } from '../../config/config.json';
+
 import styles from '../../styles/posStyles.js';
 import Payment from '../../components/tab/Payment.jsx';
+import PaymentOptions from '../../components/modals/payOptions.jsx'
 
 
 export default function ViewOneTab({ tabId, onExit }) {
@@ -11,27 +13,29 @@ export default function ViewOneTab({ tabId, onExit }) {
    
     const [tabItems, setTabItems] = useState({});
     const [checked, setChecked] = useState({});
-    const [paySelect, setPaySelect] = useState(0.00);
-    const [total, setTotal] = useState(0.00);
+    const [remaining, setRemaining] = useState(0.00);
+    const [paymentOptions, setPaymentOptions] = useState(false);
+    const [toPay, setToPay] = useState(0.00);
+    const [paidItems, setPaidItems] = useState([]);
 
     useEffect(() => {
         getTabData(tabId);
-    },[tabId])
+    }, []);
 
     useEffect(() => {
         if (tabItems && tabItems.total) {
-            setTotal(Number(tabItems.total.toFixed(2)));
+            const total = (parseFloat(tabItems.total) * 100) / 100;
+            setRemaining(Number(total.toFixed(2)));
         }
     }, [tabItems]);
 
-
     async function getTabData(id) {
         try {
-            const response = await fetch(`${connection}/tables/${id}`)
+            const response = await fetch(`${connection}/tables/${id}`);
             const tabData = await response.json();
 
-            if(!tabData.success) {
-                return console.log("Error loading tab " + tabData.msg);              
+            if (!tabData.success) {
+                return console.log("Error loading tab " + tabData.msg);
             }
 
             setTabItems(tabData.msg);
@@ -41,98 +45,129 @@ export default function ViewOneTab({ tabId, onExit }) {
         }
     }
 
+    async function deleteTab() {
+        try { 
+            const response = await fetch(`${connection}/table/${tabId}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json();
+             
+            if (!data.success) {
+                return Alert.alert(`Error: ${data.msg}`)
+            }
+
+            Alert.alert(`${data.msg}`);
+        } catch (err) {
+            Alert.alert(`Error: ${err.message}`);
+        }
+    }
+
     function formatTime(formatDate) {
         const date = new Date(formatDate);
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
         return date.toLocaleTimeString([], options);
     }
 
-    function handleCheckbox(item, cost, qty){
+    function handleCheckbox(item, cost, qty) {
         setChecked(prevState => ({
             ...prevState,
-            [item] : !prevState[item]
-        }))
+            [item]: !prevState[item]
+        }));
 
-
-        let selected = paySelect;
-
-        if(qty > 1) {
+        let selected = toPay;
+        if (qty > 1) {
             cost *= qty;
         }
 
-        checked[item] ? Number(selected -= cost) : Number(selected += cost);  
-        setPaySelect(selected);
+        selected += checked[item] ? -cost : cost;
+        setToPay(parseFloat(selected.toFixed(2)));
+    }
+
+    function disableOncePaid() {
+        const updatedPaidItems = { ...paidItems, ...checked };
+        setPaidItems(updatedPaidItems);
     }
     
     return (
         <>
             <View style={styles.mainContainer}>
                 <ScrollView style={{flexDirection: 'column'}}> 
-                <View style={tStyles.header}>
-                        <Text style={tStyles.tableNum}>Table #{tabItems.tableNo}</Text>
+                    <View style={tStyles.header}>
+                        <Text variant='displaySmall'>Table #{tabItems.tableNo}</Text>
                         <IconButton style={[styles.squareButton, {}]}
                             icon="close"
                             mode="contained"
                             selected={true}
                             size={20}
-                            onPress={() => { onExit() }}
+                            onPress={onExit}
                         />
                     </View>
                     <View style={tStyles.titleRow}>
-                        <Text style={tStyles.titleText}>Arrival: {tabItems.openedAt ? formatTime(tabItems.openedAt) : "" }</Text>
-                        <Text style={tStyles.titleText}>PAX: {tabItems.pax}</Text>
-                        <Text style={tStyles.titleText}>Total: ${total.toFixed(2)}</Text>
+                        <Text variant='titleSmall'>Arrival: {tabItems.openedAt ? formatTime(tabItems.openedAt) : "" }</Text>
+                        <Text variant='titleSmall'>PAX: {tabItems.pax}</Text>
+                        <Text variant='titleSmall'>Total: ${parseFloat(tabItems.total).toFixed(2)}</Text>
                     </View>
-
 
                     <DataTable>
                         <DataTable.Header>
                             {headers.map((header, index) => (                  
                                 <DataTable.Title key={index}>
-                                    <Text>{header}</Text>
+                                    <Text variant='bodyMedium'>{header}</Text>
                                 </DataTable.Title>
                             ))}            
                         </DataTable.Header>
 
-                            
-                        {tabItems.products && tabItems.products.length > 0 ? ( tabItems.products.map((prod, index) => {
-                            return (
-                                <View key={index}>
-                                    <DataTable.Row key={index}>
-                                        <DataTable.Cell><Text>{prod.item.name}</Text></DataTable.Cell>
-                                        <DataTable.Cell><Text>{prod.quantity}</Text></DataTable.Cell>
-                                        <DataTable.Cell><Text>{`$${prod.item.price.toFixed(2)}`}</Text></DataTable.Cell>
-                                        <DataTable.Cell>
-                                            <Checkbox 
-                                                status={checked[index] ? 'checked' : 'unchecked'}
-                                                onPress={() => handleCheckbox(index, prod.item.price, prod.quantity)}
-                                            />
-                                        </DataTable.Cell>
-                                    </DataTable.Row>
-
-                                    {prod.selectedOptions.length > 0 && 
-                                        prod.selectedOptions.map((op, opIndex) => (
-                                        <DataTable.Row key={opIndex}>
+                        {tabItems.products && tabItems.products.length > 0 && 
+                            tabItems.products.map((prod, index) => {
+                                return (
+                                    <View key={index}>
+                                        <DataTable.Row
+                                            key={index}
+                                            style={{ backgroundColor: paidItems[index] ? '#f0f0f0' : 'transparent' }}
+                                        >
                                             <DataTable.Cell>
-                                                <Text style={{ fontSize: 12}}>{`\t${op.name}`}</Text>
-                                            </DataTable.Cell>
-                                            <DataTable.Cell></DataTable.Cell>
-                                            <DataTable.Cell>
-                                                <Text style={{fontSize: 12}}>{`$ ${op.price.toFixed(2)}`}</Text>
+                                                <Text variant='bodyMedium'>{prod.item.name}</Text>
                                             </DataTable.Cell>
                                             <DataTable.Cell>
-                                            <Checkbox 
-                                                status={checked[`option-${index}-${opIndex}`] ? 'checked' : 'unchecked'}
-                                                onPress={() => handleCheckbox(`option-${index}-${opIndex}`, op.price)}
-                                            />
+                                                <Text variant='bodyMedium'>{prod.quantity}</Text>
+                                            </DataTable.Cell>
+                                            <DataTable.Cell>
+                                                <Text variant='bodyMedium'>{`$${parseFloat(prod.item.price).toFixed(2)}`}</Text>
+                                            </DataTable.Cell>
+                                            <DataTable.Cell>
+                                                <Checkbox
+                                                    color={paidItems[index] ? '#d3d3d3' : '#9c404d'}
+                                                    uncheckedColor='#767676'
+                                                    status={checked[index] ? 'checked' : 'unchecked'}
+                                                    onPress={() => handleCheckbox(index, prod.item.price, prod.quantity)}
+                                                    disabled={paidItems[index]}
+                                                />
                                             </DataTable.Cell>
                                         </DataTable.Row>
-                                        ))
-                                    }
-                                    
-                                </View>
+
+                                        {prod.selectedOptions.length > 0 && prod.selectedOptions.map((op, opIndex) => (
+                                            <DataTable.Row key={opIndex}>
+                                                <DataTable.Cell>
+                                                    <Text variant='bodySmall' style={tStyles.prodOptions}>{`\t${op.name}`}</Text>
+                                                </DataTable.Cell>
+                                                <DataTable.Cell></DataTable.Cell>
+                                                <DataTable.Cell>
+                                                    <Text variant='bodySmall' style={tStyles.prodOptions}>{`$ ${op.price.toFixed(2)}`}</Text>
+                                                </DataTable.Cell>
+                                                <DataTable.Cell>
+                                                <Checkbox
+                                                    color={paidItems[index] ? '#d3d3d3' : '#9c404d'}
+                                                    uncheckedColor='#767676'
+                                                    status={checked[`option-${index}-${opIndex}`] ? 'checked' : 'unchecked'}
+                                                    onPress={() => handleCheckbox(`option-${index}-${opIndex}`, op.price)}
+                                                    disabled={paidItems[index]}
+                                                />
+                                                </DataTable.Cell>
+                                            </DataTable.Row>
+                                        ))}
+                                    </View>
                                 )
-                            })) : null 
+                            })
                         }
                     </DataTable>
                 </ScrollView>
@@ -140,15 +175,28 @@ export default function ViewOneTab({ tabId, onExit }) {
             <View style={styles.rightContainer}>
                 <View style={{flex: 3}}>
                     <Payment 
-                        paySelect={ paySelect }
-                        total = { total }
-
+                        total={tabItems.total}
+                        remaining={remaining}
+                        setRemaining={setRemaining}
+                        toPay={toPay}
+                        setToPay={setToPay}
+                        setPaymentOptions={setPaymentOptions}
                     />
                 </View>
             </View>
+            <PaymentOptions 
+                visibility={paymentOptions}
+                setVisibility={setPaymentOptions}
+                toPay={toPay}
+                setToPay={setToPay}
+                remaining={remaining}
+                setRemaining={setRemaining}
+                disableItems={disableOncePaid}
+            />
         </>
-    )
+    );
 }
+
 
 const tStyles = StyleSheet.create({
     header: {
@@ -161,9 +209,6 @@ const tStyles = StyleSheet.create({
         marginBottom: 10,
         alignItems: 'center',
     },
-    tableNum: {
-        fontSize: 28
-    },
     titleRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -173,7 +218,7 @@ const tStyles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10,
     },
-    titleText: {
-        fontSize: 16,
+    prodOptions: { 
+        color: '#767676',
     }
 });

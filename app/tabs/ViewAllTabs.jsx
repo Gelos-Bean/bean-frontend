@@ -23,7 +23,7 @@ export default function ViewAllTabs({ onSelectTab }) {
 
   useEffect(() => {
       fetchData();
-    },[tables]);
+    },[]);
     
       
   async function fetchData(){ 
@@ -32,15 +32,14 @@ export default function ViewAllTabs({ onSelectTab }) {
       const response = await fetch(`${connection}/tables`);
       const tabs = await response.json();
 
-//------> Create functionality to display this error to user
       if (!tabs.success) {
-        return console.log(`Error: ${tabs.msg}`);
+        return Alert.alert(`Error: ${tabs.msg}`);
       }
           
       setTables(tabs.msg);
   
     } catch(err) {
-      console.log(err);
+      Alert.alert(`Error: ${err.message}`);
     } 
   }
 
@@ -110,7 +109,7 @@ export default function ViewAllTabs({ onSelectTab }) {
                     <DataTable.Title key={index}
                       sortDirection='descending'
                       onPress={() => sortBy(header)}>
-                        <Text>{header}</Text>
+                        <Text variant='titleMedium'>{header}</Text>
                     </DataTable.Title>
                   ))}            
             </DataTable.Header>
