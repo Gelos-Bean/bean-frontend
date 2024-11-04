@@ -1,22 +1,26 @@
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { DataTable, Text, Checkbox, IconButton } from 'react-native-paper';
 import { connection } from '../../config/config.json';
+
 import styles from '../../styles/posStyles.js';
 import Payment from '../../components/tab/Payment.jsx';
+import PaymentOptions from '../../components/modals/payOptions.jsx'
+
 
 export default function ViewOneTab({ tabId, onExit }) {
     const headers = ["Products", "Quantity", "Cost", "Select"];
    
     const [tabItems, setTabItems] = useState({});
     const [checked, setChecked] = useState({});
-    const [paySelect, setPaySelect] = useState(0.00);
     const [remaining, setRemaining] = useState(0.00);
-    const [itemPaid, setItemPaid] = useState([]);
+    const [paymentOptions, setPaymentOptions] = useState(false);
+    const [toPay, setToPay] = useState(0.00);
+    const [paidItems, setPaidItems] = useState([]);
 
     useEffect(() => {
         getTabData(tabId);
-    }, [tabId]);
+    }, []);
 
     useEffect(() => {
         if (tabItems && tabItems.total) {
@@ -41,6 +45,23 @@ export default function ViewOneTab({ tabId, onExit }) {
         }
     }
 
+    async function deleteTab() {
+        try { 
+            const response = await fetch(`${connection}/table/${tabId}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json();
+             
+            if (!data.success) {
+                return Alert.alert(`Error: ${data.msg}`)
+            }
+
+            Alert.alert(`${data.msg}`);
+        } catch (err) {
+            Alert.alert(`Error: ${err.message}`);
+        }
+    }
+
     function formatTime(formatDate) {
         const date = new Date(formatDate);
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
@@ -48,21 +69,23 @@ export default function ViewOneTab({ tabId, onExit }) {
     }
 
     function handleCheckbox(item, cost, qty) {
-        if (itemPaid.includes(item)) return;
-
         setChecked(prevState => ({
             ...prevState,
             [item]: !prevState[item]
         }));
 
-        let selected = paySelect;
+        let selected = toPay;
         if (qty > 1) {
             cost *= qty;
         }
 
         selected += checked[item] ? -cost : cost;
-        setPaySelect(parseFloat(selected.toFixed(2)));
+        setToPay(parseFloat(selected.toFixed(2)));
+    }
 
+    function disableOncePaid() {
+        const updatedPaidItems = { ...paidItems, ...checked };
+        setPaidItems(updatedPaidItems);
     }
     
     return (
@@ -82,7 +105,7 @@ export default function ViewOneTab({ tabId, onExit }) {
                     <View style={tStyles.titleRow}>
                         <Text variant='titleSmall'>Arrival: {tabItems.openedAt ? formatTime(tabItems.openedAt) : "" }</Text>
                         <Text variant='titleSmall'>PAX: {tabItems.pax}</Text>
-                        <Text variant='titleSmall'>Total: ${parseFloat(remaining).toFixed(2)}</Text>
+                        <Text variant='titleSmall'>Total: ${parseFloat(tabItems.total).toFixed(2)}</Text>
                     </View>
 
                     <DataTable>
@@ -96,12 +119,11 @@ export default function ViewOneTab({ tabId, onExit }) {
 
                         {tabItems.products && tabItems.products.length > 0 && 
                             tabItems.products.map((prod, index) => {
-                                const isPaid = itemPaid.includes(index);
                                 return (
                                     <View key={index}>
                                         <DataTable.Row
                                             key={index}
-                                            style={{ backgroundColor: isPaid ? '#f0f0f0' : 'transparent' }}
+                                            style={{ backgroundColor: paidItems[index] ? '#f0f0f0' : 'transparent' }}
                                         >
                                             <DataTable.Cell>
                                                 <Text variant='bodyMedium'>{prod.item.name}</Text>
@@ -113,10 +135,12 @@ export default function ViewOneTab({ tabId, onExit }) {
                                                 <Text variant='bodyMedium'>{`$${parseFloat(prod.item.price).toFixed(2)}`}</Text>
                                             </DataTable.Cell>
                                             <DataTable.Cell>
-                                                <Checkbox 
+                                                <Checkbox
+                                                    color={paidItems[index] ? '#d3d3d3' : '#9c404d'}
+                                                    uncheckedColor='#767676'
                                                     status={checked[index] ? 'checked' : 'unchecked'}
                                                     onPress={() => handleCheckbox(index, prod.item.price, prod.quantity)}
-                                                    disabled={isPaid} // Disable if paid
+                                                    disabled={paidItems[index]}
                                                 />
                                             </DataTable.Cell>
                                         </DataTable.Row>
@@ -131,13 +155,13 @@ export default function ViewOneTab({ tabId, onExit }) {
                                                     <Text variant='bodySmall' style={tStyles.prodOptions}>{`$ ${op.price.toFixed(2)}`}</Text>
                                                 </DataTable.Cell>
                                                 <DataTable.Cell>
-                                                    <Checkbox 
-                                                        color='#9c404d'
-                                                        uncheckedColor='#767676'
-                                                        status={checked[`option-${index}-${opIndex}`] ? 'checked' : 'unchecked'}
-                                                        onPress={() => handleCheckbox(`option-${index}-${opIndex}`, op.price)}
-                                                        disabled={isPaid}
-                                                    />
+                                                <Checkbox
+                                                    color={paidItems[index] ? '#d3d3d3' : '#9c404d'}
+                                                    uncheckedColor='#767676'
+                                                    status={checked[`option-${index}-${opIndex}`] ? 'checked' : 'unchecked'}
+                                                    onPress={() => handleCheckbox(`option-${index}-${opIndex}`, op.price)}
+                                                    disabled={paidItems[index]}
+                                                />
                                                 </DataTable.Cell>
                                             </DataTable.Row>
                                         ))}
@@ -151,13 +175,24 @@ export default function ViewOneTab({ tabId, onExit }) {
             <View style={styles.rightContainer}>
                 <View style={{flex: 3}}>
                     <Payment 
+                        total={tabItems.total}
                         remaining={remaining}
                         setRemaining={setRemaining}
-                        paySelect={paySelect}
-                        itemPaid={setItemPaid}
+                        toPay={toPay}
+                        setToPay={setToPay}
+                        setPaymentOptions={setPaymentOptions}
                     />
                 </View>
             </View>
+            <PaymentOptions 
+                visibility={paymentOptions}
+                setVisibility={setPaymentOptions}
+                toPay={toPay}
+                setToPay={setToPay}
+                remaining={remaining}
+                setRemaining={setRemaining}
+                disableItems={disableOncePaid}
+            />
         </>
     );
 }
@@ -184,7 +219,6 @@ const tStyles = StyleSheet.create({
         marginBottom: 10,
     },
     prodOptions: { 
-        fontStyle: 'italic',
         color: '#767676',
     }
 });
