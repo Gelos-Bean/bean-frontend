@@ -1,14 +1,24 @@
 import { useState } from 'react';
-import { View, Text, Alert, StyleSheet, Pressable } from 'react-native';
-import styles from '../../styles/posStyles';
-import { IconButton, TextInput } from 'react-native-paper';
+import { View, Alert, StyleSheet, Pressable } from 'react-native';
+import { Text, IconButton, TextInput } from 'react-native-paper';
 
-export default function PaymentScreen({ paySelect, total }) {
+import styles from '../../styles/posStyles'; 
+
+export default function PaymentScreen({ 
+        total, 
+        remaining, 
+        setRemaining, 
+        setPaymentOptions, 
+        toPay, 
+        setToPay,
+        setInputView 
+    }){
+        
+
     const tips = [5, 10, 15];
 
     const [email, setEmail] = useState("");
-    const [remaining, setRemaining] = useState(total.toFixed(2));
-
+    const [custom, setCustom] = useState(0.00);
     const [pressed, setPressed] = useState(
         tips.reduce((acc, tip) => ({
             ...acc,
@@ -16,14 +26,38 @@ export default function PaymentScreen({ paySelect, total }) {
         }), {})
     );
 
-    function handleButtonPress(amt) {
+    function handleCustomAmount() {
+        setInputView(true);
+        setCustom(toPay);
+    }
+
+    function handlePayment(amt){
+        if (!amt){
+            return Alert.alert('Please select amount to pay');
+        }
+
+        setToPay(amt);
+        setPaymentOptions(true);
+    }
+
+    function handleSendEmail() {
+        const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (email === "" || !re.test(email)) {
+            return Alert.alert('Please input a valid email address');
+        }
+
+        Alert.alert(`Sent receipt to ${email}`);
+        setEmail("");
+    }
+
+    // Handles the button press for Tips 
+    // Cycles through each button. Tap twice to remove tip
+    function handleTipsButtons(amt) {
         const decimalAmt = amt / 100;
 
         setPressed((prevState) => {
             const wasSelected = prevState[amt];
-            const newPressedState = Object.fromEntries(
-                tips.map(tip => [tip, false])
-            );
+            const newPressedState = tips.map(tip => [tip, false]);
 
             newPressedState[amt] = !wasSelected;
 
@@ -34,14 +68,9 @@ export default function PaymentScreen({ paySelect, total }) {
         });
     }
 
-    function handleSendEmail() {
-        const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (email === "" || !re.test(email)) {
-            return Alert.alert('Please input a valid email address');
-        }
 
-        Alert.alert(`Sent Email to ${email}`);
-        setEmail("");
+    function handleVoidItem(itemId) {
+        
     }
 
     return (
@@ -55,7 +84,7 @@ export default function PaymentScreen({ paySelect, total }) {
                                     <Pressable 
                                         key={amt}
                                         style={!pressed[amt] ? pStyles.unpressedBtn : [pStyles.unpressedBtn, pStyles.pressedBtn]}
-                                        onPress={() => handleButtonPress(amt)}>
+                                        onPress={() => handleTipsButtons(amt)}>
                                         <Text style={[pStyles.btnText, pStyles.smallBtnText]}>{`${amt}%`}</Text>
                                     </Pressable>
                                 );
@@ -66,17 +95,17 @@ export default function PaymentScreen({ paySelect, total }) {
                 <View style={pStyles.box}>
                     <Pressable style={pStyles.btn}>
                         <Text style={pStyles.btnText}>Add Custom Tip</Text>
+
                     </Pressable>
                 </View>
 
                 <View style={pStyles.separator} />
 
                 <View style={pStyles.box}>
-                    <Pressable style={pStyles.btn}>
+                    <Pressable style={[pStyles.btn, pStyles.textSpacing]}
+                            onPress={() => handleCustomAmount() }>
                         <Text style={pStyles.btnText}>Pay Custom Amount</Text>
-                    </Pressable>
-                    <Pressable style={pStyles.btn}>
-                        <Text style={pStyles.btnText}>Void Selected Items</Text>
+                        { custom > 0 && <Text style={pStyles.btnText}>${custom}</Text> }
                     </Pressable>
                     <Pressable style={pStyles.btn}>
                         <Text style={pStyles.btnText}>Add Discount</Text>
@@ -86,20 +115,26 @@ export default function PaymentScreen({ paySelect, total }) {
                 <View style={pStyles.separator} />
 
                 <View style={pStyles.box}>
-                    <Pressable style={[pStyles.btn, pStyles.textSpacing]}>
-                        <Text style={pStyles.btnText}>Pay Selected: </Text>
-                        <Text style={pStyles.btnText}>${paySelect.toFixed(2)}</Text>
-                    </Pressable>
-                    <Pressable style={[pStyles.btn, pStyles.textSpacing]}>
+                <Pressable
+                    style={[pStyles.btn, pStyles.textSpacing]}
+                    disabled={remaining === 0 ? true : false}
+                    onPress={() => { handlePayment(toPay) }}>                        
+                    <Text style={pStyles.btnText}>Pay Selected: </Text>
+                    <Text style={pStyles.btnText}>${parseFloat(toPay).toFixed(2)}</Text>
+                </Pressable>
+
+                    
+                    <Pressable style={[pStyles.btn, pStyles.textSpacing, {marginBottom: 10}]}
+                        disabled={remaining === 0 ? true : false}
+                        onPress={() => handlePayment(remaining)}>
                         <Text style={pStyles.btnText}>Pay Remaining: </Text>
-                        <Text style={pStyles.btnText}>${remaining}</Text>
+                        <Text style={pStyles.btnText}>${parseFloat(remaining).toFixed(2)}</Text>
                     </Pressable>
                 </View>
-
                 <View style={pStyles.box}>
                     <View style={[pStyles.total, pStyles.textSpacing]}>
-                        <Text style={pStyles.totalText}>Total: </Text>
-                        <Text style={pStyles.totalText}>${remaining}</Text>
+                        <Text variant='titleMedium'>Total: </Text>
+                        <Text variant='titleMedium'>${parseFloat(remaining).toFixed(2)}</Text>
                     </View>
                 </View>
 
@@ -111,40 +146,40 @@ export default function PaymentScreen({ paySelect, total }) {
                         onChangeText={e => setEmail(e)}
                     />
                     <IconButton
-                        style={pStyles.sendIcon}
+                        style={styles.squareButton}
                         icon="send"
                         size={24}
                         mode="contained"
+                        selected={true}
                         onPress={handleSendEmail}
                         accessibilityLabel="Send Email"
                     />
-                </View>
-
-                <View style={[styles.buttonRow]}>
-                    <View style={styles.buttonText}>
-                        <IconButton 
-                            style={styles.squareButton}
-                            icon="minus-circle"
-                            mode="contained"
-                            selected={true}
-                            onPress={() => voidItem()}
-                            size={30}
-                        />
-                        <Text variant='bodySmall'>Void Item</Text>
-                    </View>
-                    <View style={styles.buttonText}>
-                        <IconButton 
-                            style={styles.squareButton}
-                            icon="minus-circle-multiple"
-                            mode="contained"
-                            selected={true}
-                            size={30}
-                            onPress={() => setOrderProducts([])}
-                        />
-                        <Text variant='bodySmall'>Void Order</Text>
-                    </View>
-                </View> 
+                </View>    
             </View>
+            <View style={[styles.buttonRow]}>
+                <View style={styles.buttonText}>
+                    <IconButton 
+                        style={styles.squareButton}
+                        icon="minus-circle"
+                        mode="contained"
+                        selected={true}
+                        onPress={() => handleVoidItem()}
+                        size={30}
+                    />
+                    <Text variant='bodySmall'>Void Item</Text>
+                </View>
+                <View style={styles.buttonText}>
+                    <IconButton 
+                        style={styles.squareButton}
+                        icon="minus-circle-multiple"
+                        mode="contained"
+                        selected={true}
+                        size={30}
+                        onPress={() => setOrderProducts([])}
+                    />
+                    <Text variant='bodySmall'>Void Order</Text>
+                </View>
+            </View> 
         </>
     );
 };
@@ -172,7 +207,7 @@ const pStyles = StyleSheet.create({
     },
     btnText: {
         color: '#ffffff',
-        fontSize: 15,
+
         marginLeft: 10,
     },
     unpressedBtn: {
@@ -210,22 +245,18 @@ const pStyles = StyleSheet.create({
         borderRadius: 6,
         padding: 10,
     },
-    totalText: {
-        color: '#000000',
-        fontSize: 20,
-        marginLeft: 10,
-    },
 
     eContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical: 5, 
+        marginVertical: 5
     },
     email: {
         flex: 6,
         backgroundColor: '#ffffff',
-        marginRight: 5
+        marginRight: 5,
+        height: 10
     },
     sendIcon: { 
         color: '#ffffff',

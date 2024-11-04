@@ -143,7 +143,7 @@ const App = () => {
         Alert.alert('Error', errorMessage);
       }
     } catch (err) {
-      Alert.alert('Error', err);
+      Alert.alert('Error', err.message);
     }
   }
 
