@@ -257,7 +257,7 @@ const App = () => {
     <Pressable style={{flex:1}}
                 onPress={() => setSelectedProduct(null)}>
     <View style={styles.body}>
-      <View style={{flexDirection:'row', flex:2}}>
+      <View style={{flexDirection:'row', flex:5}}>
         <View style={styles.halfMainContainer}>
         <View style={styles.tabBar}>
           <Button
@@ -320,7 +320,7 @@ const App = () => {
       </ScrollView>
       </View>
       </View>
-      <View style={[styles.wideButtonContainer, {flex:1, flexDirection:'row'}]}>
+      <View style={styles.wideButtonContainer}>
         <View style={styles.tableContainer}>
           <ScrollView>
             <View style={styles.table}>
@@ -329,7 +329,6 @@ const App = () => {
                 <Text variant="bodySmall" style={[styles.cell, styles.headerText, { flex: 1 }]}>Price</Text>
                 <Text variant="bodySmall" style={[styles.cell, styles.headerText, { flex: 1 }]}>Quantity</Text>
               </View>
-
               {orderProducts.map((item, index) => (
                 <View key={`${item._id}-${index}`}>
                   <Pressable onPress={() => setSelectedProduct(item)} 
@@ -369,7 +368,7 @@ const App = () => {
             </View>
           </ScrollView>
         </View>
-        <View style={{flexDirection:'column',flex:2, margin:'1%'}}>
+        <View style={styles.buttonColumn}>
           <View style={styles.buttonRow}>
               <View style={styles.displayPortal}>
                 <Text variant='bodySmall'>Total</Text>
@@ -381,20 +380,19 @@ const App = () => {
                 <IconButton
                   icon="close-circle-outline"
                   iconColor='#000000'
-                  size={20}
                   onPress={() => setSelectedTable(null)}
                 />
               </View>
-              <IconButton style={[styles.squareButton, {}]}
+              <IconButton style={styles.squareButton}
                     icon="plus"
                     mode="contained"
-                  selected={true}
+                    selected={true}
                     size={30}
                     onPress={() => setViewAddTableModal(true)}
                   />
           </View>
-          <View style={[styles.buttonRow]}>
-             <View style={styles.buttonText}>
+          <View style={styles.buttonRow}>
+             <View>
               <IconButton style={styles.squareButton}
                   icon="minus-circle"
                   mode="contained"
@@ -402,9 +400,9 @@ const App = () => {
                   onPress={() => voidItem()}
                   size={30}
                 />
-                <Text variant='bodySmall'>Void Item</Text>
+                <Text variant='bodySmall' style={styles.buttonText}>Void Item</Text>
             </View>
-            <View style={styles.buttonText}>
+            <View>
               <IconButton style={styles.squareButton}
                 icon="minus-circle-multiple"
                 mode="contained"
@@ -412,9 +410,9 @@ const App = () => {
                 size={30}
                 onPress={() => setOrderProducts([])}
               />
-              <Text variant='bodySmall'>Void Order</Text>
+              <Text variant='bodySmall' style={styles.buttonText}>Void Order</Text>
             </View>
-            <View style={styles.buttonText}>
+            <View>
               <IconButton style={styles.squareButton}
                 icon="pencil"
                 mode="contained"
@@ -422,9 +420,9 @@ const App = () => {
                 size={30}
                 disabled={true}
               />
-              <Text variant='bodySmall'>Free Text</Text>
+              <Text variant='bodySmall' style={styles.buttonText}>Free Text</Text>
             </View>
-            <View style={styles.buttonText}>
+            <View>
               <IconButton style={styles.squareButton}
                 icon="magnify"
                 mode="contained"
@@ -432,17 +430,7 @@ const App = () => {
                 size={30}
                 onPress={() => setSearchModalVisible(true)}
               />
-              <Text variant='bodySmall'>Search</Text>
-            </View>
-            <View style={styles.buttonText}>
-              <IconButton style={styles.squareButton}
-                icon="table-furniture"
-                mode="contained"
-                selected={true}
-                size={30}
-                onPress={() => setSelectTableModal(true)}
-              />
-              <Text variant='bodySmall'>Table</Text>
+              <Text variant='bodySmall' style={styles.buttonText}>Search</Text>
             </View>
           </View>
             
@@ -458,16 +446,15 @@ const App = () => {
                 icon="send"
                 onPress={PlaceOrder}>                   
                 Add to Tab
-              </Button>
-              <IconButton style={styles.roundButton}
-                icon="home-roof"
+              </Button>   
+              <IconButton style={styles.squareButton}
+                icon="table-furniture"
                 mode="contained"
                 selected={true}
                 size={30}
-                disabled={true}
-              />
-              </View>
-            </View>   
+                onPress={() => setSelectTableModal(true)}/>
+            </View>
+          </View>   
         </View>
       </View>
     </Pressable>

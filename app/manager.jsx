@@ -185,52 +185,45 @@ const Manager = () => {
             </DataTable>
           </View>
             <View style={[styles.managerButtonContainer, {flexDirection:'row'}]}>
-              <View style={{flex:1}}>
-                <View style={styles.buttonRow}>
-                  <Button style={[styles.squareButton, styles.managerButton]}
+                <View style={[styles.buttonRow, {flex:1}]}>
+                  <Button style={[styles.squareButton, styles.wideButton]}
                       mode="contained"
                       icon="plus"
                       onPress={() => setNewProductModalVisible(true)}>              
                       Add
                   </Button>
-                  <Button style={[styles.squareButton, styles.managerButton]}
+                  <Button style={[styles.squareButton, styles.wideButton]}
                       mode="contained"
                       icon="pencil"
                       disabled={true}>              
                       Edit
                   </Button>
-                </View>
-                <View style={styles.buttonRow}>
-                  <Button style={[styles.squareButton, styles.managerButton]}
+                  <Button style={[styles.squareButton, styles.wideButton]}
                         mode="contained"
                         icon="magnify"
                         onPress={() => setSearchModalVisible(true)}>              
                         Lookup
-                    </Button>
-                    <Button style={[styles.squareButton, styles.managerButton]}
-                        mode="contained"
-                        icon="delete"
-                        onPress={() => setDeleteModalVisible(true)}>              
-                        Delete
-                    </Button>
-                  </View>
-              </View>
-              <View style={{flex:1}}>
-                <View style={styles.buttonRow}>
+                  </Button>
+                  <Button style={[styles.squareButton, styles.wideButton]}
+                      mode="contained"
+                      icon="delete"
+                      onPress={() => setDeleteModalVisible(true)}>              
+                      Delete
+                  </Button>
+                </View>
+                <View style={styles.verticalSeparator}></View>
+                <View style={[styles.buttonRow, {flex:1}]}>                  
                   <View style={styles.displayPortal}>
                     <Text variant='bodySmall'>Daily Total:</Text>
                     <Text variant='labelLarge'>$ null</Text>
                   </View>
-                  </View>
-                <View style={styles.buttonRow}>
-                  <Button style={[styles.squareButton, styles.managerButton, {width:'98%'}]}
+                  <Button style={[styles.squareButton, styles.wideButton]}
                     mode="contained"
                     icon="poll"
                     disabled={true}>              
                     Report
                   </Button>
                 </View>
-              </View>
             </View>
         </View>
       
