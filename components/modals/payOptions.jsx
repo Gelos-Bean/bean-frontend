@@ -3,7 +3,7 @@ import { Button, Text } from 'react-native-paper';
 import styles from '../../styles/modalStyles';
 
 
-export default function PaymentOptions({ visibility, setVisibility, toPay, setToPay, remaining, setRemaining }) {
+export default function PaymentOptions({ visibility, setVisibility, toPay, setToPay, remaining, setRemaining, disableItems }) {
     
     function handleButtonPress(){
         setToPay(0.00);
@@ -12,7 +12,7 @@ export default function PaymentOptions({ visibility, setVisibility, toPay, setTo
         // Using parsefloat with an equation to avoid issues with parse floating-points
         const remainingAmount = (parseFloat(remaining) * 100 - parseFloat(toPay) * 100) / 100;
         setRemaining(Number(remainingAmount.toFixed(2)));
-        setPaySelected
+        disableItems();
         setVisibility(false);
     }
 
@@ -22,7 +22,7 @@ export default function PaymentOptions({ visibility, setVisibility, toPay, setTo
                 <View style={styles.centeredView}>
                     <TouchableWithoutFeedback>
                         <View style={styles.modalView}>
-                            <Text variant='headlineMedium'>Total: ${toPay.toFixed(2)}</Text>
+                            <Text variant='headlineMedium'>Total: ${parseFloat(toPay.toFixed(2))}</Text>
                             <Button
                                     style={[styles.squareButton, styles.wideButton]}
                                     mode="contained"
