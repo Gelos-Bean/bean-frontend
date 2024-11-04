@@ -18,9 +18,9 @@ export default function PaymentOptions({ visibility, setVisibility, toPay, setTo
 
     return (
         <Modal animationType="slide" transparent={true} visible={visibility}>
-            <TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => setVisibility(false)}>
                 <View style={styles.centeredView}>
-                    <TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
                         <View style={styles.modalView}>
                             <Text variant='headlineMedium'>Total: ${parseFloat(toPay.toFixed(2))}</Text>
                             <Button

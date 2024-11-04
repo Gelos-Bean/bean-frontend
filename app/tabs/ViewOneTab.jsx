@@ -5,18 +5,21 @@ import { connection } from '../../config/config.json';
 
 import styles from '../../styles/posStyles.js';
 import Payment from '../../components/tab/Payment.jsx';
-import PaymentOptions from '../../components/modals/payOptions.jsx'
-
+import PaymentOptions from '../../components/modals/payOptions.jsx';
+import UserInput from '../../components/modals/userInput.jsx'
 
 export default function ViewOneTab({ tabId, onExit }) {
     const headers = ["Products", "Quantity", "Cost", "Select"];
    
     const [tabItems, setTabItems] = useState({});
     const [checked, setChecked] = useState({});
-    const [remaining, setRemaining] = useState(0.00);
-    const [paymentOptions, setPaymentOptions] = useState(false);
-    const [toPay, setToPay] = useState(0.00);
     const [paidItems, setPaidItems] = useState([]);
+    const [remaining, setRemaining] = useState(0.00);
+    const [toPay, setToPay] = useState(0.00);
+
+    const [inputView, setInputView] = useState(false); 
+    const [paymentOptions, setPaymentOptions] = useState(false);
+
 
     useEffect(() => {
         getTabData(tabId);
@@ -74,19 +77,22 @@ export default function ViewOneTab({ tabId, onExit }) {
             [item]: !prevState[item]
         }));
 
-        let selected = toPay;
-        if (qty > 1) {
-            cost *= qty;
-        }
+        let totalCost = qty > 1 ? cost * qty : cost;
 
-        selected += checked[item] ? -cost : cost;
-        setToPay(parseFloat(selected.toFixed(2)));
+        const updateToPay = checked[item] ? toPay - totalCost : toPay + totalCost;
+        const updateRemaining = checked[item] ? remaining + totalCost : remaining - totalCost;
+
+        setToPay(parseFloat(updateToPay.toFixed(2)));
+        setRemaining(parseFloat(updateRemaining.toFixed(2)));
     }
+
 
     function disableOncePaid() {
         const updatedPaidItems = { ...paidItems, ...checked };
         setPaidItems(updatedPaidItems);
     }
+
+
     
     return (
         <>
@@ -177,22 +183,38 @@ export default function ViewOneTab({ tabId, onExit }) {
                     <Payment 
                         total={tabItems.total}
                         remaining={remaining}
-                        setRemaining={setRemaining}
                         toPay={toPay}
-                        setToPay={setToPay}
+
+                        setInputView={setInputView}
                         setPaymentOptions={setPaymentOptions}
+                        setRemaining={setRemaining}
+                        setToPay={setToPay}
                     />
                 </View>
             </View>
+
             <PaymentOptions 
-                visibility={paymentOptions}
-                setVisibility={setPaymentOptions}
-                toPay={toPay}
-                setToPay={setToPay}
-                remaining={remaining}
-                setRemaining={setRemaining}
                 disableItems={disableOncePaid}
+
+                remaining={remaining}
+                toPay={toPay}
+                visibility={paymentOptions}
+
+                setRemaining={setRemaining}
+                setToPay={setToPay}
+                setVisibility={setPaymentOptions}
             />
+
+            <UserInput 
+                visibility={inputView}
+                setVisibility={setInputView}
+
+                title="Custom Amount"
+                keyboard="numeric"
+                placeholder=""
+                setValue={setToPay}
+            />
+            
         </>
     );
 }
