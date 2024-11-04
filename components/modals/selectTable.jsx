@@ -23,7 +23,7 @@ const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
           <Text variant='headlineMedium' style={styles.modalText}>Select table</Text>
 
           <Text variant="bodyLarge">Table number*</Text>
-          <List.Section style={{height:'60%'}}>
+          <List.Section style={{maxHeight:'60vh'}}>
           <ScrollView style={{flexDirection:'column'}}>
             <List.Accordion
               title="Tables"
