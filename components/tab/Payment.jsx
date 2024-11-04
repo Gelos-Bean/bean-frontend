@@ -1,17 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View, Alert, StyleSheet, Pressable } from 'react-native';
-import { Text, Button } from 'react-native-paper';
-import styles from '../../styles/posStyles';
-import { IconButton, TextInput } from 'react-native-paper';
-import PaymentOptions from '../../components/modals/payOptions.jsx'
+import { Text, IconButton, TextInput } from 'react-native-paper';
 
-export default function PaymentScreen({ paySelect, remaining, setRemaining, setItemPaid }) {
+import styles from '../../styles/posStyles'; 
+
+
+export default function PaymentScreen({ total, remaining, setRemaining, setPaymentOptions, toPay, setToPay }) {
     const tips = [5, 10, 15];
 
     const [email, setEmail] = useState("");
-    const [paymentOptions, setPaymentOptions] = useState(false);
-    const [toPay, setToPay] = useState(0.00);
-    
     const [pressed, setPressed] = useState(
         tips.reduce((acc, tip) => ({
             ...acc,
@@ -19,8 +16,11 @@ export default function PaymentScreen({ paySelect, remaining, setRemaining, setI
         }), {})
     );
 
-    function handleButtonPress(amt) {
-        const decimalAmt = Number(amt / 100);
+
+    // Handles the button press for Tips 
+    // Cycles through each button. Tap twice to remove tip
+    function handleTipsButtons(amt) {
+        const decimalAmt = amt / 100;
 
         setPressed((prevState) => {
             const wasSelected = prevState[amt];
@@ -30,7 +30,7 @@ export default function PaymentScreen({ paySelect, remaining, setRemaining, setI
 
             newPressedState[amt] = !wasSelected;
 
-            const updatedTotal = !wasSelected ? Number(total) * Number(1 + decimalAmt) : Number(total);
+            const updatedTotal = !wasSelected ? total * (1 + decimalAmt) : total;
 
             setRemaining(updatedTotal.toFixed(2));
             return newPressedState;
@@ -41,6 +41,7 @@ export default function PaymentScreen({ paySelect, remaining, setRemaining, setI
         if (!amt){
             return Alert.alert('Please select amount to pay');
         }
+
         setToPay(amt);
         setPaymentOptions(true);
     }
@@ -55,6 +56,10 @@ export default function PaymentScreen({ paySelect, remaining, setRemaining, setI
         setEmail("");
     }
 
+    function handleVoidItem(itemId) {
+        
+    }
+
     return (
         <>
             <View style={pStyles.container}>
@@ -66,7 +71,7 @@ export default function PaymentScreen({ paySelect, remaining, setRemaining, setI
                                     <Pressable 
                                         key={amt}
                                         style={!pressed[amt] ? pStyles.unpressedBtn : [pStyles.unpressedBtn, pStyles.pressedBtn]}
-                                        onPress={() => handleButtonPress(amt)}>
+                                        onPress={() => handleTipsButtons(amt)}>
                                         <Text style={[pStyles.btnText, pStyles.smallBtnText]}>{`${amt}%`}</Text>
                                     </Pressable>
                                 );
@@ -87,9 +92,6 @@ export default function PaymentScreen({ paySelect, remaining, setRemaining, setI
                         <Text style={pStyles.btnText}>Pay Custom Amount</Text>
                     </Pressable>
                     <Pressable style={pStyles.btn}>
-                        <Text style={pStyles.btnText}>Void Selected Items</Text>
-                    </Pressable>
-                    <Pressable style={pStyles.btn}>
                         <Text style={pStyles.btnText}>Add Discount</Text>
                     </Pressable>
                 </View>
@@ -99,14 +101,13 @@ export default function PaymentScreen({ paySelect, remaining, setRemaining, setI
                 <View style={pStyles.box}>
                 <Pressable
                     style={[pStyles.btn, pStyles.textSpacing]}
-                    onPress={() => {
-                        handlePayment(paySelect);
-                    }}>
+                    onPress={() => { handlePayment(toPay) }}>
                     <Text style={pStyles.btnText}>Pay Selected: </Text>
-                    <Text style={pStyles.btnText}>${parseFloat(paySelect).toFixed(2)}</Text>
+                    <Text style={pStyles.btnText}>${parseFloat(toPay).toFixed(2)}</Text>
                 </Pressable>
 
-                    <Pressable style={[pStyles.btn, pStyles.textSpacing, {marginBottom: 10}]}>
+                    <Pressable style={[pStyles.btn, pStyles.textSpacing, {marginBottom: 10}]}
+                        onPress={() => handlePayment(remaining)}>
                         <Text style={pStyles.btnText}>Pay Remaining: </Text>
                         <Text style={pStyles.btnText}>${parseFloat(remaining).toFixed(2)}</Text>
                     </Pressable>
@@ -143,7 +144,7 @@ export default function PaymentScreen({ paySelect, remaining, setRemaining, setI
                         icon="minus-circle"
                         mode="contained"
                         selected={true}
-                        onPress={() => voidItem()}
+                        onPress={() => handleVoidItem()}
                         size={30}
                     />
                     <Text variant='bodySmall'>Void Item</Text>
@@ -160,14 +161,6 @@ export default function PaymentScreen({ paySelect, remaining, setRemaining, setI
                     <Text variant='bodySmall'>Void Order</Text>
                 </View>
             </View> 
-            <PaymentOptions 
-                visibility={paymentOptions}
-                setVisibility={setPaymentOptions}
-                toPay={toPay}
-                setToPay={setToPay}
-                remaining={remaining}
-                setRemaining={setRemaining}
-            />
         </>
     );
 };
@@ -195,7 +188,7 @@ const pStyles = StyleSheet.create({
     },
     btnText: {
         color: '#ffffff',
-        fontSize: 15,
+
         marginLeft: 10,
     },
     unpressedBtn: {
