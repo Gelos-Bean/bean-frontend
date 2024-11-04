@@ -257,7 +257,7 @@ const App = () => {
     <Pressable style={{flex:1}}
                 onPress={() => setSelectedProduct(null)}>
     <View style={styles.body}>
-      <View style={{flexDirection:'row', flex:5}}>
+      <View style={{flexDirection:'row', flex:2}}>
         <View style={styles.halfMainContainer}>
         <View style={styles.tabBar}>
           <Button
@@ -368,6 +368,7 @@ const App = () => {
             </View>
           </ScrollView>
         </View>
+        <View style={styles.verticalSeparator}></View>
         <View style={styles.buttonColumn}>
           <View style={styles.buttonRow}>
               <View style={styles.displayPortal}>

@@ -133,7 +133,7 @@ export default function Orders() {
                 <Switch value={isSwitchOn} onValueChange={onToggleSwitch} style={{marginVertical:'auto'}}/>
               </View>
               <View style={styles.controlContainer}>
-                <IconButton style={styles.roundButton}
+                <IconButton style={[styles.roundButton, {marginHorizontal:50}]}
                   icon="arrow-left"
                   mode="contained"
                   selected={true}
@@ -142,7 +142,7 @@ export default function Orders() {
                   onPress={handlePreviousPage}
                 />
                 <Text variant='labelMedium' style={{marginVertical:'auto'}}>{`Page ${currentPage + 1} of ${totalPages}`}</Text>
-                <IconButton style={styles.roundButton}
+                <IconButton style={[styles.roundButton, {marginHorizontal:50}]}
                   icon="arrow-right"
                   mode="contained"
                   selected={true}

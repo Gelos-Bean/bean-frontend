@@ -41,7 +41,7 @@ export default styles = StyleSheet.create({
       padding: 10,
       backgroundColor: '#fcf8f2',
       borderRadius: 9,
-      flex: 4,
+      flex: 1,
     },
     rightContainer:{
       margin:'1%',
@@ -75,7 +75,7 @@ export default styles = StyleSheet.create({
       borderRadius: 9,
       justifyContent: 'center',
       flexDirection: 'row',
-      flex:2,
+      flex:1,
     },
     buttonColumn:{
       flexDirection:'column', 
@@ -84,10 +84,11 @@ export default styles = StyleSheet.create({
     },
     buttonRow:{
       flexDirection: 'row',
+      marginVertical:'1%',
       justifyContent:'space-between',
       alignContent:'center',
       flexWrap:'wrap',
-      paddingHorizontal:'1%'
+
     },
     squareButton:{
       borderRadius: 9,
@@ -130,12 +131,12 @@ export default styles = StyleSheet.create({
       borderBottomLeftRadius: 0,
     },
     separator: {
-      marginVertical: 8,
+      marginVertical: 9,
       borderBottomColor: '#9c404d',
       borderBottomWidth: StyleSheet.hairlineWidth,
     },
     verticalSeparator: {
-      marginVertical: 8,
+      marginHorizontal: '1%',
       borderLeftColor: '#9c404d',
       borderLeftWidth: StyleSheet.hairlineWidth,
     },
@@ -240,11 +241,12 @@ export default styles = StyleSheet.create({
     },
     orderStyle: {
       flex: 1,
-      margin: '1%',
+      marginBottom: '1%',
+      marginHorizontal:'2%',
       width: '22%',
       maxWidth: '22%',
       minWidth: 120,
-      height: 245, 
+      height: 260, 
       justifyContent: 'space-between',
       padding: '1%',
       borderRadius: 9,
