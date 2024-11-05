@@ -112,4 +112,36 @@ export default styles = StyleSheet.create({
       borderBottomRightRadius: 0,
       borderBottomLeftRadius: 0,
     },
+    orderStyle: {
+      padding: '1%',
+      borderRadius: 9,
+    },
+    orderHeader: {
+      flexDirection:'row',
+      justifyContent:'space-between', 
+    },
+    orderButtons: {
+      flexDirection: 'row',
+      justifyContent:'space-between',
+      marginTop:'1%'
+    },
+    courseSection: {
+      marginVertical: '1%',
+      paddingHorizontal:'1%',
+      borderRadius: 9,
+    },
+    productContainer: { 
+      marginVertical:'1%'
+    },
+    optionsContainer: { 
+      marginLeft: '5%' 
+    },
+    optionText: { 
+      color: 'grey' 
+    },
+    paginationControls: {
+      flexDirection:'row',
+      justifyContent: 'space-between',
+      display:'flex'
+    },
   });
