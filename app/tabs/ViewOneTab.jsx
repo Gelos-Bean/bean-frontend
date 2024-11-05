@@ -5,8 +5,6 @@ import { connection } from '../../config/config.json';
 
 import styles from '../../styles/posStyles.js';
 import Payment from '../../components/tab/Payment.jsx';
-import PaymentOptions from '../../components/modals/payOptions.jsx';
-import UserInput from '../../components/modals/userInput.jsx'
 
 export default function ViewOneTab({ tabId, onExit }) {
     const headers = ["Products", "Quantity", "Cost", "Select"];
@@ -14,23 +12,20 @@ export default function ViewOneTab({ tabId, onExit }) {
     const [tabItems, setTabItems] = useState({});
     const [checked, setChecked] = useState({});
     const [paidItems, setPaidItems] = useState([]);
-    const [remaining, setRemaining] = useState(0.00);
-    const [toPay, setToPay] = useState(0.00);
-
-    const [inputView, setInputView] = useState(false); 
-    const [paymentOptions, setPaymentOptions] = useState(false);
-
+    const [remaining, setRemaining] = useState(Math.max(0, 0.00));
+    const [toPay, setToPay] = useState(Math.max(0, 0.00));
 
     useEffect(() => {
         getTabData(tabId);
     }, []);
 
+    // setRemaining to tabTotal after data is received
     useEffect(() => {
-        if (tabItems && tabItems.total) {
-            const total = (parseFloat(tabItems.total) * 100) / 100;
-            setRemaining(Number(total.toFixed(2)));
+        if (tabItems.total) {
+          setRemaining(parseFloat(tabItems.total).toFixed(2));
         }
-    }, [tabItems]);
+      }, [tabItems.total]);
+
 
     async function getTabData(id) {
         try {
@@ -38,28 +33,11 @@ export default function ViewOneTab({ tabId, onExit }) {
             const tabData = await response.json();
 
             if (!tabData.success) {
-                return console.log("Error loading tab " + tabData.msg);
+                return Alert.alert("Error loading tab " + tabData.msg);
             }
 
             setTabItems(tabData.msg);
 
-        } catch (err) {
-            console.log(err.message);
-        }
-    }
-
-    async function deleteTab() {
-        try { 
-            const response = await fetch(`${connection}/table/${tabId}`, {
-                method: 'DELETE'
-            });
-            const data = await response.json();
-             
-            if (!data.success) {
-                return Alert.alert(`Error: ${data.msg}`)
-            }
-
-            Alert.alert(`${data.msg}`);
         } catch (err) {
             Alert.alert(`Error: ${err.message}`);
         }
@@ -71,19 +49,23 @@ export default function ViewOneTab({ tabId, onExit }) {
         return date.toLocaleTimeString([], options);
     }
 
-    function handleCheckbox(item, cost, qty) {
+    function handleCheckbox(item, cost, qty, options) {
         setChecked(prevState => ({
             ...prevState,
             [item]: !prevState[item]
         }));
 
-        let totalCost = qty > 1 ? cost * qty : cost;
+        let itemCost = qty > 1 ? cost * qty : cost;
+        if (options){
+            options.forEach(op => itemCost += op.price);
+        }
 
-        const updateToPay = checked[item] ? toPay - totalCost : toPay + totalCost;
-        const updateRemaining = checked[item] ? remaining + totalCost : remaining - totalCost;
+        const isChecked = !checked[item];
 
-        setToPay(parseFloat(updateToPay.toFixed(2)));
-        setRemaining(parseFloat(updateRemaining.toFixed(2)));
+        const updateToPay = isChecked ? toPay + itemCost : toPay - itemCost;
+        const updateRemaining = isChecked ? remaining - itemCost : remaining + itemCost;
+        setToPay(parseFloat(updateToPay));
+        setRemaining(parseFloat(updateRemaining));
     }
 
 
@@ -145,9 +127,12 @@ export default function ViewOneTab({ tabId, onExit }) {
                                                     color={paidItems[index] ? '#d3d3d3' : '#9c404d'}
                                                     uncheckedColor='#767676'
                                                     status={checked[index] ? 'checked' : 'unchecked'}
-                                                    onPress={() => handleCheckbox(index, prod.item.price, prod.quantity)}
+                                                    onPress={() => {
+                                                        handleCheckbox(index, prod.item.price, prod.quantity, prod.selectedOptions)}
+                                                    }
                                                     disabled={paidItems[index]}
                                                 />
+
                                             </DataTable.Cell>
                                         </DataTable.Row>
 
@@ -158,16 +143,10 @@ export default function ViewOneTab({ tabId, onExit }) {
                                                 </DataTable.Cell>
                                                 <DataTable.Cell></DataTable.Cell>
                                                 <DataTable.Cell>
-                                                    <Text variant='bodySmall' style={tStyles.prodOptions}>{`$ ${op.price.toFixed(2)}`}</Text>
+                                                    <Text variant='bodySmall' style={tStyles.prodOptions}>{`$ ${parseFloat(op.price).toFixed(2)}`}</Text>
                                                 </DataTable.Cell>
                                                 <DataTable.Cell>
-                                                <Checkbox
-                                                    color={paidItems[index] ? '#d3d3d3' : '#9c404d'}
-                                                    uncheckedColor='#767676'
-                                                    status={checked[`option-${index}-${opIndex}`] ? 'checked' : 'unchecked'}
-                                                    onPress={() => handleCheckbox(`option-${index}-${opIndex}`, op.price)}
-                                                    disabled={paidItems[index]}
-                                                />
+                                                
                                                 </DataTable.Cell>
                                             </DataTable.Row>
                                         ))}
@@ -185,35 +164,14 @@ export default function ViewOneTab({ tabId, onExit }) {
                         remaining={remaining}
                         toPay={toPay}
 
-                        setInputView={setInputView}
-                        setPaymentOptions={setPaymentOptions}
                         setRemaining={setRemaining}
                         setToPay={setToPay}
+                        disableOncePaid={disableOncePaid}
                     />
                 </View>
             </View>
 
-            <PaymentOptions 
-                disableItems={disableOncePaid}
-
-                remaining={remaining}
-                toPay={toPay}
-                visibility={paymentOptions}
-
-                setRemaining={setRemaining}
-                setToPay={setToPay}
-                setVisibility={setPaymentOptions}
-            />
-
-            <UserInput 
-                visibility={inputView}
-                setVisibility={setInputView}
-
-                title="Custom Amount"
-                keyboard="numeric"
-                placeholder=""
-                setValue={setToPay}
-            />
+           
             
         </>
     );
@@ -244,3 +202,12 @@ const tStyles = StyleSheet.create({
         color: '#767676',
     }
 });
+
+
+/**<Checkbox
+                                                    color={paidItems[index] ? '#d3d3d3' : '#9c404d'}
+                                                    uncheckedColor='#767676'
+                                                    status={checked[`option-${index}-${opIndex}`] ? 'checked' : 'unchecked'}
+                                                    onPress={() => handleCheckbox(`option-${index}-${opIndex}`, op.price)}
+                                                    disabled={paidItems[index]}
+                                                /> */
