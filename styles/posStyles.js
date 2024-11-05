@@ -25,12 +25,13 @@ export default styles = StyleSheet.create({
       padding: '1%',
       backgroundColor: '#fcf8f2',
       borderRadius: 9,
-      flex: 4,
+      flex: 10,
     },
     fullMainContainer:{
+      justifyContent:'space-between',
       marginHorizontal: '1%',
       marginBottom: '1%',
-      padding: 5,
+      padding: '1%',
       backgroundColor: '#fcf8f2',
       borderRadius: 9,
       flex:1
@@ -40,7 +41,7 @@ export default styles = StyleSheet.create({
       padding: 10,
       backgroundColor: '#fcf8f2',
       borderRadius: 9,
-      flex: 4,
+      flex: 1,
     },
     rightContainer:{
       margin:'1%',
@@ -57,8 +58,8 @@ export default styles = StyleSheet.create({
       borderRadius: 9,
       justifyContent: 'center',
       alignContent:'center',
-      flex:1
-    },
+      flex:1,
+      },
     buttonContainer:{
       margin:'1%',
       padding:'1%',
@@ -73,35 +74,38 @@ export default styles = StyleSheet.create({
       backgroundColor: '#fcf8f2',
       borderRadius: 9,
       justifyContent: 'center',
-      flexDirection: 'column',
-      flex:4
+      flexDirection: 'row',
+      flex:1,
+    },
+    buttonColumn:{
+      flexDirection:'column', 
+      justifyContent:'space-between',
+      flex:2, 
     },
     buttonRow:{
       flexDirection: 'row',
+      marginVertical:'1%',
       justifyContent:'space-between',
       alignContent:'center',
+      flexWrap:'wrap',
+
     },
     squareButton:{
       borderRadius: 9,
+      marginVertical:0
     },
     buttonText:{
-      textAlign: 'center',
-      alignContent: 'center',
-      justifyContent: 'center'
+      marginTop:'8%',
+      textAlign:'center'
     },
     roundButton:{
       marginBottom: '1%',
     },
     wideButton:{
-      margin: '1%',
-      width: 175,
-      height: 45,
-      justifyContent:'center',
-    },
-    managerButton:{
-      margin: '1%',
-      width: '48%',
-      height: 45,
+      height:46,
+      marginVertical:0,
+      marginHorizontal:'1%',
+      flex:1,
       justifyContent:'center',
     },
     title: {
@@ -114,11 +118,12 @@ export default styles = StyleSheet.create({
     },
     cardContainer: {
       flexDirection: 'row', 
-      flexWrap: 'wrap',  
+      flexWrap: 'wrap',   
     },
     cardStyle: {
       margin: '1%',
-      width: '18%'
+      width: '18%',
+      minWidth:120
     },
     cardCover: {
       height: 100,
@@ -126,9 +131,14 @@ export default styles = StyleSheet.create({
       borderBottomLeftRadius: 0,
     },
     separator: {
-      marginVertical: 8,
-      borderBottomColor: '#737373',
+      marginVertical: 9,
+      borderBottomColor: '#9c404d',
       borderBottomWidth: StyleSheet.hairlineWidth,
+    },
+    verticalSeparator: {
+      marginHorizontal: '1%',
+      borderLeftColor: '#9c404d',
+      borderLeftWidth: StyleSheet.hairlineWidth,
     },
     title: {
       fontSize: 24,
@@ -162,25 +172,26 @@ export default styles = StyleSheet.create({
     },
     tabBar: {
       flexDirection: 'row',
-      alignContent: 'stretch'
+      flexWrap: 'wrap',  
+      alignContent: 'stretch',
     },
     tabButton:{
       borderRadius:0,
+      width:'15%',
+      minWidth:110
     },
     displayPortal:{
       flexDirection: 'row',
-      margin:'1%',
-      width: 175,
-      height: 45,
+      height: 46,
       backgroundColor: '#FFFFFF',
       borderRadius: 9,
       justifyContent:'space-around',
       alignItems: 'center',
+      marginHorizontal:'1%',
       flex:1
     },
     tableContainer:{
       flex: 3,
-      margin:'1%',
       backgroundColor: '#FFFFFF',
       borderRadius: 9,
     },
@@ -224,54 +235,54 @@ export default styles = StyleSheet.create({
       textAlign: 'left',
     },
     orderContainer: {
-
+      display:'flex',
+      justifyContent:'space-between', 
+      alignContent:'space-between', 
     },
     orderStyle: {
-      marginVertical: 5,
-      marginHorizontal: 30,
-      padding: 10,
+      flex: 1,
+      marginBottom: '1%',
+      marginHorizontal:'2%',
+      width: '22%',
+      maxWidth: '22%',
+      minWidth: 120,
+      height: 260, 
       justifyContent: 'space-between',
-      height: 260,
-      width: 250
+      padding: '1%',
+      borderRadius: 9,
     },
     orderHeader: {
       flexDirection:'row',
       justifyContent:'space-between', 
     },
-    orderBody: {
-      padding: 100
-    },
     orderButtons: {
       flexDirection: 'row',
-      justifyContent:'space-around'
+      justifyContent:'space-between',
+      marginTop:'1%'
     },
     courseSection: {
-      marginVertical: 8 
-    },
-    courseTitle: { 
-      fontWeight: 'bold', 
-      fontSize: 16, 
-      marginVertical: 4 
+      marginVertical: '1%' 
     },
     productContainer: { 
-      marginLeft: 10, 
-      marginTop: 5 
+      marginVertical:'1%'
     },
     optionsContainer: { 
-      marginLeft: 15 
+      marginLeft: '5%' 
     },
     optionText: { 
       color: 'grey' 
     },
     paginationControls: {
       flexDirection:'row',
-      paddingHorizontal: '10%',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      display:'flex'
     },
     controlContainer:{
       flexDirection:'row',
-      justifyContent: 'space-between',
-      width: '30%'
+      justifyContent:'center',
+      marginHorizontal:'1%',
+      bottom:0,
+      flex:1
     },
     textInputStyle: {
       width: 200,

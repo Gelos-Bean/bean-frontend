@@ -56,9 +56,6 @@ export default function Orders() {
     <SafeAreaView style={styles.container}>
       <Header title="Orders" location="Sydney" username={null} />
       <Separator />
-      
-      <View style={{flex:1}}>
-        <View style={{ flexDirection: 'row', flex: 1 }}>
           <View style={styles.fullMainContainer}>          
             <FlatList
               contentContainerStyle={styles.orderContainer}
@@ -89,10 +86,10 @@ export default function Orders() {
                       <Text variant="labelMedium">{`Pax: ${order.table ? order.table.pax : 'N/A'}`}</Text>
                     </View>
 
-                    <ScrollView style={{ height: 175 }} contentContainerStyle={{ flexGrow: 1 }}>
+                    <ScrollView style={{height:'100%'}} contentContainerStyle={{ flexGrow:1 }}>
                       {Object.entries(groupedProducts).map(([course, products], courseIndex) => (
                         <View key={courseIndex} style={styles.courseSection}>
-                          <Text variant="titleMedium" style={styles.courseTitle}>{course}</Text>
+                          <Text variant="labelLarge">{course}</Text>
                           {products.map((prod, prodIndex) => (
                             <View key={prodIndex} style={styles.productContainer}>
                               <Text variant="bodyMedium">{prod.item.name} x{prod.quantity}</Text>
@@ -110,35 +107,33 @@ export default function Orders() {
                         </View>
                       ))}
                     </ScrollView>
-                    
-                    <View style={styles.orderButtons}>
-                      <Button style={styles.squareButton} mode="contained" icon="arrow-expand-all">
-                        Expand
-                      </Button>
-                      <Button style={styles.squareButton} mode="contained" icon="send">
-                        Send
-                      </Button>
-                    </View>
+                  <View style={styles.orderButtons}>
+                    <Button style={styles.squareButton} mode="contained" icon="arrow-expand-all">
+                      Expand
+                    </Button>
+                    <Button style={styles.squareButton} mode="contained" icon="send">
+                      Send
+                    </Button>
+                  </View> 
                   </Card>
                 );
               }}
             />
-            {/* Page controls */}
-            <View variant='labelMedium' style={styles.paginationControls}>
+            <View style={styles.paginationControls}>
             <View style={styles.controlContainer}>
-                <Text style={{paddingTop:17}}>Toggle auto call away</Text>
+                <Text variant='labelMedium' style={{marginVertical:'auto'}}>Toggle auto call away</Text>
                 <TextInput
                   placeholder={autoAwayTime.toString()}
                   keyboardType="numeric"
                   value={autoAwayTime.toString()} 
                   onChangeText={(value) => setAutoAwayTime(parseInt(value) || 0)}
-                  style={[styles.textInputStyle, {width: 50}]}
+                  style={[styles.textInputStyle, {width: 50, marginVertical:'auto'}]}
                 />
-                <Text style={{paddingTop:17}}>minutes</Text>
-                <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
+                <Text variant='labelMedium' style={{marginVertical:'auto'}}>minutes</Text>
+                <Switch value={isSwitchOn} onValueChange={onToggleSwitch} style={{marginVertical:'auto'}}/>
               </View>
               <View style={styles.controlContainer}>
-                <IconButton style={styles.roundButton}
+                <IconButton style={[styles.roundButton, {marginHorizontal:50}]}
                   icon="arrow-left"
                   mode="contained"
                   selected={true}
@@ -146,8 +141,8 @@ export default function Orders() {
                   disabled={currentPage === 0}
                   onPress={handlePreviousPage}
                 />
-                <Text variant='labelMedium' style={{paddingTop:17}}>{`Page ${currentPage + 1} of ${totalPages}`}</Text>
-                <IconButton style={styles.roundButton}
+                <Text variant='labelMedium' style={{marginVertical:'auto'}}>{`Page ${currentPage + 1} of ${totalPages}`}</Text>
+                <IconButton style={[styles.roundButton, {marginHorizontal:50}]}
                   icon="arrow-right"
                   mode="contained"
                   selected={true}
@@ -158,8 +153,6 @@ export default function Orders() {
               </View>
             </View>
           </View>
-        </View>
-      </View>
     </SafeAreaView>
   );
 }
