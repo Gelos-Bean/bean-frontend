@@ -11,74 +11,43 @@ export default function TabBtnMenu({ tableNo, setViewTableModal, highlightOrder 
   }
 
   return (
-    <View style={[styles.buttonContainer, tStyles.btnContainer]}>
-      <View style={[styles.buttonRow, tStyles.btnRow]}>
-        <View style={styles.buttonText}>
-          <IconButton style={styles.squareButton}
-                  icon="plus"
-                  mode="contained"
-                  selected={true}
-                  size={30}
-                  onPress={handleTableModal}
-          />
-          <Text variant='bodySmall'>Add Table</Text>
-        </View>
-        <View style={styles.buttonText}>
-          <IconButton style={styles.squareButton}
+    <View style={[styles.managerButtonContainer, {flexDirection:'row'}]}>
+      <View style={[styles.buttonRow, {flex:1}]}>
+        <Button style={[styles.squareButton, styles.wideButton]}
+            mode="contained"
+            icon="plus"
+            onPress={handleTableModal}>              
+            Add Table
+        </Button>
+        <Button style={[styles.squareButton, styles.wideButton]}
+            mode="contained"
             icon="magnify"
+            onPress={handleTableModal}
+            disabled={false}>              
+            Search Tables
+        </Button>
+        <Button style={[styles.squareButton, styles.wideButton]}
             mode="contained"
-            selected={true}
-            size={30}
-            
-          />
-          <Text variant='bodySmall'>Search</Text>
-        </View>
+            icon="broom"
+            onPress={() => voidItem()}>              
+            Clear Table
+        </Button>
       </View>
-        
-      <View style={[styles.buttonRow, tStyles.btnRow]}>
-        <View style={styles.buttonText}>
-          <IconButton style={styles.squareButton}
-            icon="minus-circle"
+      <View style={styles.verticalSeparator}></View>
+      <View style={[styles.buttonRow, {flex:1}]}>
+        <Button style={[styles.squareButton, styles.wideButton]}
             mode="contained"
-            selected={true}
-            disabled={highlightOrder ? true : false}
-            onPress={() => voidItem()}
-            size={30}
-          />
-          <Text variant='bodySmall'>Void Order</Text>
-        </View>
-        <View style={styles.buttonText}>
-            <IconButton style={styles.squareButton}
-              icon="send"
-              iconColor='#ffff'
-              containerColor='rgb(156, 64, 77)'
-              mode="contained"
-              size={30}
-              disabled={highlightOrder ? true : false}
-              onPress={() => console.log(`Not yet implemented`)}
-            />
-            <Text variant='bodySmall'>Call Away</Text>
-          </View>
-        </View>
-        <View style={[styles.buttonRow, tStyles.btnRow]}>
-          <Button style={[styles.squareButton, styles.wideButton]}
+            icon="send"
+            disabled={false}>              
+            Call Away
+        </Button>
+        <Button style={[styles.squareButton, styles.wideButton]}
             mode="contained"
-            icon="tag-plus"
-            onPress={() => console.log(`Not yet implemented`)}>              
-            Add Order
-          </Button>  
-        </View>
+            icon="book-open-variant"
+            disabled={false}>              
+            View Details
+        </Button>
+      </View>       
     </View>
   )
 };
-
-const tStyles = StyleSheet.create({
-  btnContainer: {
-    padding: 15,
-  },
-
-  btnRow:{
-    justifyContent: 'space-around',
-    marginVertical: 7
-  }
-})

@@ -1,2 +1,25 @@
 "http://10.0.2.2:8080"
 "http://localhost:8080"
+"http://api.alpaca.dev.thickets.onl:8080"
+
+
+To Create:
+1. ssh into the server dev.thickets.onl
+Group 2 - alpaca - Aeg8seki - 4000 - /home/alpaca/app
+2. Inspect the home directory, use ls and pwd
+3. Open a new terminal and use scp and move files over to the server Format:
+scp <filename> <username>@dev.thickets.onl:~/<folder location, create it in step 2>
+4. Run npm install to install dependencies and then Run node <starting file> on your ssh
+5. (Optional) If you want to run it and close the ssh terminal.
+Run:
+nohup node <starting file> &
+And then close the connection with exit or ctrl+d
+
+Create a separate folder for the API, app will be fixed later today (I will make an announcement about it for everyone)
+
+To Start:
+1. Open a WSL terminal
+2. ssh alpaca.dev.thickets.onl
+3. Password: Aeg8seki
+4. cd /api/
+5. node app.js
