@@ -6,7 +6,7 @@ import Header from '../components/Header.jsx';
 import { connection } from '../config/config.json';
 
 import ConfirmationModal from '../components/modals/confirmationModal.jsx';
-
+import OrderDetailsModal from '../components/modals/orderDetailsModal.jsx';
 
 const Separator = () => <View style={styles.separator} />;
 
@@ -16,6 +16,9 @@ export default function Orders() {
   const [viewConfirmationModal, setViewConfirmationModal] = useState(false);
   const [modalTitle, setModalTitle] = useState('Undefined');
   const [modalBody, setModalBody] = useState('Undefined');
+
+  const [viewOrderDetailsModal, setViewOrderDetailsModal] = useState(false);
+
 
  // Delete order:
  const [orderToDelete, setOrderToDelete] = useState(null);
@@ -44,6 +47,8 @@ export default function Orders() {
       }
   
       setOrderToDelete(null);
+      setOrderToView(null);
+      getOrders();
   
     } catch (error) {
       Alert.alert('Error', error.message);
@@ -51,6 +56,15 @@ export default function Orders() {
   }
 
 }
+
+  //Show order details
+  const [orderToView, setOrderToView] = useState(null);
+
+  const ShowDetailsModal = (order) => {
+    setOrderToView(order);
+    setViewOrderDetailsModal(true)
+
+  }
 
   //Orders and pagination
   const [orders, setOrders] = useState([]);
@@ -66,9 +80,6 @@ export default function Orders() {
   useEffect(() => {
     getOrders();
   }, []);
-  useEffect(() => {
-    getOrders();
-  }, [orders]);
 
   async function getOrders() {
     try {
@@ -156,8 +167,8 @@ export default function Orders() {
                   <View style={styles.orderButtons}>
                     <Button style={styles.squareButton} 
                       mode="contained" 
-                      con="arrow-expand-all"
-                      disabled={true}>
+                      icon="arrow-expand-all"
+                      onPress={() => ShowDetailsModal(order)}>
                       Expand
                     </Button>
                     <Button style={styles.squareButton} 
@@ -207,6 +218,8 @@ export default function Orders() {
           </View>
           <ConfirmationModal visible={viewConfirmationModal} onDismiss={() => setViewConfirmationModal(false)} 
             title={modalTitle} body={modalBody} onSelect={DeleteOrder}/>
+          <OrderDetailsModal visible={viewOrderDetailsModal} onDismiss={() => setViewOrderDetailsModal(false)} 
+            order={orderToView}  onSelect={DeleteOrder}/>
     </SafeAreaView>
   );
 }

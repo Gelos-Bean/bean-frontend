@@ -261,7 +261,9 @@ export default styles = StyleSheet.create({
       marginTop:'1%'
     },
     courseSection: {
-      marginVertical: '1%' 
+      marginVertical: '1%',
+      paddingHorizontal:'1%',
+      borderRadius: 9,
     },
     productContainer: { 
       marginVertical:'1%'
