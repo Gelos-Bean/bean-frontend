@@ -5,10 +5,53 @@ import styles from '../styles/posStyles.js';
 import Header from '../components/Header.jsx';
 import { connection } from '../config/config.json';
 
+import ConfirmationModal from '../components/modals/confirmationModal.jsx';
+
 
 const Separator = () => <View style={styles.separator} />;
 
 export default function Orders() {
+
+  //Modals
+  const [viewConfirmationModal, setViewConfirmationModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('Undefined');
+  const [modalBody, setModalBody] = useState('Undefined');
+
+ // Delete order:
+ const [orderToDelete, setOrderToDelete] = useState(null);
+
+  const ShowDeleteModal = (order) => {
+    setOrderToDelete(order);
+    setModalTitle('Confirm send order')
+    setModalBody('Are you sure you want to send this order? The order will be deleted')
+    setViewConfirmationModal(true)
+  }
+
+ async function DeleteOrder(selection) {
+  if(!selection){
+    setOrderToDelete(null);
+    return
+  } else {
+    try {
+      const response = await fetch(`${connection}/orders/${orderToDelete._id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+  
+      const data = await response.json();
+      if (!data.success) {
+        return Alert.alert('Error', data.msg);
+      }
+  
+      setOrderToDelete(null);
+  
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  }
+
+}
+
   //Orders and pagination
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -23,6 +66,9 @@ export default function Orders() {
   useEffect(() => {
     getOrders();
   }, []);
+  useEffect(() => {
+    getOrders();
+  }, [orders]);
 
   async function getOrders() {
     try {
@@ -108,10 +154,16 @@ export default function Orders() {
                       ))}
                     </ScrollView>
                   <View style={styles.orderButtons}>
-                    <Button style={styles.squareButton} mode="contained" icon="arrow-expand-all">
+                    <Button style={styles.squareButton} 
+                      mode="contained" 
+                      con="arrow-expand-all"
+                      disabled={true}>
                       Expand
                     </Button>
-                    <Button style={styles.squareButton} mode="contained" icon="send">
+                    <Button style={styles.squareButton} 
+                      mode="contained" 
+                      icon="send"
+                      onPress={() => ShowDeleteModal(order)}>
                       Send
                     </Button>
                   </View> 
@@ -153,6 +205,8 @@ export default function Orders() {
               </View>
             </View>
           </View>
+          <ConfirmationModal visible={viewConfirmationModal} onDismiss={() => setViewConfirmationModal(false)} 
+            title={modalTitle} body={modalBody} onSelect={DeleteOrder}/>
     </SafeAreaView>
   );
 }

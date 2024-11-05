@@ -19,7 +19,7 @@ Create a separate folder for the API, app will be fixed later today (I will make
 
 To Start:
 1. Open a WSL terminal
-2. ssh alpaca.dev.thickets.onl
+2. ssh alpaca@dev.thickets.onl
 3. Password: Aeg8seki
 4. cd /api/
 5. node app.js
