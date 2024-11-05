@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { View, Alert, StyleSheet, Pressable } from 'react-native';
 import { Text, IconButton, TextInput } from 'react-native-paper';
+import PaymentOptions from '../../components/modals/payOptions.jsx';
+import UserInput from '../../components/modals/userInput.jsx'
+
 
 import styles from '../../styles/posStyles'; 
 
@@ -8,34 +11,33 @@ export default function PaymentScreen({
         total, 
         remaining, 
         setRemaining, 
-        setPaymentOptions, 
         toPay, 
         setToPay,
-        setInputView 
+        disableOncePaid
     }){
         
 
     const tips = [5, 10, 15];
 
     const [email, setEmail] = useState("");
-    const [custom, setCustom] = useState(0.00);
     const [pressed, setPressed] = useState(
         tips.reduce((acc, tip) => ({
             ...acc,
             [tip]: false
         }), {})
     );
+    const [inputView, setInputView] = useState(false); 
+    const [paymentOptions, setPaymentOptions] = useState(false);
 
     function handleCustomAmount() {
         setInputView(true);
-        setCustom(toPay);
+        //setToPay(toPay);
     }
 
     function handlePayment(amt){
         if (!amt){
             return Alert.alert('Please select amount to pay');
         }
-
         setToPay(amt);
         setPaymentOptions(true);
     }
@@ -63,7 +65,7 @@ export default function PaymentScreen({
 
             const updatedTotal = !wasSelected ? total * (1 + decimalAmt) : total;
 
-            setRemaining(updatedTotal.toFixed(2));
+            setRemaining(updatedTotal);
             return newPressedState;
         });
     }
@@ -95,7 +97,6 @@ export default function PaymentScreen({
                 <View style={pStyles.box}>
                     <Pressable style={pStyles.btn}>
                         <Text style={pStyles.btnText}>Add Custom Tip</Text>
-
                     </Pressable>
                 </View>
 
@@ -105,7 +106,7 @@ export default function PaymentScreen({
                     <Pressable style={[pStyles.btn, pStyles.textSpacing]}
                             onPress={() => handleCustomAmount() }>
                         <Text style={pStyles.btnText}>Pay Custom Amount</Text>
-                        { custom > 0 && <Text style={pStyles.btnText}>${custom}</Text> }
+                        {/* toPay > 0 && <Text style={pStyles.btnText}>${toPay}</Text>*/ }
                     </Pressable>
                     <Pressable style={pStyles.btn}>
                         <Text style={pStyles.btnText}>Add Discount</Text>
@@ -117,7 +118,6 @@ export default function PaymentScreen({
                 <View style={pStyles.box}>
                 <Pressable
                     style={[pStyles.btn, pStyles.textSpacing]}
-                    disabled={remaining === 0 ? true : false}
                     onPress={() => { handlePayment(toPay) }}>                        
                     <Text style={pStyles.btnText}>Pay Selected: </Text>
                     <Text style={pStyles.btnText}>${parseFloat(toPay).toFixed(2)}</Text>
@@ -125,7 +125,6 @@ export default function PaymentScreen({
 
                     
                     <Pressable style={[pStyles.btn, pStyles.textSpacing, {marginBottom: 10}]}
-                        disabled={remaining === 0 ? true : false}
                         onPress={() => handlePayment(remaining)}>
                         <Text style={pStyles.btnText}>Pay Remaining: </Text>
                         <Text style={pStyles.btnText}>${parseFloat(remaining).toFixed(2)}</Text>
@@ -180,6 +179,26 @@ export default function PaymentScreen({
                     <Text variant='bodySmall'>Void Order</Text>
                 </View>
             </View> 
+            <PaymentOptions 
+                disableItems={disableOncePaid}
+
+                remaining={remaining}
+                toPay={toPay}
+                visibility={paymentOptions}
+
+                setToPay={setToPay}
+                setVisibility={setPaymentOptions}
+            />
+
+            <UserInput 
+                visibility={inputView}
+                setVisibility={setInputView}
+
+                title="Custom Amount"
+                keyboard="numeric"
+                placeholder=""
+                setValue={setToPay}
+            />
         </>
     );
 };

@@ -246,7 +246,7 @@ export default styles = StyleSheet.create({
       width: '22%',
       maxWidth: '22%',
       minWidth: 120,
-      height: 260, 
+      height: 255, 
       justifyContent: 'space-between',
       padding: '1%',
       borderRadius: 9,

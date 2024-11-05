@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Alert, ScrollView, Pressable } from 'react-native';
+import { View, Alert, ScrollView, Pressable, SafeAreaView } from 'react-native';
 import { DataTable, Text } from 'react-native-paper';
 import { connection } from '../../config/config.json';
 
@@ -100,8 +100,8 @@ export default function ViewAllTabs({ onSelectTab }) {
   }
 
   return (
-    <>
-      <View style={styles.mainContainer}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.managerMainContainer}>
         <ScrollView>
           <DataTable>
             <DataTable.Header>
@@ -145,19 +145,14 @@ export default function ViewAllTabs({ onSelectTab }) {
           </DataTable>
         </ScrollView>
       </View>
-      <View style={styles.rightContainer}>
-      <View style={{flex: 1}} />
-          <View>
-            <TabBtnMenu 
-              tableNo={newTable.tableNo}
-              setViewTableModal={setViewTableModal}
-              hightlightOrder={highlightOrder}
-            />
-          </View>
-      </View>
+      <TabBtnMenu 
+        tableNo={newTable.tableNo}
+        setViewTableModal={setViewTableModal}
+        hightlightOrder={highlightOrder}
+      />
       <AddTableModal visible={viewTableModal} setVisibility={setViewTableModal} onAdd={addNewTable} />
       <SelectTableModal visible={viewSelectTableModal} setVisibility={setSelectTableModal} onSelect={onSelectTab} tables={tables} />
-    </>
+    </SafeAreaView>
   );
 };
 
