@@ -53,7 +53,6 @@ const OrderDetailsModal = ({ visible, onDismiss, order, onSend }) => {
       comment: order.comment,
       total: order.total
     }
-    console.log(JSON.stringify(updatedOrder))
     try {
       const response = await fetch(`${connection}/orders/${order._id}`, {
         method: 'PUT',
@@ -71,7 +70,7 @@ const OrderDetailsModal = ({ visible, onDismiss, order, onSend }) => {
     } catch (error) {
       Alert.alert('Error', error.message);
     }
-    onSend(order, updatedProducts);
+
     setSelectedProducts([])
     onDismiss();
   };
@@ -96,7 +95,7 @@ const OrderDetailsModal = ({ visible, onDismiss, order, onSend }) => {
                   <View key={prod.item._id} style={styles.productContainer}>
                     <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                     <Text variant="bodyLarge" 
-                    style={prod.isSent ? styles.sentProduct : null}>
+                    style={[{maxWidth:'80%'}, prod.isSent ? styles.sentProduct : null]}>
                       {prod.item.name} x{prod.quantity}
                     </Text>
                     <Checkbox
