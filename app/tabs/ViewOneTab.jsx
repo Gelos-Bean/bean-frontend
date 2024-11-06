@@ -69,9 +69,19 @@ export default function ViewOneTab({ tabId, onExit }) {
     }
 
 
-    function disableOncePaid() {
-        const updatedPaidItems = { ...paidItems, ...checked };
-        setPaidItems(updatedPaidItems);
+    function disableOncePaid( all = 0 ) {
+        
+        if (all > 0) {
+            // disable all items if custom amount is chosen
+            const allPaidItems = tabItems.products.reduce((acc, index) => {
+                acc[index] = true;
+                return acc;
+            }, {});
+            setPaidItems(allPaidItems);
+        } else {
+            const updatedPaidItems = { ...paidItems, ...checked };
+            setPaidItems(updatedPaidItems);
+        }
     }
 
 
@@ -123,7 +133,7 @@ export default function ViewOneTab({ tabId, onExit }) {
                                                 <Text variant='bodyMedium'>{`$${parseFloat(prod.item.price).toFixed(2)}`}</Text>
                                             </DataTable.Cell>
                                             <DataTable.Cell>
-                                                <Checkbox
+                                                {!paidItems[index] ? <Checkbox
                                                     color={paidItems[index] ? '#d3d3d3' : '#9c404d'}
                                                     uncheckedColor='#767676'
                                                     status={checked[index] ? 'checked' : 'unchecked'}
@@ -131,7 +141,7 @@ export default function ViewOneTab({ tabId, onExit }) {
                                                         handleCheckbox(index, prod.item.price, prod.quantity, prod.selectedOptions)}
                                                     }
                                                     disabled={paidItems[index]}
-                                                />
+                                                />: null}
 
                                             </DataTable.Cell>
                                         </DataTable.Row>
