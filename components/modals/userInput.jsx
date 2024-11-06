@@ -8,8 +8,7 @@ export default function UserInput({ visibility, setVisibility, title, keyboard, 
     const [input, setInput] = useState(null);
 
     function handleOkayButton() {
-        const int = parseFloat(input);
-        setValue(int);
+        setValue(input);
         setVisibility(false);
     }
 
@@ -24,7 +23,7 @@ export default function UserInput({ visibility, setVisibility, title, keyboard, 
                                 <TextInput
                                     style={inputStyles.inputField}
                                     keyboardType={keyboard ? keyboard : 'text'}
-                                    placeholder={placeholder} 
+                                    placeholder={placeholder? placeholder : ''} 
                                     onChangeText={i => {setInput(i)}}
                                 />
                                 <IconButton

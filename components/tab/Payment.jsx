@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { View, Alert, StyleSheet, Pressable } from 'react-native';
-import { Text, IconButton, TextInput } from 'react-native-paper';
+import { useState, useEffect } from 'react';
+import { View, Alert, StyleSheet } from 'react-native';
+import { Text, IconButton, TextInput, Button } from 'react-native-paper';
 import PaymentOptions from '../../components/modals/payOptions.jsx';
-import UserInput from '../../components/modals/userInput.jsx'
+import UserInput from '../../components/modals/userInput.jsx';
 
 
 import styles from '../../styles/posStyles'; 
@@ -28,10 +28,26 @@ export default function PaymentScreen({
     );
     const [inputView, setInputView] = useState(false); 
     const [paymentOptions, setPaymentOptions] = useState(false);
+    const [customAmount, setCustomAmount] = useState(0.00);
 
-    function handleCustomAmount() {
-        setInputView(true);
-        //setToPay(toPay);
+    useEffect(() => {
+        if(!NaN(customAmount))
+        if (customAmount > 0 && !inputView) {
+            handleCustomPayment();
+        }
+    }, [customAmount, inputView]);
+
+    function handleCustomPayment(){
+        let r = Number(remaining - customAmount)
+        let calcRemain = r > 0 ? r : 0;
+        setRemaining(calcRemain);
+
+        r < 0 ? setToPay(remaining) : setToPay(customAmount);
+
+        setPaymentOptions(true);
+
+        //disable all items when custom amount is chosen
+        disableOncePaid(1);
     }
 
     function handlePayment(amt){
@@ -40,6 +56,7 @@ export default function PaymentScreen({
         }
         setToPay(amt);
         setPaymentOptions(true);
+        setCustomAmount(-1);
     }
 
     function handleSendEmail() {
@@ -76,59 +93,69 @@ export default function PaymentScreen({
     }
 
     return (
-        <>
-            <View style={pStyles.container}>
-                <View style={pStyles.box}>
-                    <View style={pStyles.buttonRow}>
-                        {tips && tips.length > 0 &&
-                            tips.map(amt => {
-                                return (
-                                    <Pressable 
-                                        key={amt}
-                                        style={!pressed[amt] ? pStyles.unpressedBtn : [pStyles.unpressedBtn, pStyles.pressedBtn]}
-                                        onPress={() => handleTipsButtons(amt)}>
-                                        <Text style={[pStyles.btnText, pStyles.smallBtnText]}>{`${amt}%`}</Text>
-                                    </Pressable>
-                                );
-                            })}
-                    </View>
+        <View style={pStyles.container}>
+            <View style={styles.buttonColumn}>
+                <View style={styles.buttonRow}>
+                    {tips && tips.length > 0 &&
+                        tips.map(amt => {
+                            return (
+                                <Button 
+                                    key={amt}
+                                    style={!pressed[amt] ? styles.squareButton : [styles.squareButton, pStyles.pressedBtn]}
+                                    mode="contained"
+                                    onPress={() => handleTipsButtons(amt)}>
+                                    {amt}%
+                                </Button>
+                            );
+                        })}
                 </View>
 
-                <View style={pStyles.box}>
-                    <Pressable style={pStyles.btn}>
-                        <Text style={pStyles.btnText}>Add Custom Tip</Text>
-                    </Pressable>
-                </View>
-
-                <View style={pStyles.separator} />
-
-                <View style={pStyles.box}>
-                    <Pressable style={[pStyles.btn, pStyles.textSpacing]}
-                            onPress={() => handleCustomAmount() }>
-                        <Text style={pStyles.btnText}>Pay Custom Amount</Text>
-                        {/* toPay > 0 && <Text style={pStyles.btnText}>${toPay}</Text>*/ }
-                    </Pressable>
-                    <Pressable style={pStyles.btn}>
-                        <Text style={pStyles.btnText}>Add Discount</Text>
-                    </Pressable>
+                <View style={styles.buttonRow}>
+                    <Button style={[styles.squareButton, styles.wideButton]}
+                        mode="contained"
+                        onPress={() => console.log('Add Discount')}>
+                        Add Custom Tip
+                    </Button>
                 </View>
 
                 <View style={pStyles.separator} />
 
-                <View style={pStyles.box}>
-                <Pressable
-                    style={[pStyles.btn, pStyles.textSpacing]}
-                    onPress={() => { handlePayment(toPay) }}>                        
-                    <Text style={pStyles.btnText}>Pay Selected: </Text>
-                    <Text style={pStyles.btnText}>${parseFloat(toPay).toFixed(2)}</Text>
-                </Pressable>
+                <View style={styles.buttonRow}>
+                    <Button style={[styles.squareButton, styles.wideButton]}
+                            mode="contained"
+                            onPress={() => setInputView(true) }
+                            disabled={customAmount >= 0 ? false : true}>
+                        Pay Custom Amount{ customAmount > 0 && `: $${parseFloat(customAmount).toFixed(2)}`}
+                    </Button>
+                </View>
+                <View style={styles.buttonRow}>
+                    <Button style={[styles.squareButton, styles.wideButton]}
+                        mode="contained"
+                        icon="percent"
+                        onPress={() => console.log('Add Discount')}>
+                        Add Discount
+                    </Button>
+                </View>
 
-                    
-                    <Pressable style={[pStyles.btn, pStyles.textSpacing, {marginBottom: 10}]}
+                <View style={pStyles.separator} />
+
+                <View style={styles.buttonRow}>
+                    <Button
+                        style={[styles.squareButton, styles.wideButton, pStyles.textSpacing]}
+                        mode="contained"
+                        onPress={() => { handlePayment(toPay) }}>                        
+                        Pay Selected: 
+                        ${parseFloat(toPay).toFixed(2)}
+                    </Button>
+                </View>
+                <View style={styles.buttonRow}>
+                    <Button style={[styles.squareButton, styles.wideButton, pStyles.textSpacing, {marginBottom: 10}]}
+                        mode="contained"
+                        icon="cash"
                         onPress={() => handlePayment(remaining)}>
-                        <Text style={pStyles.btnText}>Pay Remaining: </Text>
-                        <Text style={pStyles.btnText}>${parseFloat(remaining).toFixed(2)}</Text>
-                    </Pressable>
+                        Pay Remaining: 
+                        ${parseFloat(remaining).toFixed(2)}
+                    </Button>
                 </View>
                 <View style={pStyles.box}>
                     <View style={[pStyles.total, pStyles.textSpacing]}>
@@ -181,11 +208,9 @@ export default function PaymentScreen({
             </View> 
             <PaymentOptions 
                 disableItems={disableOncePaid}
-
                 remaining={remaining}
                 toPay={toPay}
                 visibility={paymentOptions}
-
                 setToPay={setToPay}
                 setVisibility={setPaymentOptions}
             />
@@ -196,10 +221,9 @@ export default function PaymentScreen({
 
                 title="Custom Amount"
                 keyboard="numeric"
-                placeholder=""
-                setValue={setToPay}
+                setValue={setCustomAmount}
             />
-        </>
+        </View>
     );
 };
 
@@ -207,16 +231,10 @@ const pStyles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fcf8f2',
-        padding: 10,
+        padding: 5,
     },
     box: {
         width: '100%'
-    },
-    buttonRow: {
-        flexDirection: 'row',
-        width: '100%',
-        justifyContent:'space-between',
-        alignItems: 'center'
     },
     btn: {
         backgroundColor: '#58656d',
@@ -224,28 +242,12 @@ const pStyles = StyleSheet.create({
         padding: 12,
         margin: 3
     },
-    btnText: {
-        color: '#ffffff',
-
-        marginLeft: 10,
-    },
-    unpressedBtn: {
-        backgroundColor: '#58656d',
-        borderRadius: 6,
-        alignItems: 'center',
-        padding: 12,
-        margin: 3,
-        width: '30%'
-    },
     pressedBtn: {
-        backgroundColor: '#4e90a4', 
+        backgroundColor: '#8F5100', 
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 3,
-    },
-    smallBtnText: {
-        marginLeft: 0,
     },
     textSpacing: {
         flexDirection: 'row', 
