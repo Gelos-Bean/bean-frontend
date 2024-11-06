@@ -24,12 +24,14 @@ const ConfirmationModal = ({ visible, onDismiss, title, body, onSelect }) => {
           <View style={styles.bottomButtonRow}>
             <Button
               style={[styles.squareButton, styles.wideButton]}
+              icon='window-close'
               mode="contained"
               onPress={handleCancel}>
               Cancel
             </Button>
             <Button
               style={[styles.squareButton, styles.wideButton]}
+              icon='check'
               mode="contained"
               onPress={handleSelect}>
               Confirm

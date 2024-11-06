@@ -121,6 +121,7 @@ const AddTableModal = ({ visible, setVisibility, onAdd }) => {
           <View style={styles.bottomButtonRow}>
             <Button
               style={[styles.squareButton, styles.wideButton]}
+              icon='window-close'
               mode="contained"
               onPress={() => {setVisibility(false)}}
             >
@@ -128,6 +129,7 @@ const AddTableModal = ({ visible, setVisibility, onAdd }) => {
             </Button>
             <Button
               style={[styles.squareButton, styles.wideButton]}
+              icon='plus'
               mode="contained"
               onPress={handleAdd}
             >

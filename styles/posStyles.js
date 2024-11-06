@@ -243,8 +243,8 @@ export default styles = StyleSheet.create({
       flex: 1,
       marginBottom: '1%',
       marginHorizontal:'2%',
-      width: '22%',
-      maxWidth: '22%',
+      width: '21%',
+      maxWidth: '21%',
       minWidth: 120,
       height: 255, 
       justifyContent: 'space-between',
@@ -294,6 +294,10 @@ export default styles = StyleSheet.create({
       borderWidth: 0.5,
       margin: '1%',
       backgroundColor:'#ffff',
+    },
+    sentProduct: {
+      opacity: 0.5, 
+      color: 'grey', 
     },
     
   });

@@ -170,9 +170,10 @@ const Manager = () => {
                           {product.options.map((option, index) => (
                             <List.Item
                               key={index}
-                              title={option.name}
-                              description={`Price: $${option.price}`}
-                            />
+                              title={<Text variant='bodyMedium'>{option.name}</Text>}
+                              description={<Text variant='bodySmall'>{option.price}</Text>}
+                            >                          
+                            </List.Item>
                           ))}
                         </List.Accordion>
                       </List.Section>
