@@ -154,7 +154,8 @@ export default function Orders() {
                               {prod.selectedOptions && prod.selectedOptions.length > 0 && (
                                 <View style={styles.optionsContainer}>
                                   {prod.selectedOptions.map((option, optionIndex) => (
-                                    <Text key={optionIndex} variant="bodySmall" style={styles.optionText}>
+                                    <Text key={optionIndex} variant="bodySmall" 
+                                    style={[styles.optionText, prod.isSent ? styles.sentProduct : null]}>
                                       - {option.name} (${option.price})
                                     </Text>
                                   ))}
@@ -219,7 +220,7 @@ export default function Orders() {
           </View>
           <ConfirmationModal visible={viewConfirmationModal} onDismiss={() => setViewConfirmationModal(false)} 
             title={modalTitle} body={modalBody} onSelect={DeleteOrder}/>
-          <OrderDetailsModal visible={viewOrderDetailsModal} onDismiss={() => setViewOrderDetailsModal(false)} 
+          <OrderDetailsModal visible={viewOrderDetailsModal} onDismiss={() => {setViewOrderDetailsModal(false), getOrders()}} 
             order={orderToView}/>
     </SafeAreaView>
   );
