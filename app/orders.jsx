@@ -22,14 +22,12 @@ export default function Orders() {
 
  // Delete order:
  const [orderToDelete, setOrderToDelete] = useState(null);
-
   const ShowDeleteModal = (order) => {
     setOrderToDelete(order);
     setModalTitle('Confirm send order')
     setModalBody('Are you sure you want to send this order? The order will be deleted')
     setViewConfirmationModal(true)
   }
-
  async function DeleteOrder(selection) {
   if(!selection){
     setOrderToDelete(null);
@@ -71,16 +69,6 @@ export default function Orders() {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 8; 
 
-  //Auto away controls
-  const [autoAwayTime, setAutoAwayTime] = useState(15);
-  const [isSwitchOn, setIsSwitchOn] = React.useState(false);
-
-  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
-  
-  useEffect(() => {
-    getOrders();
-  }, []);
-
   async function getOrders() {
     try {
       const response = await fetch(`${connection}/orders`);
@@ -96,15 +84,24 @@ export default function Orders() {
     }
   }
 
+  //Auto away controls
+  const [autoAwayTime, setAutoAwayTime] = useState(15);
+  const [isSwitchOn, setIsSwitchOn] = React.useState(false);
+
+  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+  
+  useEffect(() => {
+    getOrders();
+  }, []);
+
+  
+
   // Page navigation
   const paginatedOrders = orders.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
   const totalPages = Math.ceil(orders.length / itemsPerPage);
-  
-  
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
   };
-
   const handlePreviousPage = () => {
     if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
@@ -141,6 +138,8 @@ export default function Orders() {
                     <View style={styles.orderHeader}>
                       <Text variant="labelMedium">{`${formattedTime} ${formattedDate}`}</Text>
                       <Text variant="labelMedium">{`Pax: ${order.table ? order.table.pax : 'N/A'}`}</Text>
+                      <Text variant="labelMedium">{`Lines: ${order.products.length}`}</Text>
+
                     </View>
 
                     <ScrollView style={{height:'100%'}} contentContainerStyle={{ flexGrow:1 }}>
@@ -149,7 +148,9 @@ export default function Orders() {
                           <Text variant="labelLarge">{course}</Text>
                           {products.map((prod, prodIndex) => (
                             <View key={prodIndex} style={styles.productContainer}>
-                              <Text variant="bodyMedium">{prod.item.name} x{prod.quantity}</Text>
+                              <Text variant="bodyMedium"
+                                style={prod.isSent ? styles.sentProduct : null}>
+                                  {prod.item.name} x{prod.quantity}</Text>
                               {prod.selectedOptions && prod.selectedOptions.length > 0 && (
                                 <View style={styles.optionsContainer}>
                                   {prod.selectedOptions.map((option, optionIndex) => (
@@ -175,7 +176,7 @@ export default function Orders() {
                       mode="contained" 
                       icon="send"
                       onPress={() => ShowDeleteModal(order)}>
-                      Send
+                      Send All
                     </Button>
                   </View> 
                   </Card>

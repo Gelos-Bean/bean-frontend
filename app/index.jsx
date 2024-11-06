@@ -266,6 +266,7 @@ const App = () => {
               selectedCourse === 'Starter' ? styles.activeTab : styles.inactiveTab
             ]}
             mode="contained"
+            icon="baguette"
             onPress={() => setSelectedCourse('Starter')}
             disabled={selectedCourse === 'Starter'}>
             Entrees
@@ -276,6 +277,7 @@ const App = () => {
               selectedCourse === 'Main Course' ? styles.activeTab : styles.inactiveTab
             ]}
             mode="contained"
+            icon="food-turkey"
             onPress={() => setSelectedCourse('Main Course')}
             disabled={selectedCourse === 'Main Course'}>
             Mains
@@ -286,6 +288,7 @@ const App = () => {
               selectedCourse === 'Dessert' ? styles.activeTab : styles.inactiveTab
             ]}
             mode="contained"
+            icon="cupcake"
             onPress={() => setSelectedCourse('Dessert')}
             disabled={selectedCourse === 'Dessert'}>
             Desserts
@@ -296,9 +299,10 @@ const App = () => {
               selectedCourse === 'Beverage' ? styles.activeTab : styles.inactiveTab
             ]}
             mode="contained"
+            icon="glass-mug-variant"
             onPress={() => setSelectedCourse('Beverage')}
             disabled={selectedCourse === 'Beverage'}>
-            Beverage
+            Beverages
           </Button>
         </View>
         <ScrollView contentContainerStyle={ styles.cardContainer }>
@@ -445,7 +449,7 @@ const App = () => {
               <Button style={[styles.squareButton, styles.wideButton]}
                 mode="contained"
                 icon="send"
-                onPress={PlaceOrder}>                   
+                onPress={PlaceOrder}>             
                 Add to Tab
               </Button>   
               <IconButton style={styles.squareButton}

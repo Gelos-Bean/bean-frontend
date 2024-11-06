@@ -3,7 +3,9 @@ import { StyleSheet } from 'react-native';
 
 export default styles = StyleSheet.create({
     centeredView: {
-      margin:'auto'
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     modalView: {
       display: 'flex',
@@ -20,7 +22,8 @@ export default styles = StyleSheet.create({
       shadowRadius: 4,
       elevation: 5,
       justifyContent: 'space-between',
-      width:'30%'
+      width:'30%',
+      maxHeight:'100%'
     },
     buttonClose: {
       backgroundColor: '#2196F3',
@@ -79,7 +82,6 @@ export default styles = StyleSheet.create({
     },
     wideButton:{
       margin: '1%',
-      width: 125,
       justifyContent:'center',
       color:'rgb(229 220 200)'
     },
@@ -94,8 +96,8 @@ export default styles = StyleSheet.create({
     bottomButtonRow:{
       flexDirection:'row',
       alignContent:'center',
-      marginVertical: '5%',
-      justifyContent:'space-evenly',
+      marginTop: '5%',
+      justifyContent:'space-between',
     },
     resultsContainer:{
       flexGrow: 1,
@@ -113,17 +115,12 @@ export default styles = StyleSheet.create({
       borderBottomLeftRadius: 0,
     },
     orderStyle: {
-      padding: '1%',
+      flex:1,
       borderRadius: 9,
     },
     orderHeader: {
       flexDirection:'row',
       justifyContent:'space-between', 
-    },
-    orderButtons: {
-      flexDirection: 'row',
-      justifyContent:'space-between',
-      marginTop:'1%'
     },
     courseSection: {
       marginVertical: '1%',
@@ -139,9 +136,14 @@ export default styles = StyleSheet.create({
     optionText: { 
       color: 'grey' 
     },
-    paginationControls: {
-      flexDirection:'row',
-      justifyContent: 'space-between',
-      display:'flex'
+    scrollableContent: {
+      maxHeight: '70%', 
+      paddingHorizontal: '1%',
+      marginVertical: '1%',
     },
+    sentProduct: {
+      opacity: 0.5, 
+      color: 'grey', 
+    },
+    
   });

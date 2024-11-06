@@ -88,6 +88,7 @@ const SearchModal = ({ visible, onDismiss, onSelect }) => {
                   <View style={styles.bottomButtonRow}>
                     <Button
                       style={[styles.squareButton, styles.wideButton]}
+                      icon="window-close"
                       mode="contained"
                       onPress={onDismiss}
                     >
@@ -95,6 +96,7 @@ const SearchModal = ({ visible, onDismiss, onSelect }) => {
                     </Button>
                     <Button
                       style={[styles.squareButton, styles.wideButton]}
+                      icon="magnify"
                       mode="contained"
                       onPress={handleSearch}
                     >
