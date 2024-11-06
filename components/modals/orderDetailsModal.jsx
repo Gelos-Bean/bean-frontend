@@ -107,7 +107,8 @@ const OrderDetailsModal = ({ visible, onDismiss, order, onSend }) => {
                     {prod.selectedOptions && prod.selectedOptions.length > 0 && (
                       <View style={styles.optionsContainer}>
                         {prod.selectedOptions.map((option, optionIndex) => (
-                          <Text key={optionIndex} variant="bodyMedium" style={styles.optionText}>
+                          <Text key={optionIndex} variant="bodyMedium" 
+                          style={[{maxWidth:'80%'}, styles.optionText, prod.isSent ? styles.sentProduct : null]}>
                             - {option.name} (${option.price})
                           </Text>
                         ))}
