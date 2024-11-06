@@ -73,7 +73,7 @@ export default function ViewOneTab({ tabId, onExit }) {
         
         if (all > 0) {
             // disable all items if custom amount is chosen
-            const allPaidItems = tabItems.products.reduce((acc, _, index) => {
+            const allPaidItems = tabItems.products.reduce((acc, index) => {
                 acc[index] = true;
                 return acc;
             }, {});

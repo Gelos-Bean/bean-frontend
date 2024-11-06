@@ -4,7 +4,6 @@ import { Text, IconButton, TextInput, Button } from 'react-native-paper';
 import PaymentOptions from '../../components/modals/payOptions.jsx';
 import UserInput from '../../components/modals/userInput.jsx';
 
-
 import styles from '../../styles/posStyles'; 
 
 export default function PaymentScreen({ 
@@ -15,7 +14,6 @@ export default function PaymentScreen({
         setToPay,
         disableOncePaid
     }){
-        
 
     const tips = [5, 10, 15];
 
@@ -31,24 +29,45 @@ export default function PaymentScreen({
     const [customAmount, setCustomAmount] = useState(0.00);
 
     useEffect(() => {
-        if(!NaN(customAmount))
+
         if (customAmount > 0 && !inputView) {
             handleCustomPayment();
         }
     }, [customAmount, inputView]);
+
+
+    // Handles the button press for Tips 
+    // Cycles through each button. Tap twice to remove tip
+    function handleTipsButtons(amt) {
+        const decimalAmt = amt / 100;
+
+        setPressed((prevState) => {
+            const wasSelected = prevState[amt];
+            const newPressedState = tips.map(tip => [tip, false]);
+
+            newPressedState[amt] = !wasSelected;
+
+            const updatedTotal = !wasSelected ? total * (1 + decimalAmt) : total;
+
+            setRemaining(updatedTotal);
+            return newPressedState;
+        });
+    }
+
 
     function handleCustomPayment(){
         let r = Number(remaining - customAmount)
         let calcRemain = r > 0 ? r : 0;
         setRemaining(calcRemain);
 
-        r < 0 ? setToPay(remaining) : setToPay(customAmount);
+        r < 0 ? setToPay(Number(remaining)) : setToPay(Number(customAmount));
 
         setPaymentOptions(true);
 
         //disable all items when custom amount is chosen
         disableOncePaid(1);
     }
+    
 
     function handlePayment(amt){
         if (!amt){
@@ -67,24 +86,6 @@ export default function PaymentScreen({
 
         Alert.alert(`Sent receipt to ${email}`);
         setEmail("");
-    }
-
-    // Handles the button press for Tips 
-    // Cycles through each button. Tap twice to remove tip
-    function handleTipsButtons(amt) {
-        const decimalAmt = amt / 100;
-
-        setPressed((prevState) => {
-            const wasSelected = prevState[amt];
-            const newPressedState = tips.map(tip => [tip, false]);
-
-            newPressedState[amt] = !wasSelected;
-
-            const updatedTotal = !wasSelected ? total * (1 + decimalAmt) : total;
-
-            setRemaining(updatedTotal);
-            return newPressedState;
-        });
     }
 
 
