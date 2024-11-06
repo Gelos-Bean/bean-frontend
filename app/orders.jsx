@@ -220,7 +220,7 @@ export default function Orders() {
           <ConfirmationModal visible={viewConfirmationModal} onDismiss={() => setViewConfirmationModal(false)} 
             title={modalTitle} body={modalBody} onSelect={DeleteOrder}/>
           <OrderDetailsModal visible={viewOrderDetailsModal} onDismiss={() => setViewOrderDetailsModal(false)} 
-            order={orderToView}  onSelect={DeleteOrder}/>
+            order={orderToView}/>
     </SafeAreaView>
   );
 }

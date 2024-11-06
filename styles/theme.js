@@ -41,8 +41,8 @@ export default theme = {
         "level4": "rgb(243, 229, 234)",
         "level5": "rgb(241, 225, 230)"
       },
-      "surfaceDisabled": "rgba(32, 26, 26, 0.12)",
-      "onSurfaceDisabled": "rgba(128, 128, 128)",
+      "surfaceDisabled": "rgb(217, 217, 217)",
+      "onSurfaceDisabled": "rgb(128, 128, 128)",
       "backdrop": "rgba(59, 45, 46, 0.4)",
       "dark": "rgb(150, 65, 105)",
       "onDark": "rgb(255, 255, 255)",
