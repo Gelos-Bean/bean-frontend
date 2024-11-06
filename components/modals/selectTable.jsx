@@ -19,12 +19,10 @@ const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
   return (
     <Modal animationType="slide" transparent={true} visible={visible} >
       <View style={styles.centeredView}>
-        <View style={[styles.modalView]}>
+        <View style={styles.modalView}>
           <Text variant='headlineMedium' style={styles.modalText}>Select table</Text>
-
           <Text variant="bodyLarge">Table number*</Text>
-          <List.Section style={{maxHeight:'60vh'}}>
-          <ScrollView style={{flexDirection:'column'}}>
+          <ScrollView style={styles.scrollableContent}>
             <List.Accordion
               title="Tables"
               left={props => <List.Icon {...props} icon="table-furniture" />}
@@ -32,25 +30,19 @@ const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
               onPress={handlePress}>
                 
                   {tables.map((table) => (
-                    // <Pressable>
                       <List.Item  key={table._id}
                                   variant="bodySmall"
                                   title={table.tableNo}
                                   onPress={() => setSelectedTable(table)}/>
-                    // </Pressable>
                   ))}
                 
             </List.Accordion>
-            </ScrollView>
-          </List.Section>
-          <Text variant="titleMedium" style={{textAlign:'center'}}>
-            Selected table: 
-            {selectedTable === null ? '-' : selectedTable.tableNo}
-          </Text>
+            </ScrollView>    
           {/* Buttons */}
           <View style={styles.bottomButtonRow}>
             <Button
               style={[styles.squareButton, styles.wideButton]}
+              icon="window-close"
               mode="contained"
               onPress={() => setVisibility(false)}
             >
@@ -58,6 +50,7 @@ const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
             </Button>
             <Button
               style={[styles.squareButton, styles.wideButton]}
+              icon="check"
               mode="contained"
               onPress={handleSelect}
             >

@@ -5,24 +5,69 @@ import styles from '../styles/posStyles.js';
 import Header from '../components/Header.jsx';
 import { connection } from '../config/config.json';
 
+import ConfirmationModal from '../components/modals/confirmationModal.jsx';
+import OrderDetailsModal from '../components/modals/orderDetailsModal.jsx';
 
 const Separator = () => <View style={styles.separator} />;
 
 export default function Orders() {
+
+  //Modals
+  const [viewConfirmationModal, setViewConfirmationModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('Undefined');
+  const [modalBody, setModalBody] = useState('Undefined');
+
+  const [viewOrderDetailsModal, setViewOrderDetailsModal] = useState(false);
+
+
+ // Delete order:
+ const [orderToDelete, setOrderToDelete] = useState(null);
+  const ShowDeleteModal = (order) => {
+    setOrderToDelete(order);
+    setModalTitle('Confirm send order')
+    setModalBody('Are you sure you want to send this order? The order will be deleted')
+    setViewConfirmationModal(true)
+  }
+ async function DeleteOrder(selection) {
+  if(!selection){
+    setOrderToDelete(null);
+    return
+  } else {
+    try {
+      const response = await fetch(`${connection}/orders/${orderToDelete._id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+  
+      const data = await response.json();
+      if (!data.success) {
+        return Alert.alert('Error', data.msg);
+      }
+  
+      setOrderToDelete(null);
+      setOrderToView(null);
+      getOrders();
+  
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  }
+
+}
+
+  //Show order details
+  const [orderToView, setOrderToView] = useState(null);
+
+  const ShowDetailsModal = (order) => {
+    setOrderToView(order);
+    setViewOrderDetailsModal(true)
+
+  }
+
   //Orders and pagination
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 8; 
-
-  //Auto away controls
-  const [autoAwayTime, setAutoAwayTime] = useState(15);
-  const [isSwitchOn, setIsSwitchOn] = React.useState(false);
-
-  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
-  
-  useEffect(() => {
-    getOrders();
-  }, []);
 
   async function getOrders() {
     try {
@@ -39,15 +84,24 @@ export default function Orders() {
     }
   }
 
+  //Auto away controls
+  const [autoAwayTime, setAutoAwayTime] = useState(15);
+  const [isSwitchOn, setIsSwitchOn] = React.useState(false);
+
+  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+  
+  useEffect(() => {
+    getOrders();
+  }, []);
+
+  
+
   // Page navigation
   const paginatedOrders = orders.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
   const totalPages = Math.ceil(orders.length / itemsPerPage);
-  
-  
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
   };
-
   const handlePreviousPage = () => {
     if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
@@ -84,6 +138,8 @@ export default function Orders() {
                     <View style={styles.orderHeader}>
                       <Text variant="labelMedium">{`${formattedTime} ${formattedDate}`}</Text>
                       <Text variant="labelMedium">{`Pax: ${order.table ? order.table.pax : 'N/A'}`}</Text>
+                      <Text variant="labelMedium">{`Lines: ${order.products.length}`}</Text>
+
                     </View>
 
                     <ScrollView style={{height:'100%'}} contentContainerStyle={{ flexGrow:1 }}>
@@ -92,7 +148,9 @@ export default function Orders() {
                           <Text variant="labelLarge">{course}</Text>
                           {products.map((prod, prodIndex) => (
                             <View key={prodIndex} style={styles.productContainer}>
-                              <Text variant="bodyMedium">{prod.item.name} x{prod.quantity}</Text>
+                              <Text variant="bodyMedium"
+                                style={prod.isSent ? styles.sentProduct : null}>
+                                  {prod.item.name} x{prod.quantity}</Text>
                               {prod.selectedOptions && prod.selectedOptions.length > 0 && (
                                 <View style={styles.optionsContainer}>
                                   {prod.selectedOptions.map((option, optionIndex) => (
@@ -108,11 +166,17 @@ export default function Orders() {
                       ))}
                     </ScrollView>
                   <View style={styles.orderButtons}>
-                    <Button style={styles.squareButton} mode="contained" icon="arrow-expand-all">
+                    <Button style={styles.squareButton} 
+                      mode="contained" 
+                      icon="arrow-expand-all"
+                      onPress={() => ShowDetailsModal(order)}>
                       Expand
                     </Button>
-                    <Button style={styles.squareButton} mode="contained" icon="send">
-                      Send
+                    <Button style={styles.squareButton} 
+                      mode="contained" 
+                      icon="send"
+                      onPress={() => ShowDeleteModal(order)}>
+                      Send All
                     </Button>
                   </View> 
                   </Card>
@@ -153,6 +217,10 @@ export default function Orders() {
               </View>
             </View>
           </View>
+          <ConfirmationModal visible={viewConfirmationModal} onDismiss={() => setViewConfirmationModal(false)} 
+            title={modalTitle} body={modalBody} onSelect={DeleteOrder}/>
+          <OrderDetailsModal visible={viewOrderDetailsModal} onDismiss={() => setViewOrderDetailsModal(false)} 
+            order={orderToView}  onSelect={DeleteOrder}/>
     </SafeAreaView>
   );
 }
