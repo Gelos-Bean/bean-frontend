@@ -38,6 +38,7 @@ export default function ViewAllTabs({ onSelectTab }) {
       }
       setTables(tabs.msg);
     } catch (err) {
+      console.error('Error', err)
       ShowError('Failed to load tables. Please check your network connection');
     } finally {
       setLoadingTables(false);
@@ -103,10 +104,10 @@ export default function ViewAllTabs({ onSelectTab }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.managerMainContainer}>
-        <ScrollView  style={{flex:1}}>
-          {loadingTables ? (
+      {loadingTables ? (
             <LoadingIndicator/>
           ) : (
+        <ScrollView  style={{flex:1}}>         
             <DataTable>
               <DataTable.Header>
                 {headers.map((header, index) => (
@@ -144,12 +145,12 @@ export default function ViewAllTabs({ onSelectTab }) {
                 ))
               ) : (
                 <View style={styles.loadingContainer}>
-                  <Text variant='bodyLarge' style={{color:'grey'}}>Error loading products</Text>
+                  <Text variant='bodyLarge' style={{color:'grey'}}>Error loading tables</Text>
                 </View>              
               )}
             </DataTable>
-          )}
         </ScrollView>
+        )}
       </View>
       <TabBtnMenu
         tableNo={newTable.tableNo}
