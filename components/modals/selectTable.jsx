@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { Modal, View, ScrollView } from 'react-native';
 import { Button, Text, IconButton, List } from 'react-native-paper';
 import styles from '../../styles/modalStyles';
+import LoadingIndicator from '../LoadingIndicator';
 
 const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
+  
   const [selectedTable, setSelectedTable] = useState(null);
+  
 
 
   const handleSelect = () => {
@@ -15,7 +18,6 @@ const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
   const [expanded, setExpanded] = useState(true);
 
   const handlePress = () => setExpanded(!expanded);
-
   return (
     <Modal animationType="slide" transparent={true} visible={visible} >
       <View style={styles.centeredView}>
@@ -29,13 +31,17 @@ const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
               expanded={expanded}
               onPress={handlePress}>
                 
-                  {tables.map((table) => (
+                {tables.length === 0 ? (
+                <LoadingIndicator />
+              ) : (
+
+                  tables.map((table) => (
                       <List.Item  key={table._id}
                                   variant="bodySmall"
                                   title={table.tableNo}
                                   onPress={() => setSelectedTable(table)}/>
-                  ))}
-                
+                  ))
+              )} 
             </List.Accordion>
             </ScrollView>    
           {/* Buttons */}

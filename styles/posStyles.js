@@ -299,5 +299,11 @@ export default styles = StyleSheet.create({
       opacity: 0.5, 
       color: 'grey', 
     },
-    
+    loadingContainer: {
+      flex:1,
+      alignItems: 'center',
+      justifyContent:'center',
+      alignSelf:'center',
+      marginVertical:'10%'
+    },
   });
