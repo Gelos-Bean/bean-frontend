@@ -155,7 +155,7 @@ export default function Orders() {
                                 <View style={styles.optionsContainer}>
                                   {prod.selectedOptions.map((option, optionIndex) => (
                                     <Text key={optionIndex} variant="bodySmall" 
-                                    style={[styles.optionText, prod.isSent ? styles.sentProduct : null]}>
+                                      style={[styles.optionText, prod.isSent ? styles.sentProduct : null]}>
                                       - {option.name} (${option.price})
                                     </Text>
                                   ))}
