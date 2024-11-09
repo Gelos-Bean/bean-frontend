@@ -6,10 +6,20 @@ import {
   ScrollView,
   Pressable
 } from 'react-native';
+import { 
+  Button, 
+  Text, 
+  Card, 
+  IconButton
+ } from 'react-native-paper';
+
 import Header from '../components/Header.jsx';
-import { Button, Text, Card, IconButton, MD3Colors, DataTable } from 'react-native-paper';
 import { connection } from '../config/config.json';
 import styles from '../styles/posStyles';
+import ErrorBoundary from '../components/ErrorBoundary.jsx';
+import LoadingIndicator from '../components/LoadingIndicator.jsx';
+import ShowError from '../components/ShowError.jsx'
+import { withTimeout } from '../components/WithTimeout.jsx';
 
 import AddTableModal from '../components/modals/addTable.jsx'
 import SelectTableModal from '../components/modals/selectTable.jsx'
@@ -18,6 +28,10 @@ import SearchModal from '../components/modals/searchModal.jsx';
 
 const App = () => {
   
+  // Loading indicators
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [loadingAddTable, setLoadingAddTable] = useState(false);
+
   // Modals
   const [viewAddTableModal, setViewAddTableModal] = useState(false);
   const [selectTableModal, setSelectTableModal] = useState(false);
@@ -30,31 +44,39 @@ const App = () => {
   //Products
   const [products, setProducts] = useState([]); 
   async function PopulateProducts() {
+    setLoadingProducts(true);
+    if (!connection) {
+      ShowError('Connection configuration is missing');
+      setLoadingProducts(false); 
+      return;
+    }
     try {
-      const response = await fetch(`${connection}/products`, {
-        method: 'GET',
-      });
-
+      const response = await withTimeout(fetch(`${connection}/products`, { method: 'GET' }), 5000);
+  
       if (!response.ok) {
-        const error = await response.json();
-        const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
-        Alert.alert('Error', errorMessage);
+        const errorMessage = 'Server responded with an error';
+        ShowError(errorMessage);
+        console.error(errorMessage, response.statusText);
         return;
       }
-
+  
       const data = await response.json();
-
+  
       if (data.success && Array.isArray(data.msg)) {
         setProducts(data.msg);
       } else {
         const errorMessage = typeof data.msg === 'string' ? data.msg : 'No products found';
-        Alert.alert('Error', errorMessage);
+        ShowError(errorMessage);
       }
     } catch (err) {
       console.error('Search error:', err);
-      Alert.alert('Error', 'Something went wrong');
+      ShowError('Failed to load products. Please check your network connection.');
+    } finally {
+      setLoadingProducts(false);
     }
   }
+  
+
   const [selectedCourse, setSelectedCourse] = useState('Starter');
 
   // Make an order
@@ -98,7 +120,6 @@ const App = () => {
   const voidItem = () => {
     if (!selectedProduct) {
       Alert.alert('Error', 'Please select a product to void');
-      console.log('Error', 'Please select a product to void')
     } else {
       const updatedOrderProducts = orderProducts
         .map((p) => {
@@ -122,15 +143,19 @@ const App = () => {
 
   //Populate tables
   async function PopulateTables() {
+    if (!connection) {
+      ShowError('Connection configuration is missing');
+      return;
+    }
     try {
       const response = await fetch(`${connection}/tables`, {
         method: 'GET',
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
-        Alert.alert('Error', errorMessage);
+        const errorMessage = 'Server responded with an error';
+        ShowError(errorMessage);
+        console.error(errorMessage, response.statusText);
         return;
       }
 
@@ -139,16 +164,24 @@ const App = () => {
       if (data.success) {
         setTables(data.msg);
       } else {
-        const errorMessage = typeof data.msg === 'string' ? data.msg : 'Error collating tables';
-        Alert.alert('Error', errorMessage);
+        const errorMessage = typeof data.msg === 'string' ? data.msg : 'Error retrieving tables';
+        ShowError(errorMessage);
       }
     } catch (err) {
-      Alert.alert('Error', err.message);
+      console.error('Error fetching tables:', err);
+      ShowError('Failed to load tables. Please check your network connection.');
     }
   }
 
   // New table:
   async function AddTable(tableNum, pax, limit) {
+    if (!connection) {
+      ShowError('Connection configuration is missing');
+      return;
+    }
+
+    setLoadingAddTable(true); 
+
     try {
       const table = {
         tableNo: tableNum,
@@ -164,20 +197,29 @@ const App = () => {
         body: JSON.stringify(table),
       });
 
+      if (!addResponse.ok) {
+        const errorData = await addResponse.json();
+        ShowError(errorData.msg || 'Failed to add table');
+        return;
+      }
+
       const data = await addResponse.json();
 
       if (!data.success) {
-        Alert.alert('Error', data.msg);
-        console.log(`Error: ${data.msg}`);
+        ShowError(data.msg);
+        console.error('Error', data.msg);
         return;
       }
 
       setSelectedTable({ tableNo: tableNum, _id: data._id });
-      console.log(`New table created and selected:`, { tableNo: tableNum, _id: data._id });
-  
+      setViewAddTableModal(false);  
+
     } catch (err) {
-      Alert.alert('Error', err.message);
-      console.log('Error:', err.message);
+      ShowError('Failed to connect to the server. Please check your network.');
+      console.error('Error', err);
+      
+    } finally {
+      setLoadingAddTable(false); 
     }
   }
     
@@ -187,13 +229,11 @@ const App = () => {
     if(selectedTable === null)
     {
       Alert.alert('Error', 'Please select a table before placing an order')
-      console.log('Error', 'Please select a table before placing an order')
       return;
     }
     if(orderProducts.length === 0)
       {
         Alert.alert('Error', 'No products selected')
-        console.log('Error', 'No products selected')
         return;
       }
 
@@ -207,6 +247,11 @@ const App = () => {
       comment:comment,
       total: total
     };
+
+    if (!connection) {
+      ShowError('Connection configuration is missing');
+      return;
+    }
   
     try {
       const response = await fetch(`${connection}/add-order`, {
@@ -214,19 +259,27 @@ const App = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(order)
       });
+
+      if (!response.ok) {
+        const errorMessage = 'Order not placed. The server responded with an error';
+        ShowError(errorMessage);
+        console.error(errorMessage, response.statusText);
+        return;
+      }
   
       const data = await response.json();
       if (!data.success) {
-        return Alert.alert('Error', data.msg);
+        ShowError(data.msg);
+        console.error('Error', data.msg);
+
       }
-      Alert.alert('Order sent to kitchen');
-      console.log('Order sent to kitchen');
 
       setOrderProducts([]);
       setSelectedTable(null);
 
     } catch (error) {
-      Alert.alert('Error', error.message);
+      console.error('Error placing order:', error);
+      ShowError('Failed to place order. Please check your network connection.');
     }
   }
 
@@ -305,8 +358,12 @@ const App = () => {
             Beverages
           </Button>
         </View>
+        {loadingProducts ? (
+                <LoadingIndicator />
+              ) : (
         <ScrollView contentContainerStyle={ styles.cardContainer }>
-        {products
+        {products && Array.isArray(products) && products.length > 0 ? (
+          products
           .filter((p) => p.course === selectedCourse)
           .map((product) => (
             <Card key={product._id} 
@@ -320,8 +377,13 @@ const App = () => {
                 <Text variant="bodySmall">{product.name}</Text>
               </Card.Content>
             </Card>
-          ))}
+          ))) : (
+            <View style={styles.loadingContainer}>
+              <Text variant='bodyLarge' style={{color:'grey'}}>Error loading products</Text>
+            </View>
+          )}
       </ScrollView>
+              )}
       </View>
       </View>
       <View style={styles.wideButtonContainer}>
@@ -464,14 +526,19 @@ const App = () => {
       </View>
     </Pressable>
     {/* Modals */}
-    <AddTableModal    visible={viewAddTableModal} setVisibility={setViewAddTableModal} onAdd={AddTable} />
-    <SelectTableModal visible={selectTableModal} setVisibility={setSelectTableModal} 
-                      tables={tables} onSelect={setSelectedTable}/>
-    <OptionModal      visible={optionModalVisible} onDismiss={() => setOptionModalVisible(false)} 
-                      product={selectedProduct} addToOrder={addToOrder}/>
-    <SearchModal      visible={searchModalVisible} onDismiss={() => setSearchModalVisible(false)} 
-                      onSelect={handleProductSelect}/>
+    <ErrorBoundary>
+      <AddTableModal    visible={viewAddTableModal} onDismiss={() => setViewAddTableModal(false)} 
+                        onAdd={AddTable}  loading={loadingAddTable}
+/>
+      <SelectTableModal visible={selectTableModal} setVisibility={setSelectTableModal} 
+                        tables={tables} onSelect={setSelectedTable}/>
+      <OptionModal      visible={optionModalVisible} onDismiss={() => setOptionModalVisible(false)} 
+                        product={selectedProduct} addToOrder={addToOrder}/>
+      <SearchModal      visible={searchModalVisible} onDismiss={() => setSearchModalVisible(false)} 
+                        onSelect={handleProductSelect}/>
+    </ErrorBoundary>
   </SafeAreaView>
+  
 )};
 
 export default App;

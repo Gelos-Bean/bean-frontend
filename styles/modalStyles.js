@@ -145,5 +145,4 @@ export default styles = StyleSheet.create({
       opacity: 0.5, 
       color: 'grey', 
     },
-    
   });

@@ -5,6 +5,9 @@ import { connection } from '../../config/config.json';
 
 import styles from '../../styles/posStyles.js';
 import Payment from '../../components/tab/Payment.jsx';
+import LoadingIndicator from '../../components/LoadingIndicator.jsx';
+import ShowError from '../../components/ShowError.jsx';
+import { withTimeout } from '../../components/WithTimeout.jsx';
 
 export default function ViewOneTab({ tabId, onExit }) {
     const headers = ["Products", "Quantity", "Cost", "Select"];
@@ -14,6 +17,7 @@ export default function ViewOneTab({ tabId, onExit }) {
     const [paidItems, setPaidItems] = useState([]);
     const [remaining, setRemaining] = useState(Math.max(0, 0.00));
     const [toPay, setToPay] = useState(Math.max(0, 0.00));
+    const [loadingTabData, setLoadingTabData] = useState(false);
 
     useEffect(() => {
         getTabData(tabId);
@@ -28,18 +32,23 @@ export default function ViewOneTab({ tabId, onExit }) {
 
 
     async function getTabData(id) {
+        setLoadingTabData(true);
         try {
             const response = await fetch(`${connection}/tables/${id}`);
             const tabData = await response.json();
 
             if (!tabData.success) {
-                return Alert.alert("Error loading tab " + tabData.msg);
+                ShowError(tabData.msg);
+                setLoadingTabData(false);
+                return;
             }
 
             setTabItems(tabData.msg);
 
         } catch (err) {
-            Alert.alert(`Error: ${err.message}`);
+            ShowError(err.message);
+        } finally {
+            setLoadingTabData(false)
         }
     }
 
@@ -114,8 +123,9 @@ export default function ViewOneTab({ tabId, onExit }) {
                                 </DataTable.Title>
                             ))}            
                         </DataTable.Header>
-
-                        {tabItems.products && tabItems.products.length > 0 && 
+                        {loadingTabData ? (
+                        <LoadingIndicator />
+                        ) : tabItems.products && tabItems.products.length > 0 && 
                             tabItems.products.map((prod, index) => {
                                 return (
                                     <View key={index}>
