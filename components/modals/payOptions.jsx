@@ -17,7 +17,7 @@ export default function PaymentOptions({ visibility, setVisibility, toPay, setTo
                 <View style={styles.centeredView}>
                     <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
                         <View style={styles.modalView}>
-                            <Text variant='headlineMedium'>Total: ${toPay}</Text>
+                            <Text variant='headlineMedium'>Total: ${parseFloat(toPay).toFixed(2)}</Text>
                             <Button
                                     style={[styles.squareButton, styles.wideButton]}
                                     mode="contained"
