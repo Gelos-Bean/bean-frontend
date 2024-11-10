@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { Text, IconButton, TextInput, Button } from 'react-native-paper';
-import PaymentOptions from '../../components/modals/PayOptions.jsx';
+import PaymentOptions from '../modals/PayOptions.jsx';
 import UserInput from '../../components/modals/UserInput.jsx';
-import Discount from '../../components/modals/discount.jsx';
+import Discount from '../modals/Discount.jsx';
 
 
 import styles from '../../styles/posStyles'; 
