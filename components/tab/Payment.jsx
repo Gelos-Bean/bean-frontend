@@ -14,7 +14,7 @@ export default function PaymentScreen({
         toPay, 
         setToPay,
         setDisableAllItems,
-        disableOncePaid
+        disableItems
     }){
 
     const tips = [5, 10, 15];
@@ -86,7 +86,8 @@ export default function PaymentScreen({
 
         setPaymentOptions(true);
         //disables ability to select items when custom payment amount is chosen
-        setDisableAllItems(true);
+        disableItems(1);
+        setCustomAmount(0);
     }
 
 
@@ -154,8 +155,8 @@ export default function PaymentScreen({
                             return (
                                 <Button 
                                     key={amt}
-                                    style={[styles.squareButton, pressed[amt] && pStyles.pressedBtn]}
-                                    mode="contained"
+                                    style={[styles.squareButton, pStyles.btn]}
+                                    mode= {pressed[amt] ? "contained-tonal" : "contained"}
                                     onPress={() => handleTipsButtons(amt)}>
                                     {amt}%
                                 </Button>
@@ -164,8 +165,9 @@ export default function PaymentScreen({
                 </View>
 
                 <View style={styles.buttonRow}>
-                    <Button style={[styles.squareButton, styles.wideButton, pStyles.textSpacing]}
-                        mode="contained"
+                    <Button style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start' }]}
+                        mode= {customTip > 0 ? "contained-tonal" : "contained"}
+                        icon="cash-plus"
                         onPress={() => handleUserInput("Custom Tip", "numeric", setCustomTip)}
                         onLongPress={() => handleCustomTip(false)}>
                         Add Custom Tip {customTip > 0 && `: $${parseFloat(customTip).toFixed(2)}`}
@@ -175,21 +177,17 @@ export default function PaymentScreen({
                 <View style={pStyles.separator} />
 
                 <View style={styles.buttonRow}>
-                    <Button style={[styles.squareButton, styles.wideButton, pStyles.textSpacing]}
+                    <Button style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start' }]}
                             mode="contained"
+                            icon='pencil-plus-outline'
                             onPress={() => handleUserInput("Input Amount", "numeric", setCustomAmount) }
                             disabled={customAmount >= 0 ? false : true}>
-                        Pay Custom Amount{customAmount > 0 && `: $${parseFloat(customAmount).toFixed(2)}`}
+                        Pay Custom Amount
                     </Button>
                 </View>
                 <View style={styles.buttonRow}>
-                    <Button style={[
-                            styles.squareButton, 
-                            styles.wideButton, 
-                            pStyles.textSpacing, 
-                            discount !== null && pStyles.pressedBtn
-                        ]}
-                        mode="contained"
+                <Button style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start' }]}
+                        mode= {discount !== null ? "contained-tonal" : "contained"}
                         icon="percent"
                         onPress={() => setDiscountModal(true)}
                         onLongPress={() => handleDiscount(false)}>
@@ -201,17 +199,18 @@ export default function PaymentScreen({
 
                 <View style={styles.buttonRow}>
                     <Button
-                        style={[styles.squareButton, styles.wideButton, pStyles.textSpacing]}
+                        style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start' }]}
                         mode="contained"
+                        icon="cash-multiple"
                         onPress={() => { handlePayment(toPay) }}>                        
                         Pay Selected: 
                         ${parseFloat(toPay).toFixed(2)}
                     </Button>
                 </View>
                 <View style={styles.buttonRow}>
-                    <Button style={[styles.squareButton, styles.wideButton, pStyles.textSpacing, {marginBottom: 10}]}
+                    <Button style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start', marginBottom: 10}]}
                         mode="contained"
-                        icon="cash"
+                        icon="cash-check"
                         onPress={() => handlePayment(remaining, true)}>
                         Pay Remaining: 
                         ${parseFloat(remaining).toFixed(2)}
@@ -234,7 +233,7 @@ export default function PaymentScreen({
                     <IconButton
                         style={styles.squareButton}
                         icon="send"
-                        size={24}
+                        size={20}
                         mode="contained"
                         selected={true}
                         onPress={handleSendEmail}
@@ -267,12 +266,12 @@ export default function PaymentScreen({
                 </View>
             </View> 
             <PaymentOptions 
-                disableOncePaid={disableOncePaid}
                 remaining={remaining}
                 toPay={toPay}
                 visibility={paymentOptions}
                 setToPay={setToPay}
                 setVisibility={setPaymentOptions}
+                disableItems={disableItems}
             />
 
             
@@ -304,17 +303,8 @@ const pStyles = StyleSheet.create({
         width: '100%'
     },
     btn: {
-        backgroundColor: '#58656d',
-        borderRadius: 6,
-        padding: 12,
-        margin: 3
-    },
-    pressedBtn: {
-        backgroundColor: '#8F5100', 
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 3,
+        margin: '1%',
+        width: '30%',
     },
     textSpacing: {
         flexDirection: 'row', 
@@ -325,7 +315,6 @@ const pStyles = StyleSheet.create({
         width: '100%',
         borderBottomColor: '#9c404d',
         borderBottomWidth: 1,
-        marginVertical: 6,
     },
     total: {
         flexDirection: 'row',
@@ -343,6 +332,7 @@ const pStyles = StyleSheet.create({
     email: {
         flex: 6,
         backgroundColor: '#ffffff',
+        paddingVertical: 8,
         marginRight: 5,
         height: 10
     },

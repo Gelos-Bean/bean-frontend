@@ -3,11 +3,11 @@ import { Button, Text } from 'react-native-paper';
 import styles from '../../styles/modalStyles';
 
 
-export default function PaymentOptions({ visibility, setVisibility, toPay, setToPay, disableOncePaid }) {
+export default function PaymentOptions({ visibility, setVisibility, toPay, setToPay, disableItems }) {
     
     function handleButtonPress(){     
         setToPay(0.00);
-        disableOncePaid();
+        disableItems();
         setVisibility(false);
     }
 
@@ -21,6 +21,7 @@ export default function PaymentOptions({ visibility, setVisibility, toPay, setTo
                             <Button
                                     style={[styles.squareButton, styles.wideButton]}
                                     mode="contained"
+                                    icon="credit-card"
                                     selected={true}
                                     onPress={handleButtonPress}>
                                 Eftpos
@@ -28,6 +29,7 @@ export default function PaymentOptions({ visibility, setVisibility, toPay, setTo
                             <Button
                                     style={[styles.squareButton, styles.wideButton]}
                                     mode="contained"
+                                    icon="currency-usd"
                                     selected={true}
                                     onPress={handleButtonPress}>
                                 Cash

@@ -18,7 +18,6 @@ export default function ViewOneTab({ tabId, onExit }) {
     const [remaining, setRemaining] = useState(Math.max(0, 0.00));
     const [toPay, setToPay] = useState(Math.max(0, 0.00));
     const [loadingTabData, setLoadingTabData] = useState(false);
-    const [disableAllItems, setDisableAllItems] = useState(false);
 
     useEffect(() => {
         getTabData(tabId);
@@ -30,12 +29,6 @@ export default function ViewOneTab({ tabId, onExit }) {
           setRemaining(parseFloat(tabItems.total).toFixed(2));
         }
       }, [tabItems.total]);
-
-      useEffect(() => {
-        if(disableAllItems) {
-            disableOncePaid();
-        }
-      },[disableAllItems])
 
 
     async function getTabData(id) {
@@ -85,14 +78,15 @@ export default function ViewOneTab({ tabId, onExit }) {
     }
 
 
-    function disableOncePaid() {
+    function disableItems(all=0) {
         
-        if (disableAllItems) {
+        if (all > 0) {
             // disable all items if custom amount is chosen
-            const allPaidItems = tabItems.products.reduce((acc, index) => {
+            const allPaidItems = tabItems.products.reduce((acc, _, index) => {
                 acc[index] = true;
                 return acc;
             }, {});
+
             setPaidItems(allPaidItems);
         } else {
             const updatedPaidItems = { ...paidItems, ...checked };
@@ -193,8 +187,7 @@ export default function ViewOneTab({ tabId, onExit }) {
 
                         setRemaining={setRemaining}
                         setToPay={setToPay}
-                        disableOncePaid={disableOncePaid}
-                        setDisableAllItems={setDisableAllItems}
+                        disableItems={disableItems}
                     />
                 </View>
             </View>
