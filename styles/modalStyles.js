@@ -62,8 +62,8 @@ export default styles = StyleSheet.create({
       borderBottomColor: '#ccc',
     },
     selectedItem: {
-      fontWeight: 'bold', // Bold the selected item
-      color: '#2196F3',   // Change color for highlight (optional)
+      fontWeight: 'bold', 
+      color: '#2196F3',  
     },
     fixToText: {
       flexDirection: 'row',

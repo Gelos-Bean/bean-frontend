@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, FlatList, ScrollView, Alert, TextInput } from 'react-native';
 import { Button, Card, Text, IconButton, Switch } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
 
 import styles from '../styles/posStyles.js';
 import Header from '../components/Header.jsx';
@@ -9,15 +10,51 @@ import LoadingIndicator from '../components/LoadingIndicator.jsx';
 import ShowError from '../components/ShowError.jsx';
 import { withTimeout } from '../components/WithTimeout.jsx';
 
-import ConfirmationModal from '../components/modals/confirmationModal.jsx';
-import OrderDetailsModal from '../components/modals/orderDetailsModal.jsx';
+import ConfirmationModal from '../components/modals/ConfirmationModal.jsx';
+import OrderDetailsModal from '../components/modals/OrderDetailsModal.jsx';
 
 const Separator = () => <View style={styles.separator} />;
 
 export default function Orders() {
+  //Orders
+  useFocusEffect(
+    React.useCallback(() => {
+      getOrders(); 
+      const interval = setInterval(() => {
+        getOrders();
+      }, 15000);
+  
+      return () => clearInterval(interval); 
+    }, [])
+  );
+
+  const [orders, setOrders] = useState([]);
+  async function getOrders() {
+    try {
+      const response = await withTimeout(fetch(`${connection}/orders`), 5000);
+      const orders = await response.json();
+
+      if (!orders.success) {
+        ShowError('Problem loading orders')
+        console.error(`Fetch Error: ${orders.msg}`);
+        setLoadingOrders(false);
+        return;
+      }
+
+      setOrders(orders.msg);
+      setErrorLoadingOrders(false);
+
+    } catch (err) {
+      console.error('Error', err.message);
+      ShowError('Failed to load orders. Please check your network connection');
+      setErrorLoadingOrders(true);
+    } finally {
+      setLoadingOrders(false);
+    }
+  }
 
   //Loading indicator
-  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [loadingOrders, setLoadingOrders] = useState(true);
   const [errorLoadingOrders, setErrorLoadingOrders] = useState(false);
 
   //Modals
@@ -41,6 +78,7 @@ export default function Orders() {
     setOrderToDelete(null);
     return
   } else {
+    setOrderToDelete(selection);
     try {
       const response = await fetch(`${connection}/orders/${orderToDelete._id}`, {
         method: 'DELETE',
@@ -72,49 +110,14 @@ export default function Orders() {
 
   }
 
-  //Orders and pagination
-  const [orders, setOrders] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 8; 
-
-  async function getOrders() {
-    setLoadingOrders(true);
-    try {
-      const response = await withTimeout(fetch(`${connection}/orders`), 5000);
-      const orders = await response.json();
-
-      if (!orders.success) {
-        ShowError('Problem loading orders')
-        console.error(`Fetch Error: ${orders.msg}`);
-        setLoadingOrders(false);
-        return;
-      }
-
-      setOrders(orders.msg);
-      setErrorLoadingOrders(false);
-
-    } catch (err) {
-      console.error('Error', err.message);
-      ShowError('Failed to load orders. Please check your network connection');
-      setErrorLoadingOrders(true);
-    } finally {
-      setLoadingOrders(false);
-    }
-  }
-
   //Auto away controls
   const [autoAwayTime, setAutoAwayTime] = useState(15);
   const [isSwitchOn, setIsSwitchOn] = React.useState(false);
-
   const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
-  
-  useEffect(() => {
-    getOrders();
-  }, []);
-
-  
 
   // Page navigation
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 8; 
   const paginatedOrders = orders.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
   const totalPages = Math.ceil(orders.length / itemsPerPage);
   const handleNextPage = () => {
@@ -159,7 +162,7 @@ export default function Orders() {
   
               const groupByCourse = (products) => {
                 return products.reduce((acc, product) => {
-                  const course = product.item.course || 'Other';
+                  const course = product.item && product.item.course ? product.item.course : 'Other';
                   if (!acc[course]) acc[course] = [];
                   acc[course].push(product);
                   return acc;
@@ -290,6 +293,7 @@ export default function Orders() {
           getOrders();
         }}
         order={orderToView}
+        handleDeleteOrder={ShowDeleteModal}
       />
     </SafeAreaView>
   );
