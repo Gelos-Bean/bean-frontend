@@ -21,6 +21,7 @@ export default function PaymentOptions({ visibility, setVisibility, toPay, setTo
                             <Button
                                     style={[styles.squareButton, styles.wideButton]}
                                     mode="contained"
+                                    icon="credit-card"
                                     selected={true}
                                     onPress={handleButtonPress}>
                                 Eftpos
@@ -28,6 +29,7 @@ export default function PaymentOptions({ visibility, setVisibility, toPay, setTo
                             <Button
                                     style={[styles.squareButton, styles.wideButton]}
                                     mode="contained"
+                                    icon="currency-usd"
                                     selected={true}
                                     onPress={handleButtonPress}>
                                 Cash

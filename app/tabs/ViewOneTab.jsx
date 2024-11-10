@@ -78,14 +78,15 @@ export default function ViewOneTab({ tabId, onExit }) {
     }
 
 
-    function disableOncePaid( all = 0 ) {
+    function disableItems(all=0) {
         
         if (all > 0) {
             // disable all items if custom amount is chosen
-            const allPaidItems = tabItems.products.reduce((acc, index) => {
+            const allPaidItems = tabItems.products.reduce((acc, _, index) => {
                 acc[index] = true;
                 return acc;
             }, {});
+
             setPaidItems(allPaidItems);
         } else {
             const updatedPaidItems = { ...paidItems, ...checked };
@@ -186,7 +187,7 @@ export default function ViewOneTab({ tabId, onExit }) {
 
                         setRemaining={setRemaining}
                         setToPay={setToPay}
-                        disableOncePaid={disableOncePaid}
+                        disableItems={disableItems}
                     />
                 </View>
             </View>
