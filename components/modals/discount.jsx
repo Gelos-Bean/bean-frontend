@@ -8,12 +8,12 @@ export default function Discount({ visibility, setVisibility, setValue, remainin
     const [disableBtn, setDisableBtn] = useState(false);
     const presetDiscounts = [5, 10, 20];
 
-
     useEffect(() => { 
-        if(remaining !== total) {
+        if(Number(remaining) !== Number(total) && visibility) {
             setDisableBtn(true);         
         }
     }, [remaining, total])
+
 
     
     function handlePercentage(amt){
