@@ -10,11 +10,7 @@ export default function Discount({ visibility, setVisibility, setValue, remainin
 
 
     useEffect(() => { 
-        console.log(`Remaining: ${typeof remaining} ${remaining}`);
-        console.log(`total: ${typeof total} ${total}`);
-
         if(remaining !== total) {
-            console.log(disableBtn);
             setDisableBtn(true);         
         }
     }, [remaining, total])
