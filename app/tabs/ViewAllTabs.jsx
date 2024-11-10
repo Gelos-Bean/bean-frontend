@@ -4,8 +4,8 @@ import { DataTable, Text } from 'react-native-paper';
 import { connection } from '../../config/config.json';
 
 import TabBtnMenu from '../../components/tab/TabBtnMenu.jsx';
-import AddTableModal from '../../components/modals/addTable.jsx';
-import SelectTableModal from '../../components/modals/selectTable.jsx';
+import AddTableModal from '../../components/modals/AddTable.jsx';
+import SelectTableModal from '../../components/modals/SelectTable.jsx';
 import LoadingIndicator from '../../components/LoadingIndicator.jsx';
 import ShowError from '../../components/ShowError.jsx';
 import { withTimeout } from '../../components/WithTimeout.jsx';
