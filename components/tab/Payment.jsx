@@ -13,6 +13,7 @@ export default function PaymentScreen({
         setRemaining, 
         toPay, 
         setToPay,
+        setDisableAllItems,
         disableOncePaid
     }){
 
@@ -73,6 +74,22 @@ export default function PaymentScreen({
         if (!add) setCustomTip(0);
     }
 
+
+    function handleCustomPayment(){
+        let r = Number(remaining - customAmount)
+        let calcRemain = r > 0 ? r : 0;
+        setRemaining(calcRemain);
+
+        // makes sure largest amount that toPay can be is the remaining
+        // amount of the tab. Remaining will never go into negative.
+        r < 0 ? setToPay(Number(remaining)) : setToPay(Number(customAmount));
+
+        setPaymentOptions(true);
+        //disables ability to select items when custom payment amount is chosen
+        setDisableAllItems(true);
+    }
+
+
     function handleDiscount(add = true) {
         if (!discount) return;
         let totalDiscount = Number(total);
@@ -89,32 +106,17 @@ export default function PaymentScreen({
 
         if (!add) setDiscount(null);
     }
+
     // allows dynamic use of the UserInput modal
     function handleUserInput(title, keyboard, stateFunction){
         setUserInputConfig({
             title: title,
             keyboard: keyboard,
-            setValue: (value) => stateFunction(value)
+            setValue: stateFunction
         });
         setInputView(true);
     }
 
-
-    function handleCustomPayment(){
-
-        let r = Number(remaining - customAmount)
-        let calcRemain = r > 0 ? r : 0;
-        setRemaining(calcRemain);
-
-        // makes sure largest amount that toPay can be is the remaining
-        // amount of the tab. Remaining will never go into negative.
-        r < 0 ? setToPay(Number(remaining)) : setToPay(Number(customAmount));
-
-        setPaymentOptions(true);
-
-        //disables ability to select items when custom payment amount is chosen
-        disableOncePaid(1);
-    }
     
 
     function handlePayment(amt, payFull = false){
@@ -175,9 +177,9 @@ export default function PaymentScreen({
                 <View style={styles.buttonRow}>
                     <Button style={[styles.squareButton, styles.wideButton, pStyles.textSpacing]}
                             mode="contained"
-                            onPress={() => handleUserInput("Pay Custom", "numeric", setCustomAmount) }
+                            onPress={() => handleUserInput("Input Amount", "numeric", setCustomAmount) }
                             disabled={customAmount >= 0 ? false : true}>
-                        Pay Custom Amount{customAmount > 0 && `: \t$${parseFloat(customAmount).toFixed(2)}`}
+                        Pay Custom Amount{customAmount > 0 && `: $${parseFloat(customAmount).toFixed(2)}`}
                     </Button>
                 </View>
                 <View style={styles.buttonRow}>
@@ -191,7 +193,7 @@ export default function PaymentScreen({
                         icon="percent"
                         onPress={() => setDiscountModal(true)}
                         onLongPress={() => handleDiscount(false)}>
-                        Add Discount {discount !== null && `\t \u2713`}
+                        Add Discount                     {discount !== null && `\u2713`}
                     </Button>
                 </View>
 
@@ -265,7 +267,7 @@ export default function PaymentScreen({
                 </View>
             </View> 
             <PaymentOptions 
-                disableItems={disableOncePaid}
+                disableOncePaid={disableOncePaid}
                 remaining={remaining}
                 toPay={toPay}
                 visibility={paymentOptions}
