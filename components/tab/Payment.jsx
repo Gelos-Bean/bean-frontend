@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { Text, IconButton, TextInput, Button } from 'react-native-paper';
-import PaymentOptions from '../../components/modals/PayOptions.jsx';
-import UserInput from '../../components/modals/UserInput.jsx';
-import Discount from '../../components/modals/discount.jsx';
-
+import PaymentOptions from '../modals/PayOptions.jsx';
+import UserInput from '../modals/UserInput.jsx';
+import Discount from '../modals/Discount.jsx';
 
 import styles from '../../styles/posStyles'; 
 
@@ -75,6 +74,7 @@ export default function PaymentScreen({
     }
 
     function handleDiscount(add = true) {
+        if (!discount) return;
         let totalDiscount = Number(total);
         let [amt, type] = discount;
 
@@ -152,7 +152,7 @@ export default function PaymentScreen({
                             return (
                                 <Button 
                                     key={amt}
-                                    style={!pressed[amt] ? styles.squareButton : [styles.squareButton, pStyles.pressedBtn]}
+                                    style={[styles.squareButton, pressed[amt] && pStyles.pressedBtn]}
                                     mode="contained"
                                     onPress={() => handleTipsButtons(amt)}>
                                     {amt}%
@@ -177,16 +177,21 @@ export default function PaymentScreen({
                             mode="contained"
                             onPress={() => handleUserInput("Pay Custom", "numeric", setCustomAmount) }
                             disabled={customAmount >= 0 ? false : true}>
-                        Pay Custom Amount{ customAmount > 0 && `: $${parseFloat(customAmount).toFixed(2)}`}
+                        Pay Custom Amount{customAmount > 0 && `: \t$${parseFloat(customAmount).toFixed(2)}`}
                     </Button>
                 </View>
                 <View style={styles.buttonRow}>
-                    <Button style={[styles.squareButton, styles.wideButton, pStyles.textSpacing]}
+                    <Button style={[
+                            styles.squareButton, 
+                            styles.wideButton, 
+                            pStyles.textSpacing, 
+                            discount !== null && pStyles.pressedBtn
+                        ]}
                         mode="contained"
                         icon="percent"
                         onPress={() => setDiscountModal(true)}
                         onLongPress={() => handleDiscount(false)}>
-                        Add Discount
+                        Add Discount {discount !== null && `\t \u2713`}
                     </Button>
                 </View>
 
