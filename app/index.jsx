@@ -21,7 +21,7 @@ import LoadingIndicator from '../components/LoadingIndicator.jsx';
 import ShowError from '../components/ShowError.jsx'
 import { withTimeout } from '../components/WithTimeout.jsx';
 
-import AddTableModal from '../components/modals/addTable.jsx'
+import AddTableModal from '../components/modals/AddTable.jsx'
 import SelectTableModal from '../components/modals/selectTable.jsx'
 import OptionModal from '../components/modals/options.jsx'
 import SearchModal from '../components/modals/searchModal.jsx';

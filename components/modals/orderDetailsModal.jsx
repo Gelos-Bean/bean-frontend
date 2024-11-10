@@ -4,7 +4,7 @@ import { Button, Checkbox, Text } from 'react-native-paper';
 import styles from '../../styles/modalStyles';
 import { connection } from '../../config/config.json';
 
-const OrderDetailsModal = ({ visible, onDismiss, order, onSend }) => {
+const OrderDetailsModal = ({ visible, onDismiss, order, handleDeleteOrder }) => {
   if (!order) {
     return null; // If order is null, render nothing
   }
@@ -64,14 +64,16 @@ const OrderDetailsModal = ({ visible, onDismiss, order, onSend }) => {
       if (!data.success) {
         return Alert.alert('Error', data.msg);
       }
-      Alert.alert('Success');
-      onDismiss();
+
+    if(updatedProducts.every(product => product.isSent === true)){
+      handleDeleteOrder(order);
+    }
 
     } catch (error) {
       Alert.alert('Error', error.message);
     }
 
-    setSelectedProducts([])
+    setSelectedProducts([]);
     onDismiss();
   };
 

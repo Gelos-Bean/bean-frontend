@@ -221,6 +221,12 @@ export default styles = StyleSheet.create({
       backgroundColor: 'rgb(156, 64, 77)',
       color: 'rgb(255, 255, 255)'
     },
+    largeRow: {
+    },
+    largeHighlightedRow: {
+      backgroundColor: 'rgb(156, 64, 77)',
+      color: 'rgb(255, 255, 255)'
+    },
     highlightedText: {
       color: 'rgb(255, 255, 255)',
     },

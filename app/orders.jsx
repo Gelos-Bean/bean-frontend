@@ -15,9 +15,45 @@ import OrderDetailsModal from '../components/modals/orderDetailsModal.jsx';
 const Separator = () => <View style={styles.separator} />;
 
 export default function Orders() {
+  //Orders
+  useEffect(() => {
+    getOrders();
+  //Update orders ever 15 seconds
+    const interval = setInterval(() => {
+      getOrders();
+      console.log('Updating orders...')
+    }, 15000);
+  //Stop updating when page is navigated away from
+    return () => clearInterval(interval);
+  }, [])
+
+  const [orders, setOrders] = useState([]);
+  async function getOrders() {
+    try {
+      const response = await withTimeout(fetch(`${connection}/orders`), 5000);
+      const orders = await response.json();
+
+      if (!orders.success) {
+        ShowError('Problem loading orders')
+        console.error(`Fetch Error: ${orders.msg}`);
+        setLoadingOrders(false);
+        return;
+      }
+
+      setOrders(orders.msg);
+      setErrorLoadingOrders(false);
+
+    } catch (err) {
+      console.error('Error', err.message);
+      ShowError('Failed to load orders. Please check your network connection');
+      setErrorLoadingOrders(true);
+    } finally {
+      setLoadingOrders(false);
+    }
+  }
 
   //Loading indicator
-  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [loadingOrders, setLoadingOrders] = useState(true);
   const [errorLoadingOrders, setErrorLoadingOrders] = useState(false);
 
   //Modals
@@ -41,6 +77,7 @@ export default function Orders() {
     setOrderToDelete(null);
     return
   } else {
+    setOrderToDelete(selection);
     try {
       const response = await fetch(`${connection}/orders/${orderToDelete._id}`, {
         method: 'DELETE',
@@ -72,49 +109,14 @@ export default function Orders() {
 
   }
 
-  //Orders and pagination
-  const [orders, setOrders] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 8; 
-
-  async function getOrders() {
-    setLoadingOrders(true);
-    try {
-      const response = await withTimeout(fetch(`${connection}/orders`), 5000);
-      const orders = await response.json();
-
-      if (!orders.success) {
-        ShowError('Problem loading orders')
-        console.error(`Fetch Error: ${orders.msg}`);
-        setLoadingOrders(false);
-        return;
-      }
-
-      setOrders(orders.msg);
-      setErrorLoadingOrders(false);
-
-    } catch (err) {
-      console.error('Error', err.message);
-      ShowError('Failed to load orders. Please check your network connection');
-      setErrorLoadingOrders(true);
-    } finally {
-      setLoadingOrders(false);
-    }
-  }
-
   //Auto away controls
   const [autoAwayTime, setAutoAwayTime] = useState(15);
   const [isSwitchOn, setIsSwitchOn] = React.useState(false);
-
   const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
-  
-  useEffect(() => {
-    getOrders();
-  }, []);
-
-  
 
   // Page navigation
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 8; 
   const paginatedOrders = orders.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
   const totalPages = Math.ceil(orders.length / itemsPerPage);
   const handleNextPage = () => {
@@ -290,6 +292,7 @@ export default function Orders() {
           getOrders();
         }}
         order={orderToView}
+        handleDeleteOrder={ShowDeleteModal}
       />
     </SafeAreaView>
   );
