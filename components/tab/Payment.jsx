@@ -3,6 +3,8 @@ import { View, Alert, StyleSheet } from 'react-native';
 import { Text, IconButton, TextInput, Button } from 'react-native-paper';
 import PaymentOptions from '../../components/modals/PayOptions.jsx';
 import UserInput from '../../components/modals/UserInput.jsx';
+import Discount from '../../components/modals/discount.jsx';
+
 
 import styles from '../../styles/posStyles'; 
 
@@ -19,22 +21,32 @@ export default function PaymentScreen({
 
     const [email, setEmail] = useState("");
     const [pressed, setPressed] = useState(
-        tips.reduce((acc, tip) => ({
-            ...acc,
-            [tip]: false
-        }), {})
-    );
+            tips.reduce((acc, tip) => ({...acc, [tip]: false}), {}));
     const [inputView, setInputView] = useState(false); 
     const [paymentOptions, setPaymentOptions] = useState(false);
     const [customAmount, setCustomAmount] = useState(0.00);
+    const [customTip, setCustomTip] = useState(0.00);
+    const [discount, setDiscount] = useState(null);
+    const [discountModal, setDiscountModal] = useState(false);
+    const [userInputConfig, setUserInputConfig] = useState(null);
 
     useEffect(() => {
-
         if (customAmount > 0 && !inputView) {
             handleCustomPayment();
         }
     }, [customAmount, inputView]);
 
+    useEffect(() => {
+        if (customTip > 0 && !inputView) {
+            handleCustomTip();
+        }
+    }, [customTip, inputView])
+
+    useEffect(() => {
+        if (discount !== null && !discountModal) {
+            handleDiscount();
+        }
+    }, [discount, discountModal])
 
     // Handles the button press for Tips 
     // Cycles through each button. Tap twice to remove tip
@@ -46,7 +58,6 @@ export default function PaymentScreen({
             const newPressedState = tips.map(tip => [tip, false]);
 
             newPressedState[amt] = !wasSelected;
-
             const updatedTotal = !wasSelected ? total * (1 + decimalAmt) : total;
 
             setRemaining(updatedTotal);
@@ -54,28 +65,68 @@ export default function PaymentScreen({
         });
     }
 
+    function handleCustomTip(add = true) {
+        let remainTip = Number(remaining);
+        let tip = Number(customTip);
+        add ? remainTip += tip : remainTip -= tip;
+
+        setRemaining(remainTip);
+        if (!add) setCustomTip(0);
+    }
+
+    function handleDiscount(add = true) {
+        let totalDiscount = Number(total);
+        let [amt, type] = discount;
+
+        if (type) {
+            let t = 1 - Number(amt);
+            add ? totalDiscount *= Number(t) : total;
+        } else {
+            add ? totalDiscount -= Number(amt) : total;
+        }
+        
+        setRemaining(totalDiscount);
+
+        if (!add) setDiscount(null);
+    }
+    // allows dynamic use of the UserInput modal
+    function handleUserInput(title, keyboard, stateFunction){
+        setUserInputConfig({
+            title: title,
+            keyboard: keyboard,
+            setValue: (value) => stateFunction(value)
+        });
+        setInputView(true);
+    }
+
 
     function handleCustomPayment(){
+
         let r = Number(remaining - customAmount)
         let calcRemain = r > 0 ? r : 0;
         setRemaining(calcRemain);
 
+        // makes sure largest amount that toPay can be is the remaining
+        // amount of the tab. Remaining will never go into negative.
         r < 0 ? setToPay(Number(remaining)) : setToPay(Number(customAmount));
 
         setPaymentOptions(true);
 
-        //disable all items when custom amount is chosen
+        //disables ability to select items when custom payment amount is chosen
         disableOncePaid(1);
     }
     
 
-    function handlePayment(amt){
+    function handlePayment(amt, payFull = false){
         if (!amt){
             return Alert.alert('Please select amount to pay');
         }
+
         setToPay(amt);
         setPaymentOptions(true);
         setCustomAmount(-1);
+
+        if(payFull) setRemaining(0);     
     }
 
     function handleSendEmail() {
@@ -90,7 +141,6 @@ export default function PaymentScreen({
 
 
     function handleVoidItem(itemId) {
-        
     }
 
     return (
@@ -112,28 +162,30 @@ export default function PaymentScreen({
                 </View>
 
                 <View style={styles.buttonRow}>
-                    <Button style={[styles.squareButton, styles.wideButton]}
+                    <Button style={[styles.squareButton, styles.wideButton, pStyles.textSpacing]}
                         mode="contained"
-                        onPress={() => console.log('Add Discount')}>
-                        Add Custom Tip
+                        onPress={() => handleUserInput("Custom Tip", "numeric", setCustomTip)}
+                        onLongPress={() => handleCustomTip(false)}>
+                        Add Custom Tip {customTip > 0 && `: $${parseFloat(customTip).toFixed(2)}`}
                     </Button>
                 </View>
 
                 <View style={pStyles.separator} />
 
                 <View style={styles.buttonRow}>
-                    <Button style={[styles.squareButton, styles.wideButton]}
+                    <Button style={[styles.squareButton, styles.wideButton, pStyles.textSpacing]}
                             mode="contained"
-                            onPress={() => setInputView(true) }
+                            onPress={() => handleUserInput("Pay Custom", "numeric", setCustomAmount) }
                             disabled={customAmount >= 0 ? false : true}>
                         Pay Custom Amount{ customAmount > 0 && `: $${parseFloat(customAmount).toFixed(2)}`}
                     </Button>
                 </View>
                 <View style={styles.buttonRow}>
-                    <Button style={[styles.squareButton, styles.wideButton]}
+                    <Button style={[styles.squareButton, styles.wideButton, pStyles.textSpacing]}
                         mode="contained"
                         icon="percent"
-                        onPress={() => console.log('Add Discount')}>
+                        onPress={() => setDiscountModal(true)}
+                        onLongPress={() => handleDiscount(false)}>
                         Add Discount
                     </Button>
                 </View>
@@ -153,7 +205,7 @@ export default function PaymentScreen({
                     <Button style={[styles.squareButton, styles.wideButton, pStyles.textSpacing, {marginBottom: 10}]}
                         mode="contained"
                         icon="cash"
-                        onPress={() => handlePayment(remaining)}>
+                        onPress={() => handlePayment(remaining, true)}>
                         Pay Remaining: 
                         ${parseFloat(remaining).toFixed(2)}
                     </Button>
@@ -216,13 +268,20 @@ export default function PaymentScreen({
                 setVisibility={setPaymentOptions}
             />
 
+            
             <UserInput 
                 visibility={inputView}
                 setVisibility={setInputView}
 
-                title="Custom Amount"
-                keyboard="numeric"
-                setValue={setCustomAmount}
+                {...userInputConfig}
+            />
+
+            <Discount 
+                visibility={discountModal}
+                setVisibility={setDiscountModal}
+                setValue={setDiscount}
+                remaining = {Number(remaining)}
+                total = {total}
             />
         </View>
     );
