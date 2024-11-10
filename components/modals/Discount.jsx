@@ -105,7 +105,7 @@ const inputStyles = StyleSheet.create({
         marginVertical: 10,
     },
     btn: {
-        height: '100%',
+        height: '80%',
         justifyContent:'center',
         width: '30%'
     },
