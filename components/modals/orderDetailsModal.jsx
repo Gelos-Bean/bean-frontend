@@ -15,7 +15,7 @@ const OrderDetailsModal = ({ visible, onDismiss, order, handleDeleteOrder }) => 
   // Helper function to group products by course
   const groupByCourse = (products) => {
     return products.reduce((acc, product) => {
-      const course = product.item.course || 'Other';
+      const course = product.item && product.item.course ? product.item.course : 'Other';
       if (!acc[course]) acc[course] = [];
       acc[course].push(product);
       return acc;

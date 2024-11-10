@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, FlatList, ScrollView, Alert, TextInput } from 'react-native';
 import { Button, Card, Text, IconButton, Switch } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
 
 import styles from '../styles/posStyles.js';
 import Header from '../components/Header.jsx';
@@ -9,23 +10,23 @@ import LoadingIndicator from '../components/LoadingIndicator.jsx';
 import ShowError from '../components/ShowError.jsx';
 import { withTimeout } from '../components/WithTimeout.jsx';
 
-import ConfirmationModal from '../components/modals/confirmationModal.jsx';
-import OrderDetailsModal from '../components/modals/orderDetailsModal.jsx';
+import ConfirmationModal from '../components/modals/ConfirmationModal.jsx';
+import OrderDetailsModal from '../components/modals/OrderDetailsModal.jsx';
 
 const Separator = () => <View style={styles.separator} />;
 
 export default function Orders() {
   //Orders
-  useEffect(() => {
-    getOrders();
-  //Update orders ever 15 seconds
-    const interval = setInterval(() => {
-      getOrders();
-      console.log('Updating orders...')
-    }, 15000);
-  //Stop updating when page is navigated away from
-    return () => clearInterval(interval);
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      getOrders(); 
+      const interval = setInterval(() => {
+        getOrders();
+      }, 15000);
+  
+      return () => clearInterval(interval); 
+    }, [])
+  );
 
   const [orders, setOrders] = useState([]);
   async function getOrders() {
@@ -161,7 +162,7 @@ export default function Orders() {
   
               const groupByCourse = (products) => {
                 return products.reduce((acc, product) => {
-                  const course = product.item.course || 'Other';
+                  const course = product.item && product.item.course ? product.item.course : 'Other';
                   if (!acc[course]) acc[course] = [];
                   acc[course].push(product);
                   return acc;

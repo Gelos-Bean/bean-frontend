@@ -10,14 +10,13 @@ import {
 import { useRouter } from 'expo-router';
 import { Button, Text, DataTable, List } from 'react-native-paper';
 import { connection } from '../config/config.json';
-import SearchModal from '../components/modals/searchModal';
-import NewProduct from '../components/modals/newProduct';
-import DeleteModal from '../components/modals/deleteProduct'
+import SearchModal from '../components/modals/SearchModal';
+import NewProduct from '../components/modals/NewProduct';
 import ShowError from '../components/ShowError';
 import { withTimeout } from '../components/WithTimeout';
 import LoadingIndicator from '../components/LoadingIndicator';
 import ErrorBoundary from '../components/ErrorBoundary';
-import ConfirmationModal from '../components/modals/confirmationModal';
+import ConfirmationModal from '../components/modals/ConfirmationModal';
 
 import styles from '../styles/posStyles';
 
