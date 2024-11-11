@@ -3,12 +3,13 @@ import { Button, Text } from 'react-native-paper';
 import styles from '../../styles/modalStyles';
 
 
-export default function PaymentOptions({ visibility, setVisibility, toPay, setToPay, disableItems }) {
+export default function PaymentOptions({ visibility, setVisibility, toPay, setToPay, disableItems, onDismiss }) {
     
     function handleButtonPress(){     
         setToPay(0.00);
         disableItems();
         setVisibility(false);
+        onDismiss();
     }
 
     return (

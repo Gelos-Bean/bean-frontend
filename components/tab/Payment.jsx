@@ -13,8 +13,8 @@ export default function PaymentScreen({
         setRemaining, 
         toPay, 
         setToPay,
-        setDisableAllItems,
-        disableItems
+        disableItems,
+        setConfirmDelete
     }){
 
     const tips = [5, 10, 15];
@@ -29,6 +29,8 @@ export default function PaymentScreen({
     const [discount, setDiscount] = useState(null);
     const [discountModal, setDiscountModal] = useState(false);
     const [userInputConfig, setUserInputConfig] = useState(null);
+    const [paidInFull, setPaidInFull] = useState(false);
+    const [remainZero, setRemainZero] = useState(false);
 
     useEffect(() => {
         if (customAmount > 0 && !inputView) {
@@ -43,10 +45,17 @@ export default function PaymentScreen({
     }, [customTip, inputView])
 
     useEffect(() => {
-        if (discount !== null && !discountModal) {
+        if (discount !== null && !discountModal) {s
             handleDiscount();
         }
     }, [discount, discountModal])
+
+    useEffect(() => {
+        if(paidInFull) {
+            setConfirmDelete(true);
+        }
+    }, [paidInFull])
+
 
     // Handles the button press for Tips 
     // Cycles through each button. Tap twice to remove tip
@@ -60,7 +69,7 @@ export default function PaymentScreen({
             newPressedState[amt] = !wasSelected;
             const updatedTotal = !wasSelected ? total * (1 + decimalAmt) : total;
 
-            setRemaining(updatedTotal);
+            setRemaining(Math.max(0, updatedTotal));
             return newPressedState;
         });
     }
@@ -70,7 +79,7 @@ export default function PaymentScreen({
         let tip = Number(customTip);
         add ? remainTip += tip : remainTip -= tip;
 
-        setRemaining(remainTip);
+        setRemaining(Math.max(0, remainTip));
         if (!add) setCustomTip(0);
     }
 
@@ -78,16 +87,40 @@ export default function PaymentScreen({
     function handleCustomPayment(){
         let r = Number(remaining - customAmount)
         let calcRemain = r > 0 ? r : 0;
-        setRemaining(calcRemain);
-
+        setRemaining(Math.max(0, calcRemain));
+        
         // makes sure largest amount that toPay can be is the remaining
         // amount of the tab. Remaining will never go into negative.
         r < 0 ? setToPay(Number(remaining)) : setToPay(Number(customAmount));
 
         setPaymentOptions(true);
-        //disables ability to select items when custom payment amount is chosen
-        disableItems(1);
-        setCustomAmount(0);
+    }
+
+    function handlePayment(amt, paidInFull = false){
+        if (!amt){
+            return Alert.alert('Please select amount to pay');
+        }
+        setToPay(amt);
+        setPaymentOptions(true);
+        if (paidInFull)
+            setRemainZero(true);
+    }
+
+    function onDismiss() {
+        if (customAmount > 0) {
+            //configure for handleCustomPayment function
+            disableItems(1);
+            setCustomAmount(0);
+        } else { 
+            //configure for handlePayment function
+            
+            //disables ability to select items when custom payment amount is chosen
+            setCustomAmount(-1);
+            if(remainZero)
+                setRemaining(0);
+        }
+        if(remaining === 0) 
+            setPaidInFull(true);
     }
 
 
@@ -103,7 +136,7 @@ export default function PaymentScreen({
             add ? totalDiscount -= Number(amt) : total;
         }
         
-        setRemaining(totalDiscount);
+        setRemaining(Math.max(0, totalDiscount));
 
         if (!add) setDiscount(null);
     }
@@ -118,20 +151,6 @@ export default function PaymentScreen({
         setInputView(true);
     }
 
-    
-
-    function handlePayment(amt, payFull = false){
-        if (!amt){
-            return Alert.alert('Please select amount to pay');
-        }
-
-        setToPay(amt);
-        setPaymentOptions(true);
-        setCustomAmount(-1);
-
-        if(payFull) setRemaining(0);     
-    }
-
     function handleSendEmail() {
         const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (email === "" || !re.test(email)) {
@@ -140,10 +159,6 @@ export default function PaymentScreen({
 
         Alert.alert(`Sent receipt to ${email}`);
         setEmail("");
-    }
-
-
-    function handleVoidItem(itemId) {
     }
 
     return (
@@ -260,9 +275,9 @@ export default function PaymentScreen({
                         mode="contained"
                         selected={true}
                         size={30}
-                        onPress={() => setOrderProducts([])}
+                        onPress={() => setPaidInFull(true)}
                     />
-                    <Text variant='bodySmall'>Void Order</Text>
+                    <Text variant='bodySmall'>Void Tab</Text>
                 </View>
             </View> 
             <PaymentOptions 
@@ -272,6 +287,7 @@ export default function PaymentScreen({
                 setToPay={setToPay}
                 setVisibility={setPaymentOptions}
                 disableItems={disableItems}
+                onDismiss={() => onDismiss()}
             />
 
             
