@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Modal, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import styles from '../../styles/modalStyles';

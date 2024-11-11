@@ -7,6 +7,7 @@ import styles from '../../styles/posStyles.js';
 import Payment from '../../components/tab/Payment.jsx';
 import LoadingIndicator from '../../components/LoadingIndicator.jsx';
 import ShowError from '../../components/ShowError.jsx';
+import ConfirmationModal from '../../components/modals/ConfirmationModal.jsx';
 import { withTimeout } from '../../components/WithTimeout.jsx';
 
 export default function ViewOneTab({ tabId, onExit }) {
@@ -15,8 +16,9 @@ export default function ViewOneTab({ tabId, onExit }) {
     const [tabItems, setTabItems] = useState({});
     const [checked, setChecked] = useState({});
     const [paidItems, setPaidItems] = useState([]);
-    const [remaining, setRemaining] = useState(Math.max(0, 0.00));
-    const [toPay, setToPay] = useState(Math.max(0, 0.00));
+    const [remaining, setRemaining] = useState(Math.max(0, 0));
+    const [toPay, setToPay] = useState(Math.max(0, 0));
+    const [confirmDelete, setConfirmDelete] = useState(false);
     const [loadingTabData, setLoadingTabData] = useState(false);
 
     useEffect(() => {
@@ -36,7 +38,6 @@ export default function ViewOneTab({ tabId, onExit }) {
         try {
             const response = await fetch(`${connection}/tables/${id}`);
             const tabData = await response.json();
-
             if (!tabData.success) {
                 ShowError(tabData.msg);
                 setLoadingTabData(false);
@@ -49,6 +50,25 @@ export default function ViewOneTab({ tabId, onExit }) {
             ShowError(err.message);
         } finally {
             setLoadingTabData(false)
+        }
+    }
+
+    async function deleteTab(rm = false){
+        if (rm) {
+            try { 
+                const response = await fetch(`${connection}/tables/${tabItems._id}`, {
+                    method: 'DELETE'
+                });
+                const res = await response.json();
+    
+                if(!res) {
+                    return ShowError(res.msg);
+                }
+                Alert.alert(res.msg)
+                onExit();
+            } catch (err) {
+                ShowError(err.message);
+            }
         }
     }
 
@@ -79,7 +99,6 @@ export default function ViewOneTab({ tabId, onExit }) {
 
 
     function disableItems(all=0) {
-        
         if (all > 0) {
             // disable all items if custom amount is chosen
             const allPaidItems = tabItems.products.reduce((acc, _, index) => {
@@ -128,20 +147,23 @@ export default function ViewOneTab({ tabId, onExit }) {
                         <LoadingIndicator />
                         ) : tabItems.products && tabItems.products.length > 0 && 
                             tabItems.products.map((prod, index) => {
+                                if (!prod.item) return null;
                                 return (
                                     <View key={index}>
                                         <DataTable.Row
                                             key={index}
                                             style={{ backgroundColor: paidItems[index] ? '#f0f0f0' : 'transparent' }}
-                                        >
+                                            >
                                             <DataTable.Cell>
-                                                <Text variant='bodyMedium'>{prod.item.name}</Text>
+                                                <Text variant='bodyMedium'>{prod.item?.name || ""}</Text>
                                             </DataTable.Cell>
                                             <DataTable.Cell>
-                                                <Text variant='bodyMedium'>{prod.quantity}</Text>
+                                                <Text variant='bodyMedium'>{prod.quantity || ""}</Text>
                                             </DataTable.Cell>
                                             <DataTable.Cell>
-                                                <Text variant='bodyMedium'>{`$${parseFloat(prod.item.price).toFixed(2)}`}</Text>
+                                                <Text variant='bodyMedium'>
+                                                    {prod.item?.price ? `$${parseFloat(prod.item.price).toFixed(2)}` : ""}
+                                                </Text>
                                             </DataTable.Cell>
                                             <DataTable.Cell>
                                                 {!paidItems[index] ? <Checkbox
@@ -185,15 +207,20 @@ export default function ViewOneTab({ tabId, onExit }) {
                         remaining={remaining}
                         toPay={toPay}
 
+                        setConfirmDelete={setConfirmDelete}
                         setRemaining={setRemaining}
                         setToPay={setToPay}
                         disableItems={disableItems}
                     />
                 </View>
             </View>
-
-           
-            
+            <ConfirmationModal 
+                visible={confirmDelete}
+                onSelect={deleteTab}
+                onDismiss={() => setConfirmDelete(false)}
+                title='Close Table?'
+                body='This will delete table from view'
+            />
         </>
     );
 }
