@@ -18,7 +18,7 @@ const Separator = () => <View style={styles.separator} />;
 export default function Orders() {
   //Orders
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       getOrders(); 
       const interval = setInterval(() => {
         getOrders();
