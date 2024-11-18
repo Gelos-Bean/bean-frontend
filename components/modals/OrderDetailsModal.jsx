@@ -88,13 +88,15 @@ const OrderDetailsModal = ({ visible, onDismiss, order, handleDeleteOrder }) => 
           <View style={styles.orderHeader}>
             <Text variant="labelLarge">{`${formattedTime} ${formattedDate}`}</Text>
             <Text variant="labelLarge">{`Pax: ${order.table ? order.table.pax : 'N/A'}`}</Text>
+            <Text variant="labelLarge">{`Lines: ${order.products.length}`}</Text>
           </View>
           <ScrollView style={styles.scrollableContent}>
             {Object.entries(groupedProducts).map(([course, products], courseIndex) => (
               <View key={courseIndex} style={styles.courseSection}>
                 <Text variant="titleMedium">{course}</Text>
-                {products.map((prod) => (
-                  <View key={prod.item._id} style={styles.productContainer}>
+                {products.map((prod, index) => (
+                  <View key={`${prod.item._id}-${index}`}
+                  style={styles.productContainer}>
                     <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                     <Text variant="bodyLarge" 
                     style={[{maxWidth:'80%'}, prod.isSent ? styles.sentProduct : null]}>
@@ -121,6 +123,12 @@ const OrderDetailsModal = ({ visible, onDismiss, order, handleDeleteOrder }) => 
               </View>
             ))}
           </ScrollView>
+          <View style={[styles.commentContainer, styles.inputContainer]}>
+                    <Text variant='titleMedium'>
+                      Comment: </Text>
+                    <Text variant='bodyLarge'>
+                      {order.comment}</Text>
+                  </View>
           <View style={styles.bottomButtonRow}>
             <Button
               style={[styles.squareButton, styles.wideButton]}
