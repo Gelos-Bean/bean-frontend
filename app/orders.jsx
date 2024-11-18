@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, SafeAreaView, FlatList, ScrollView, Alert, TextInput } from 'react-native';
-import { Button, Card, Text, IconButton, Switch } from 'react-native-paper';
+import { Button, Card, Text, IconButton, Switch, Icon } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 
 import styles from '../styles/posStyles.js';
@@ -173,7 +173,17 @@ export default function Orders() {
   
               return (
                 <Card style={styles.orderStyle}>
-                  <Card.Title title={`Table ${order.table ? order.table.tableNo : 'N/A'}`} />
+                  <View style={styles.titleContainer}>
+                    <Text variant='titleLarge' style={{marginVertical:'auto'}}>Table {order.table ? order.table.tableNo : 'N/A'}</Text>
+                    {order.comment.length > 0 ? <IconButton
+                      icon="note-alert"
+                      iconColor="#000000"
+                      size={20}
+                      style={{margin:0, marginVertical:'auto'}}
+                    /> : null}
+                    
+                  </View>
+                  
                   <View style={styles.orderHeader}>
                     <Text variant="labelMedium">{`${formattedTime} ${formattedDate}`}</Text>
                     <Text variant="labelMedium">{`Pax: ${order.table ? order.table.pax : 'N/A'}`}</Text>
@@ -186,9 +196,15 @@ export default function Orders() {
                         <Text variant="labelLarge">{course}</Text>
                         {products.map((prod, prodIndex) => (
                           <View key={prodIndex} style={styles.productContainer}>
-                            <Text variant="bodyMedium" style={prod.isSent ? styles.sentProduct : null}>
-                              {prod.item.name} x{prod.quantity}
-                            </Text>
+                            <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                              <Text variant="bodyMedium" style={prod.isSent ? styles.sentProduct : null}>
+                                {prod.item.name}
+                              </Text>
+                              <Text variant="bodyMedium" style={prod.isSent ? styles.sentProduct : null}>
+                                x {prod.quantity}
+                              </Text>
+                            </View>
+                            
                             {prod.selectedOptions && prod.selectedOptions.length > 0 && (
                               <View style={styles.optionsContainer}>
                                 {prod.selectedOptions.map((option, optionIndex) => (
@@ -197,7 +213,7 @@ export default function Orders() {
                                     variant="bodySmall"
                                     style={[styles.optionText, prod.isSent ? styles.sentProduct : null]}
                                   >
-                                    - {option.name} (${option.price})
+                                    - {option.name}
                                   </Text>
                                 ))}
                               </View>

@@ -18,13 +18,15 @@ import { connection } from '../config/config.json';
 import styles from '../styles/posStyles';
 import ErrorBoundary from '../components/ErrorBoundary.jsx';
 import LoadingIndicator from '../components/LoadingIndicator.jsx';
-import ShowError from '../components/ShowError.jsx'
+import ShowError from '../components/ShowError.jsx';
 import { withTimeout } from '../components/WithTimeout.jsx';
 
-import AddTableModal from '../components/modals/AddTable.jsx'
-import SelectTableModal from '../components/modals/SelectTable.jsx'
-import OptionModal from '../components/modals/Options.jsx'
+import AddTableModal from '../components/modals/AddTable.jsx';
+import SelectTableModal from '../components/modals/SelectTable.jsx';
+import OptionModal from '../components/modals/Options.jsx';
 import SearchModal from '../components/modals/SearchModal.jsx';
+import FreeTextModal from '../components/modals/FreeText.jsx';
+import ConfirmationModal from '../components/modals/ConfirmationModal.jsx';
 
 const App = () => {
   
@@ -37,6 +39,12 @@ const App = () => {
   const [selectTableModal, setSelectTableModal] = useState(false);
   const [optionModalVisible, setOptionModalVisible] = useState(false);
   const [searchModalVisible, setSearchModalVisible] = useState(false);
+  const [freeTextModalVisible, setFreeTextModalVisible] = useState(false);
+  // Confirmation modal
+  const [viewConfirmationModal, setViewConfirmationModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('Undefined');
+  const [modalBody, setModalBody] = useState('Undefined');
+
 
 
   const Separator = () => <View style={styles.separator} />;
@@ -82,7 +90,6 @@ const App = () => {
   // Make an order
   const [orderProducts, setOrderProducts] = useState([])
   const [total, setTotal] = useState(0);
-  const [comment, setComment] = useState('');
 
   // Modify order
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -117,6 +124,30 @@ const App = () => {
     setSelectedOptions([]);
   };
   
+  //Add comment to order
+  const [comment, setComment] = useState('');
+  const addComment = (newComment) => {
+    console.log(newComment);
+    if(newComment.length <= 0) {
+      Alert.alert('Error', 'Comment must be longer than 0 characters')
+      return;
+    } else if (newComment.length >= 200 ) {
+      Alert.alert('Error', 'Comment cannot be longer than 200 characters');
+      return;
+    } else {
+      setComment(newComment);
+    }
+  }
+  const clearCommentModal = () => {
+    setModalTitle('Clear Comment')
+    setModalBody(`Are you sure you would like to to clear the comment?`)
+    setViewConfirmationModal(true);
+  }
+  const clearComment = (selection) => {
+    selection ? setComment('') : null;
+  }
+
+  //Void item
   const voidItem = () => {
     if (!selectedProduct) {
       Alert.alert('Error', 'Please select a product to void');
@@ -137,6 +168,8 @@ const App = () => {
     }
   };
   
+
+
   //Tables:
   const [tables, setTables] = useState([])
   const [selectedTable, setSelectedTable] = useState(null);
@@ -276,6 +309,7 @@ const App = () => {
 
       setOrderProducts([]);
       setSelectedTable(null);
+      setComment('');
 
     } catch (error) {
       console.error('Error placing order:', error);
@@ -433,6 +467,13 @@ const App = () => {
               ))}
             </View>
           </ScrollView>
+          <View style={styles.commentContainer}>
+            <Text variant='labelLarge'>
+              Comment: </Text>
+            <Text variant='bodyMedium' numberOfLines={1} ellipsizeMode="tail">
+              {comment}</Text>
+          </View>
+          
         </View>
         <View style={styles.verticalSeparator}></View>
         <View style={styles.buttonColumn}>
@@ -485,7 +526,7 @@ const App = () => {
                 mode="contained"
                 selected={true}
                 size={30}
-                disabled={true}
+                onPress={() => setFreeTextModalVisible(true)}
               />
               <Text variant='bodySmall' style={styles.buttonText}>Free Text</Text>
             </View>
@@ -536,6 +577,14 @@ const App = () => {
                         product={selectedProduct} addToOrder={addToOrder}/>
       <SearchModal      visible={searchModalVisible} onDismiss={() => setSearchModalVisible(false)} 
                         onSelect={handleProductSelect}/>
+      <FreeTextModal    visible={freeTextModalVisible} onDismiss={() => setFreeTextModalVisible(false)} 
+                        onAdd={addComment} onClear={clearCommentModal}/>
+      <ConfirmationModal
+                        visible={viewConfirmationModal}
+                        onDismiss={() => setViewConfirmationModal(false)}
+                        title={modalTitle}
+                        body={modalBody}
+                        onSelect={clearComment}/>
     </ErrorBoundary>
   </SafeAreaView>
   

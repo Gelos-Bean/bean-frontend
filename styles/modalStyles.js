@@ -128,10 +128,15 @@ export default styles = StyleSheet.create({
       borderRadius: 9,
     },
     productContainer: { 
-      marginVertical:'1%'
+      marginVertical:'1%',
+      justifyContent:'space-between'
     },
     optionsContainer: { 
       marginLeft: '5%' 
+    },
+    commentContainer: {
+      flexDirection:'row',
+      paddingHorizontal:'10%',
     },
     optionText: { 
       color: 'grey' 

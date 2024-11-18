@@ -2,24 +2,29 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   SafeAreaView,
-  Alert,
-  Image,
   ScrollView,
+  Pressable
 } from 'react-native';
+import { 
+  Button, 
+  Text, 
+  DataTable, 
+  List
+} from 'react-native-paper';
+
 
 import { useRouter } from 'expo-router';
-import { Button, Text, DataTable, List } from 'react-native-paper';
 import { connection } from '../config/config.json';
+
 import SearchModal from '../components/modals/SearchModal';
 import NewProduct from '../components/modals/NewProduct';
+import EditProductModal from '../components/modals/EditProduct';
 import ShowError from '../components/ShowError';
 import { withTimeout } from '../components/WithTimeout';
 import LoadingIndicator from '../components/LoadingIndicator';
 import ErrorBoundary from '../components/ErrorBoundary';
 import ConfirmationModal from '../components/modals/ConfirmationModal';
-
 import styles from '../styles/posStyles';
-
 import Header from '../components/Header'
 
 const Manager = () => {
@@ -35,7 +40,9 @@ const Manager = () => {
   const [viewConfirmationModal, setViewConfirmationModal] = useState(false);
   const [modalTitle, setModalTitle] = useState('Undefined');
   const [modalBody, setModalBody] = useState('Undefined');
-  
+
+  //Edit product modal
+  const [viewEditProductModel, setViewEditProductModal] = useState(false);
 
   const Separator = () => <View style={styles.separator} />;
   
@@ -44,13 +51,18 @@ const Manager = () => {
   const [productsLoading, setProductsLoading] = useState(false);
   async function populateProducts() {
     setProductsLoading(true);
+    if (!connection) {
+      ShowError('Connection configuration is missing');
+      setProductsLoading(false); 
+      return;
+    }
     try {
       const response = await withTimeout(fetch(`${connection}/products`, { method: 'GET' }), 5000);
-
       if (!response.ok) {
         const error = await response.json();
         const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
-        Alert.alert('Error', errorMessage);
+        ShowError(errorMessage);
+        console.error(errorMessage, response.statusText);
         setProductsLoading(false);
         return;
       }
@@ -62,7 +74,8 @@ const Manager = () => {
         populateOptions();
       } else {
         const errorMessage = typeof data.msg === 'string' ? data.msg : 'No products found';
-        Alert.alert('Error', errorMessage);
+        ShowError(errorMessage);
+        console.error(errorMessage, response.statusText);
       }
     } catch (err) {
       console.error('Search error:', err);
@@ -74,9 +87,7 @@ const Manager = () => {
   const [options, setOptions] = useState([]);
   async function populateOptions() {
     try {
-      const response = await fetch(`${connection}/options`, {
-        method: 'GET',
-      });
+      const response = await withTimeout(fetch(`${connection}/options`, { method: 'GET' }), 5000);
       const data = await response.json();
       if (data.success && Array.isArray(data.msg)) {
         setOptions(data.msg);
@@ -122,19 +133,50 @@ const Manager = () => {
   
       if (!response.ok) {
         console.error('Error:', data.msg);
+        ShowError('Server connection issue. Product not added');
         return { success: false, message: data.msg };
       }
         return { success: true, message: data.msg };
       
     } catch (error) {
       console.error('Request failed:', error);
+      ShowError('Failed to add product. Please check your network connection')
       return { success: false, message: 'Failed to add product. Please check your network connection.' };
     }
   }
 
   // Handle Edit Product
-  const handleEditProduct = async (id) => { };
-
+  const handleEditProduct = async (product) => { 
+    console.log(product)
+    try {
+      const response = await fetch(`${connection}/products/${product._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: product.name,
+          price: parseFloat(product.price) || 0,
+          course: product.course,
+          options: product.options || [],
+          image: product.image || ''
+        })
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        console.error('Error:', data.msg);
+        ShowError('Server connection issue. Product not changed');
+        return { success: false, message: data.msg };
+      }
+        populateProducts();
+        return { success: true, message: data.msg };
+      
+    } catch (error) {
+      console.error('Request failed:', error);
+      ShowError('Failed to edit product. Please check your network connection')
+      return { success: false, message: 'Failed to edit product. Please check your network connection.' };
+    }
+  }
   // Handle Delete Product 
   const [productToDelete, setProductToDelete] = useState(null);
   const ShowDeleteModal = () => {
@@ -157,14 +199,16 @@ const Manager = () => {
   
       const data = await response.json();
       if (!data.success) {
-        return Alert.alert('Error', data.msg);
+        console.error('Error:', data.msg);
+        ShowError('Server connection issue. Product not deleted');
+        return;
       }
   
       setProductToDelete(null);
       populateProducts();
   
     } catch (error) {
-      Alert.alert('Error', error.message);
+      ShowError('Failed to delete product. Please check your network connection');
     }
   }
 
@@ -181,115 +225,117 @@ const Manager = () => {
         location={"Sydney"}
         username={null}/>
       <Separator />
-      <View style={styles.body}>
-          <View style={styles.managerMainContainer}>
-          <DataTable style={{ flex: 1 }}>
-            <DataTable.Header>
-              <DataTable.Title>Name</DataTable.Title>
-              <DataTable.Title>Price</DataTable.Title>
-              <DataTable.Title>Course</DataTable.Title>
-              <DataTable.Title>Image</DataTable.Title>
-              <DataTable.Title>Options</DataTable.Title>
-            </DataTable.Header>
-            <ScrollView contentContainerStyle={{ flexDirection: 'column' }}>
-              {productsLoading ? (
-                <LoadingIndicator />
-              ) : (
-                products && Array.isArray(products) && products.length > 0 && (
-                  products.map((product) => (
-                    <DataTable.Row
-                      key={product._id}
-                      onPress={() => handleRowSelect(product)}
-                      style={[styles.largeRow,
-                        selectedProduct && selectedProduct._id === product._id ? styles.largeHighlightedRow : null
-                      ]}>
-                      <DataTable.Cell><Text variant='bodyMedium'>{product.name}</Text></DataTable.Cell>
-                      <DataTable.Cell><Text variant='bodyMedium'>${product.price}</Text></DataTable.Cell>
-                      <DataTable.Cell><Text variant='labelMedium'>{product.course}</Text></DataTable.Cell>
-                      <DataTable.Cell>{product.image}</DataTable.Cell>
-                      <DataTable.Cell>
-                        {product.options && product.options.length > 0 ? (
-                          <List.Section
-                            title="Options"
-                            style={{
-                              flexDirection: 'row',
-                              paddingVertical: 0,
-                              paddingHorizontal: 0,
-                              marginHorizontal: 0,
-                              marginVertical: 0,
-                            }}
-                          >
-                            <List.Accordion
+      <Pressable style={{flex:1}}
+                onPress={() => setSelectedProduct(null)}>
+        <View style={styles.body}>
+            <View style={styles.managerMainContainer}>
+            <DataTable style={{ flex: 1 }}>
+              <DataTable.Header>
+                <DataTable.Title>Name</DataTable.Title>
+                <DataTable.Title>Price</DataTable.Title>
+                <DataTable.Title>Course</DataTable.Title>
+                <DataTable.Title>Image</DataTable.Title>
+                <DataTable.Title>Options</DataTable.Title>
+              </DataTable.Header>
+              <ScrollView contentContainerStyle={{ flexDirection: 'column' }}>
+                {productsLoading ? (
+                  <LoadingIndicator />
+                ) : (
+                  products && Array.isArray(products) && products.length > 0 && (
+                    products.map((product) => (
+                      <DataTable.Row
+                        key={product._id}
+                        onPress={() => handleRowSelect(product)}
+                        style={[styles.largeRow,
+                          selectedProduct && selectedProduct._id === product._id ? styles.largeHighlightedRow : null
+                        ]}>
+                        <DataTable.Cell><Text variant='bodyMedium' style={selectedProduct && product._id === selectedProduct._id ? styles.highlightedText : null}>
+                          {product.name}</Text></DataTable.Cell>
+                        <DataTable.Cell><Text variant='bodyMedium' style={selectedProduct && product._id === selectedProduct._id ? styles.highlightedText : null}>
+                          ${product.price}</Text></DataTable.Cell>
+                        <DataTable.Cell><Text variant='labelMedium' style={selectedProduct && product._id === selectedProduct._id ? styles.highlightedText : null}>
+                          {product.course}</Text></DataTable.Cell>
+                        <DataTable.Cell><Text variant='bodyMedium' numberOfLines={1} ellipsizeMode="tail" style={selectedProduct && product._id === selectedProduct._id ? styles.highlightedText : styles.unhighlightedText}>
+                          {product.image}</Text></DataTable.Cell>
+                        <DataTable.Cell>
+                          {product.options && product.options.length > 0 ? (
+                            <List.Section
+                              title={<Text style={selectedProduct && product._id === selectedProduct._id ? styles.highlightedText : styles.unhighlightedText}>Options</Text>}
                               style={{
+                                flexDirection: 'row',
                                 paddingVertical: 0,
                                 paddingHorizontal: 0,
                                 marginHorizontal: 0,
                                 marginVertical: 0,
                               }}
-                              expanded={expanded[product._id] || false}
-                              onPress={() => handlePress(product._id)}
                             >
-                              {product.options.map((option, index) => (
-                                <List.Item
-                                  key={index}
-                                  title={<Text variant="bodySmall">{option.name} - ${option.price}</Text>}
-                                />
-                              ))}
-                            </List.Accordion>
-                          </List.Section>
-                        ) : null}
-                      </DataTable.Cell>
-                    </DataTable.Row>
-                  ))
-                )
-              )}
-            </ScrollView>
-          </DataTable>
-          </View>
-            <View style={[styles.managerButtonContainer, {flexDirection:'row'}]}>
-                <View style={[styles.buttonRow, {flex:1}]}>
-                  <Button style={[styles.squareButton, styles.wideButton]}
-                      mode="contained"
-                      icon="plus"
-                      onPress={() => setNewProductModalVisible(true)}>              
-                      Add
-                  </Button>
-                  <Button style={[styles.squareButton, styles.wideButton]}
-                        mode="contained"
-                        icon="magnify"
-                        onPress={() => setSearchModalVisible(true)}>              
-                        Lookup
-                  </Button>
-                  <Button style={[styles.squareButton, styles.wideButton]}
-                      mode="contained"
-                      icon="pencil"
-                      disabled={true}>              
-                      Edit
-                  </Button>   
-                  <Button style={[styles.squareButton, styles.wideButton]}
-                      mode="contained"
-                      icon="delete"
-                      disabled={!selectedProduct}
-                      onPress={ShowDeleteModal}>              
-                      Delete
-                  </Button>
-                </View>
-                <View style={styles.verticalSeparator}></View>
-                <View style={[styles.buttonRow, {flex:1}]}>                  
-                  <View style={styles.displayPortal}>
-                    <Text variant='bodySmall'>Daily Total:</Text>
-                    <Text variant='labelLarge'>$ null</Text>
-                  </View>
-                  <Button style={[styles.squareButton, styles.wideButton]}
-                    mode="contained"
-                    icon="poll"
-                    disabled={true}>              
-                    Report
-                  </Button>
-                </View>
+                              <List.Accordion
+                                style={selectedProduct && product._id === selectedProduct._id ? styles.highlightedAccordian : styles.unhighlightedAccordian}
+                                expanded={expanded[product._id] || false}
+                                onPress={() => handlePress(product._id)}
+                              >
+                                {product.options.map((option, index) => (
+                                  <List.Item
+                                    key={index}
+                                    title={<Text variant="bodySmall" style={selectedProduct && product._id === selectedProduct._id ? styles.highlightedText : styles.unhighlightedText}>
+                                      {option.name} - ${option.price}</Text>}
+                                  />
+                                ))}
+                              </List.Accordion>
+                            </List.Section>
+                          ) : <Text variant='bodyMedium' style={[{marginLeft:'8%'}, selectedProduct && product._id === selectedProduct._id ? styles.highlightedText : null]}>No Options</Text>}
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                    ))
+                  )
+                )}
+              </ScrollView>
+            </DataTable>
             </View>
-        </View>
-      
+              <View style={[styles.managerButtonContainer, {flexDirection:'row'}]}>
+                  <View style={[styles.buttonRow, {flex:1}]}>
+                    <Button style={[styles.squareButton, styles.wideButton]}
+                        mode="contained"
+                        icon="plus"
+                        onPress={() => setNewProductModalVisible(true)}>              
+                        Add
+                    </Button>
+                    <Button style={[styles.squareButton, styles.wideButton]}
+                          mode="contained"
+                          icon="magnify"
+                          onPress={() => setSearchModalVisible(true)}>              
+                          Lookup
+                    </Button>
+                    <Button style={[styles.squareButton, styles.wideButton]}
+                        mode="contained"
+                        disabled={!selectedProduct}
+                        onPress={() => setViewEditProductModal(true)}>             
+                        Edit
+                    </Button>   
+                    <Button style={[styles.squareButton, styles.wideButton]}
+                        mode="contained"
+                        icon="delete"
+                        disabled={!selectedProduct}
+                        onPress={ShowDeleteModal}>              
+                        Delete
+                    </Button>
+                  </View>
+                  <View style={styles.verticalSeparator}></View>
+                  <View style={[styles.buttonRow, {flex:1}]}>                  
+                    <View style={styles.displayPortal}>
+                      <Text variant='bodySmall'>Daily Total:</Text>
+                      <Text variant='labelLarge'>$ null</Text>
+                    </View>
+                    <Button style={[styles.squareButton, styles.wideButton]}
+                      mode="contained"
+                      icon="poll"
+                      disabled={true}>              
+                      Report
+                    </Button>
+                  </View>
+              </View>
+          </View>
+        </Pressable>
       {/* Modals */}
       <ErrorBoundary>
         <SearchModal  visible={searchModalVisible} onDismiss={() => setSearchModalVisible(false)} />
@@ -302,6 +348,11 @@ const Manager = () => {
                       title={modalTitle}
                       body={modalBody}
                       onSelect={DeleteProduct}/>
+        <EditProductModal
+                      visible={viewEditProductModel}
+                      onDismiss={() => setViewEditProductModal(false)}
+                      product={selectedProduct}
+                      onConfirm={handleEditProduct}/>
       </ErrorBoundary>
       </SafeAreaView>
   );

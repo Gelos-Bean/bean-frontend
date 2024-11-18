@@ -160,6 +160,10 @@ export default styles = StyleSheet.create({
     tableCell: {
       fontSize: 16,
     },
+    commentContainer: {
+      flexDirection:'row',
+      margin:'1%',
+    },
     tabBar: {
       backgroundColor: 'lightgray',
     },
@@ -225,10 +229,30 @@ export default styles = StyleSheet.create({
     },
     largeHighlightedRow: {
       backgroundColor: 'rgb(156, 64, 77)',
-      color: 'rgb(255, 255, 255)'
+    },
+    unhighlightedText: {
+      color: 'rgb(0,0,0)',
+      numberOfLines:1,
+      ellipsizeMode:"tail" 
     },
     highlightedText: {
       color: 'rgb(255, 255, 255)',
+      numberOfLines:1,
+      ellipsizeMode:"tail" 
+    },
+    highlightedAccordian:{
+      backgroundColor: 'rgb(156, 64, 77)',
+      color: 'rgb(255, 255, 255)',
+      paddingVertical: 0,
+      paddingHorizontal: 0,
+      marginHorizontal: 0,
+      marginVertical: 0,
+    },
+    unhighlightedAccordian:{
+      paddingVertical: 0,
+      paddingHorizontal: 0,
+      marginHorizontal: 0,
+      marginVertical: 0,
     },
     cell: {
       flex: 1,
@@ -256,6 +280,11 @@ export default styles = StyleSheet.create({
       justifyContent: 'space-between',
       padding: '1%',
       borderRadius: 9,
+    },
+    titleContainer:{
+      flexDirection:'row', 
+      justifyContent:'space-between', 
+      height:'17%'
     },
     orderHeader: {
       flexDirection:'row',
