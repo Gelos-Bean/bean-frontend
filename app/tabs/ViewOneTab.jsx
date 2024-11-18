@@ -20,6 +20,8 @@ export default function ViewOneTab({ tabId, onExit }) {
     const [toPay, setToPay] = useState(Math.max(0, 0));
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [loadingTabData, setLoadingTabData] = useState(false);
+    const [fullTab, setFullTab] = useState();
+    const [report, setReport] = useState();
 
     useEffect(() => {
         getTabData(tabId);
@@ -45,6 +47,7 @@ export default function ViewOneTab({ tabId, onExit }) {
             }
 
             setTabItems(tabData.msg);
+            setFullTab(tabData.msg);
 
         } catch (err) {
             ShowError(err.message);
@@ -55,6 +58,7 @@ export default function ViewOneTab({ tabId, onExit }) {
 
     async function deleteTab(rm = false){
         if (rm) {
+            await addToSalesHistory();
             try { 
                 const response = await fetch(`${connection}/tables/${tabItems._id}`, {
                     method: 'DELETE'
@@ -72,10 +76,70 @@ export default function ViewOneTab({ tabId, onExit }) {
         }
     }
 
+    async function addToSalesHistory() {
+        await findReport();
+        try{
+            const salesHistory = {
+                sales: {
+                    tableNo: fullTab.tableNo,
+                    openedAt: fullTab.openedAt,
+                    pax: fullTab.pax,
+                    limit: fullTab.limit,
+                    products: {...fullTab.products},
+                    total: fullTab.total
+                }
+            }
+            console.log(`report: ${report._id}`)
+            console.log(JSON.stringify(salesHistory));
+            
+            const response = await fetch(`${connection}/reports/${report._id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(salesHistory)
+              });
+
+              const data = await response.json();
+
+              if (data.success) {
+                Alert.alert('Added to history')
+              } else {
+                const errorMessage = typeof data.msg === 'string' ? data.msg : 'No reports found';
+                ShowError(errorMessage);
+                console.error(errorMessage, response.statusText);
+              }
+
+        } catch (err) {
+            ShowError(err.message);
+        }
+    }
+
     function formatTime(formatDate) {
         const date = new Date(formatDate);
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
         return date.toLocaleTimeString([], options);
+    }
+
+    async function findReport() {
+        const date = new Date();
+        const formattedDate = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`;
+        try {
+            const response = await fetch(`${connection}/reports/${formattedDate}`, {
+                method: 'GET'
+            });            
+            const data = await response.json();
+            if (data.success) {
+                setReport(data.msg);  
+                console.log(`report message: ${data.msg}`)
+                console.log(`report: ${report._id}`)    
+                } else {
+                const errorMessage = typeof data.msg === 'string' ? data.msg : 'No reports found';
+                ShowError(errorMessage);
+                console.error(errorMessage, response.statusText);
+                }
+        } catch (err) {
+            ShowError(err.message);
+        }
+        
     }
 
     function handleCheckbox(item, cost, qty, options) {
