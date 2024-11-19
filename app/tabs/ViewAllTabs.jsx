@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Alert, ScrollView, Pressable, SafeAreaView } from 'react-native';
+import { View, ScrollView, Pressable, SafeAreaView } from 'react-native';
 import { DataTable, Text } from 'react-native-paper';
 import { connection } from '../../config/config.json';
 
 import TabBtnMenu from '../../components/tab/TabBtnMenu.jsx';
 import AddTableModal from '../../components/modals/AddTable.jsx';
 import SelectTableModal from '../../components/modals/SelectTable.jsx';
+
+import handleAddTable from '../../utils/addTable.jsx';
+
 import LoadingIndicator from '../../components/LoadingIndicator.jsx';
 import ShowError from '../../components/ShowError.jsx';
 import { withTimeout } from '../../components/WithTimeout.jsx';
@@ -45,33 +48,8 @@ export default function ViewAllTabs({ onSelectTab }) {
     }
   }
 
-  async function addNewTable(nTableNo, nPax, nLimit) {
-    try {
-      const createTable = {
-        tableNo: nTableNo,
-        pax: nPax,
-        limit: nLimit,
-      };
-
-      const response = await fetch(`${connection}/add-table`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(createTable),
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        return Alert.alert(data.msg);
-      }
-
-      setNewTable(data._id);
-      setViewTableModal(false);
-    } catch (err) {
-      console.error(err.message);
-    }
+  async function addTable(tableNum, pax, limit) {
+    await handleAddTable(tableNum, pax, limit);
   }
 
   function formatTime(formatDate) {
@@ -158,7 +136,7 @@ export default function ViewAllTabs({ onSelectTab }) {
         highlightOrder={highlightOrder}
       />
       <ErrorBoundary>
-        <AddTableModal visible={viewTableModal} setVisibility={setViewTableModal} onAdd={addNewTable} />
+        <AddTableModal visible={viewTableModal} onDismiss={() => setViewTableModal(false)} onAdd={addTable} loading={true} />
         <SelectTableModal visible={viewSelectTableModal} setVisibility={setSelectTableModal} onSelect={onSelectTab} tables={tables} />
       </ErrorBoundary>
     </SafeAreaView>

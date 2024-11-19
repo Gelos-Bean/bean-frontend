@@ -1,5 +1,4 @@
 import { 
-  Text, 
   ActivityIndicator
 } from 'react-native-paper';
 import { View } from 'react-native';
