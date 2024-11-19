@@ -38,7 +38,7 @@ export default function ViewOneTab({ tabId, onExit }) {
     async function getTabData(id) {
         setLoadingTabData(true);
         try {
-            const response = await fetch(`${connection}/tables/${id}`);
+            const response = await withTimeout(fetch(`${connection}/tables/${id}`), 5000);
             const tabData = await response.json();
             if (!tabData.success) {
                 ShowError(tabData.msg);
