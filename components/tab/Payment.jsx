@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { Text, IconButton, TextInput, Button } from 'react-native-paper';
 import PaymentOptions from '../modals/PayOptions.jsx';
@@ -6,6 +6,10 @@ import UserInput from '../modals/UserInput.jsx';
 import Discount from '../modals/Discount.jsx';
 
 import styles from '../../styles/posStyles'; 
+
+const MemoPaymentOptions = memo(PaymentOptions);
+const MemoUserInput = memo(UserInput);
+const MemoDiscount = memo(Discount);
 
 export default function PaymentScreen({ 
         total, 
@@ -45,7 +49,7 @@ export default function PaymentScreen({
     }, [customTip, inputView])
 
     useEffect(() => {
-        if (discount !== null && !discountModal) {s
+        if (discount !== null && !discountModal) {
             handleDiscount();
         }
     }, [discount, discountModal])
@@ -280,7 +284,7 @@ export default function PaymentScreen({
                     <Text variant='bodySmall'>Void Tab</Text>
                 </View>
             </View> 
-            <PaymentOptions 
+            <MemoPaymentOptions 
                 remaining={remaining}
                 toPay={toPay}
                 visibility={paymentOptions}
@@ -291,14 +295,14 @@ export default function PaymentScreen({
             />
 
             
-            <UserInput 
+            <MemoUserInput 
                 visibility={inputView}
                 setVisibility={setInputView}
 
                 {...userInputConfig}
             />
 
-            <Discount 
+            <MemoDiscount 
                 visibility={discountModal}
                 setVisibility={setDiscountModal}
                 setValue={setDiscount}
