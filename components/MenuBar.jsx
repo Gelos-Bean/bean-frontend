@@ -16,6 +16,7 @@ export default function MenuBar(){
     style={{justifyContent: 'space-between', paddingStart: 20, paddingEnd: 20 }}
       >
       <Appbar.BackAction onPress={() => { navigation.goBack() }}/>
+        <Appbar.Action icon="login" title="Login" onPress={() => { goTo('/login') }}/>
         <Appbar.Action icon="home" title="Home" onPress={() => { goTo('/') }}/>
         <Appbar.Action icon="tab" title="Tabs" onPress={() => { goTo('/tabs') }} />
         <Appbar.Action icon="clipboard-list" title="Orders" onPress={() => { goTo('/orders') }} />

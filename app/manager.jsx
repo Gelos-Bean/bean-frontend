@@ -222,7 +222,7 @@ const Manager = () => {
     setReportsLoading(true);
     if (!connection) {
       ShowError('Connection configuration is missing');
-      setReportsLoading(false); 
+      setReportsLoading(false);
       return;
     }
     try {
@@ -235,12 +235,11 @@ const Manager = () => {
         setReportsLoading(false);
         return;
       }
-
+  
       const data = await response.json();
-
+  
       if (data.success && Array.isArray(data.msg)) {
-        setReports(data.msg);      
-        updateDailyReport();
+        setReports(data.msg); // Updates reports state
       } else {
         const errorMessage = typeof data.msg === 'string' ? data.msg : 'No reports found';
         ShowError(errorMessage);
@@ -253,61 +252,46 @@ const Manager = () => {
       setReportsLoading(false);
     }
   }
-
-  function updateDailyReport(){
-    if(reports){
+  
+  // Automatically run updateDailyReport when `reports` changes
+  useEffect(() => {
+    if (reports.length > 0) {
+      updateDailyReport();
+    }
+  }, [reports]);
+  
+  function updateDailyReport() {
+    if (reports && reports.length > 0) {
       const today = new Date();
       const todayISO = dateToIso(today);
-    
+  
+      console.log('Today ISO:', todayISO);
+  
       const reportMatch = reports.find((report) => {
-      const reportDate = dateToIso(new Date(report.date));
-      return reportDate === todayISO;
-    });
-    
-    if (reportMatch) {
-      setTodaysReport(reportMatch);
-    } else {
-    }
-  }
-}
-
-  async function addNewReport(){
-    try {
-      const date = new Date();
-      const newRecord = {
-        date: `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
-      }
-      const response = await fetch(`${connection}/reports`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newRecord)
+        const reportDate = dateToIso(new Date(report.date));
+        console.log('Report date:', reportDate); // Debug original date
+        return reportDate === todayISO;
       });
   
-      const data = await response.json();
-
-      if (!response.ok) {
-        ShowError(data.msg);
-        return { success: false, message: data.msg };
+      if (reportMatch) {
+        setTodaysReport(reportMatch);
+        console.log('Matched Report:', reportMatch);
+      } else {
+        console.log('No report found for today');
       }
-        return { success: true, message: data.msg };
-      
-    } catch (error) {
-      console.error('Request failed:', error);
-      ShowError('Failed to add report. Please check your network connection')
-      return { success: false, message: 'Failed to add Report. Please check your network connection.' };
     }
   }
+  
   const dateToIso = (date) => {
-    const formatDateToISO = (date) => {
-      return date.toISOString().split('T')[0];
-    };
-    
-  }
+    return date.toISOString().split('T')[0]; // Extract YYYY-MM-DD
+  };
+  
   // On Load:
   useEffect(() => {
     populateProducts();
     populateReports();
-    }, []);
+  }, []);
+  
 
   return (
     <SafeAreaView style={styles.container}>

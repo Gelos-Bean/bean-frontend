@@ -21,7 +21,6 @@ export default function ViewOneTab({ tabId, onExit }) {
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [loadingTabData, setLoadingTabData] = useState(false);
     const [fullTab, setFullTab] = useState();
-    const [report, setReport] = useState();
 
     useEffect(() => {
         getTabData(tabId);
@@ -121,8 +120,9 @@ export default function ViewOneTab({ tabId, onExit }) {
     }
 
     async function findReport() {
-        const date = new Date();
-        const formattedDate = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
+        const date = getLocalStartOfDay(new Date());
+        const formattedDate = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
+
         try {
             const response = await fetch(`${connection}/reports/${formattedDate}`, {
                 method: 'GET'
@@ -153,10 +153,11 @@ export default function ViewOneTab({ tabId, onExit }) {
     }
     async function addNewReport(){
         try {
-          const date = new Date();
-          const newRecord = {
-            date: `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
-          }
+            const date = getLocalStartOfDay(new Date());
+            const newRecord = {
+              date: `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`,
+            };
+            
           const response = await fetch(`${connection}/reports`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -176,13 +177,14 @@ export default function ViewOneTab({ tabId, onExit }) {
           ShowError('Failed to add report. Please check your network connection')
           return { success: false, message: 'Failed to add Report. Please check your network connection.' };
         }
+    } 
+
+    function getLocalStartOfDay(date) {
+        const localDate = new Date(date); //Fixing time zone errors
+        localDate.setHours(0, 0, 0, 0); 
+        return localDate.toISOString();
       }
-      const dateToIso = (date) => {
-        const formatDateToISO = (date) => {
-          return date.toISOString().split('T')[0];
-        };
-        
-      }
+    
     function handleCheckbox(item, cost, qty, options) {
         setChecked(prevState => ({
             ...prevState,
@@ -201,7 +203,6 @@ export default function ViewOneTab({ tabId, onExit }) {
         setToPay(parseFloat(updateToPay));
         setRemaining(parseFloat(updateRemaining));
     }
-
 
     function disableItems(all=0) {
         if (all > 0) {
