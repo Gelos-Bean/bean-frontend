@@ -91,7 +91,7 @@ export default function PaymentScreen({
     function handleCustomPayment(){
         let r = Number(remaining - customAmount)
         let calcRemain = r > 0 ? r : 0;
-        setRemaining(Math.max(0, calcRemain));
+        setRemaining(calcRemain);
         
         // makes sure largest amount that toPay can be is the remaining
         // amount of the tab. Remaining will never go into negative.
@@ -104,10 +104,11 @@ export default function PaymentScreen({
         if (!amt){
             return Alert.alert('Please select amount to pay');
         }
-        setToPay(amt);
-        setPaymentOptions(true);
         if (paidInFull)
             setRemainZero(true);
+        
+        setToPay(amt);
+        setPaymentOptions(true);
     }
 
     function onDismiss() {
@@ -120,10 +121,11 @@ export default function PaymentScreen({
             
             //disables ability to select items when custom payment amount is chosen
             setCustomAmount(-1);
+
             if(remainZero)
                 setRemaining(0);
         }
-        if(remaining === 0) 
+        if(remainZero) 
             setPaidInFull(true);
     }
 

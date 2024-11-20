@@ -123,7 +123,7 @@ export default function ViewAllTabs({ onSelectTab }) {
                 ))
               ) : (
                 <View style={styles.loadingContainer}>
-                  <Text variant='bodyLarge' style={{color:'grey'}}>Error loading tables</Text>
+                  <Text variant='bodyLarge' style={{color:'grey'}}>No active tables</Text>
                 </View>              
               )}
             </DataTable>
