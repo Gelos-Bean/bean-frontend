@@ -20,7 +20,6 @@ export default function ViewOneTab({ tabId, onExit }) {
     const [toPay, setToPay] = useState(Math.max(0, 0));
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [loadingTabData, setLoadingTabData] = useState(false);
-    const [fullTab, setFullTab] = useState();
 
     useEffect(() => {
         getTabData(tabId);
@@ -41,12 +40,10 @@ export default function ViewOneTab({ tabId, onExit }) {
             const tabData = await response.json();
             if (!tabData.success) {
                 ShowError(tabData.msg);
-                setLoadingTabData(false);
-                return;
+                return setLoadingTabData(false);
             }
 
             setTabItems(tabData.msg);
-            setFullTab(tabData.msg);
 
         } catch (err) {
             ShowError(err.message);
@@ -57,59 +54,20 @@ export default function ViewOneTab({ tabId, onExit }) {
 
     async function deleteTab(rm = false){
         if (rm) {
-            await addToSalesHistory();
             try { 
                 const response = await fetch(`${connection}/tables/${tabItems._id}`, {
                     method: 'DELETE'
                 });
                 const res = await response.json();
     
-                if(!res) {
+                if(!res)
                     return ShowError(res.msg);
-                }
+
+                Alert.alert(res.msg)
                 onExit();
             } catch (err) {
                 ShowError(err.message);
-            }   
-        }
-    }
-
-    async function addToSalesHistory() {
-        const report = await findReport();
-        if (!report) {
-            console.error('Failed to find or create a report.');
-            return;
-        }
-        try{
-            const saleToAdd = {
-                sales: {
-                    tableNo: fullTab.tableNo,
-                    openedAt: fullTab.openedAt,
-                    pax: fullTab.pax,
-                    limit: fullTab.limit,
-                    products: [...fullTab.products], 
-                    total: fullTab.total
-                }
             }
-            const response = await fetch(`${connection}/reports/${report._id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(saleToAdd)
-              });
-
-              const data = await response.json();
-
-              if (data.success) {
-
-              } else {
-                const errorMessage = typeof data.msg === 'string' ? data.msg : 'No reports found';
-                ShowError(errorMessage);
-                console.error(errorMessage, response.statusText);
-              }
-
-        } catch (err) {
-            console.error('Error in addToSalesHistory:', err.message);
-            ShowError(err.message);
         }
     }
 
@@ -119,72 +77,6 @@ export default function ViewOneTab({ tabId, onExit }) {
         return date.toLocaleTimeString([], options);
     }
 
-    async function findReport() {
-        const date = getLocalStartOfDay(new Date());
-        const formattedDate = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
-
-        try {
-            const response = await fetch(`${connection}/reports/${formattedDate}`, {
-                method: 'GET'
-            });            
-            const data = await response.json();
-            if (data.success) {
-                return data.msg; 
-                
-                } else {
-                    console.log('Adding new report...')
-                    const newReport = await addNewReport();
-                    if (newReport.success) {
-                        const fetchNewResponse = await fetch(`${connection}/reports/${formattedDate}`, {
-                            method: 'GET',
-                        });    
-                        const fetchNewData = await fetchNewResponse.json();
-                    if (fetchNewData.success) {
-                        console.log(`Newly created report: ${JSON.stringify(fetchNewData.msg)}`);
-                        return fetchNewData.msg; 
-                    }            
-                }
-            }
-        } catch (err) {
-            ShowError(err.message);
-        }
-        return null; 
-
-    }
-    async function addNewReport(){
-        try {
-            const date = getLocalStartOfDay(new Date());
-            const newRecord = {
-              date: `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`,
-            };
-            
-          const response = await fetch(`${connection}/reports`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newRecord)
-          });
-      
-          const data = await response.json();
-    
-          if (!response.ok) {
-            ShowError(data.msg);
-            return { success: false, message: data.msg };
-          }
-            return { success: true, message: data.msg };
-          
-        } catch (error) {
-          console.error('Request failed:', error);
-          ShowError('Failed to add report. Please check your network connection')
-          return { success: false, message: 'Failed to add Report. Please check your network connection.' };
-        }
-    } 
-
-    function getLocalStartOfDay(date) {
-        const localDate = new Date(date); //Fixing time zone errors
-        localDate.setHours(0, 0, 0, 0); 
-        return localDate.toISOString();
-      }
-    
     function handleCheckbox(item, cost, qty, options) {
         setChecked(prevState => ({
             ...prevState,
@@ -203,6 +95,7 @@ export default function ViewOneTab({ tabId, onExit }) {
         setToPay(parseFloat(updateToPay));
         setRemaining(parseFloat(updateRemaining));
     }
+
 
     function disableItems(all=0) {
         if (all > 0) {
@@ -356,12 +249,3 @@ const tStyles = StyleSheet.create({
         color: '#767676',
     }
 });
-
-
-/**<Checkbox
-                                                    color={paidItems[index] ? '#d3d3d3' : '#9c404d'}
-                                                    uncheckedColor='#767676'
-                                                    status={checked[`option-${index}-${opIndex}`] ? 'checked' : 'unchecked'}
-                                                    onPress={() => handleCheckbox(`option-${index}-${opIndex}`, op.price)}
-                                                    disabled={paidItems[index]}
-                                                /> */

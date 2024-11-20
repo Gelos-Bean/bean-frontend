@@ -1,6 +1,7 @@
 import { useState, useEffect, memo } from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { Text, IconButton, TextInput, Button } from 'react-native-paper';
+
 import PaymentOptions from '../modals/PayOptions.jsx';
 import UserInput from '../modals/UserInput.jsx';
 import Discount from '../modals/Discount.jsx';
