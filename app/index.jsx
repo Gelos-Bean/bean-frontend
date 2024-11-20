@@ -486,7 +486,7 @@ const App = () => {
                 <Text variant='bodySmall'>Table:</Text>
                 <Text variant='labelLarge'>{selectedTable === null ? '-' : selectedTable.tableNo}</Text>
                 <IconButton
-                  icon="close-circle-outline"
+                  icon="close-circle"
                   iconColor='#000000'
                   onPress={() => setSelectedTable(null)}
                 />

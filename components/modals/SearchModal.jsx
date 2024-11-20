@@ -62,7 +62,7 @@ const SearchModal = ({ visible, onDismiss, onSelect }) => {
               style={[styles.textInputStyle, { width: '92%' }]}
             />
             <IconButton
-              icon="close-circle-outline"
+              icon="backspace"
               iconColor="#000000"
               size={20}
               onPress={() => { setInputValue(''); setProducts([]); }}

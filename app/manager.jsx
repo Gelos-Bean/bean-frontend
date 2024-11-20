@@ -22,6 +22,7 @@ import EditProductModal from '../components/modals/EditProduct';
 import ShowError from '../components/ShowError';
 import { withTimeout } from '../components/WithTimeout';
 import LoadingIndicator from '../components/LoadingIndicator';
+import LoadingIndicatorSmall from '../components/LoadingIndicatorSmall';
 import ErrorBoundary from '../components/ErrorBoundary';
 import ConfirmationModal from '../components/modals/ConfirmationModal';
 import styles from '../styles/posStyles';
@@ -147,7 +148,6 @@ const Manager = () => {
 
   // Handle Edit Product
   const handleEditProduct = async (product) => { 
-    console.log(product)
     try {
       const response = await fetch(`${connection}/products/${product._id}`, {
         method: 'PUT',
@@ -214,10 +214,84 @@ const Manager = () => {
 
 }
 
+  //Sales history
+  const [reports, setReports] = useState([]); 
+  const [todaysReport, setTodaysReport] = useState(null);
+  const [reportsLoading, setReportsLoading] = useState(false);
+  async function populateReports() {
+    setReportsLoading(true);
+    if (!connection) {
+      ShowError('Connection configuration is missing');
+      setReportsLoading(false);
+      return;
+    }
+    try {
+      const response = await withTimeout(fetch(`${connection}/reports`, { method: 'GET' }), 5000);
+      if (!response.ok) {
+        const error = await response.json();
+        const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
+        ShowError(errorMessage);
+        console.error(errorMessage, response.statusText);
+        setReportsLoading(false);
+        return;
+      }
+  
+      const data = await response.json();
+  
+      if (data.success && Array.isArray(data.msg)) {
+        setReports(data.msg); // Updates reports state
+      } else {
+        const errorMessage = typeof data.msg === 'string' ? data.msg : 'No reports found';
+        ShowError(errorMessage);
+        console.error(errorMessage, response.statusText);
+      }
+    } catch (err) {
+      console.error('Search error:', err);
+      ShowError('There was a problem retrieving sales history. Please check your network connection');
+    } finally {
+      setReportsLoading(false);
+    }
+  }
+  
+  // Automatically run updateDailyReport when `reports` changes
+  useEffect(() => {
+    if (reports.length > 0) {
+      updateDailyReport();
+    }
+  }, [reports]);
+  
+  function updateDailyReport() {
+    if (reports && reports.length > 0) {
+      const today = new Date();
+      const todayISO = dateToIso(today);
+  
+      console.log('Today ISO:', todayISO);
+  
+      const reportMatch = reports.find((report) => {
+        const reportDate = dateToIso(new Date(report.date));
+        console.log('Report date:', reportDate); // Debug original date
+        return reportDate === todayISO;
+      });
+  
+      if (reportMatch) {
+        setTodaysReport(reportMatch);
+        console.log('Matched Report:', reportMatch);
+      } else {
+        console.log('No report found for today');
+      }
+    }
+  }
+  
+  const dateToIso = (date) => {
+    return date.toISOString().split('T')[0]; // Extract YYYY-MM-DD
+  };
+  
   // On Load:
   useEffect(() => {
     populateProducts();
-    }, []);
+    populateReports();
+  }, []);
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -323,15 +397,32 @@ const Manager = () => {
                   <View style={styles.verticalSeparator}></View>
                   <View style={[styles.buttonRow, {flex:1}]}>                  
                     <View style={styles.displayPortal}>
-                      <Text variant='bodySmall'>Daily Total:</Text>
-                      <Text variant='labelLarge'>$ null</Text>
+                      {reportsLoading ? (
+                        <LoadingIndicatorSmall />
+                      ) : (
+                        <>
+                          <Text variant='bodySmall'>Daily Total:</Text>
+                          <Text variant='labelLarge'>
+                            {todaysReport != null ? `$${todaysReport.total}` : 'N/A'}
+                          </Text>
+                        </>
+                      )}
+                      
                     </View>
+                    <Button style={[styles.squareButton, styles.wideButton]}
+                      mode="contained"
+                      icon="refresh"
+                      disabled={false}
+                      onPress={populateReports}>              
+                      Refresh Total
+                    </Button>
                     <Button style={[styles.squareButton, styles.wideButton]}
                       mode="contained"
                       icon="poll"
                       disabled={true}>              
                       Report
                     </Button>
+                    
                   </View>
               </View>
           </View>
