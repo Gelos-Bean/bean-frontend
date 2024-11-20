@@ -193,7 +193,7 @@ export default function ViewOneTab({ tabId, onExit }) {
 
         let itemCost = qty > 1 ? cost * qty : cost;
         if (options){
-            options.forEach(op => itemCost += op.price);
+            options.forEach(op => itemCost += (qty * op.price));
         }
 
         const isChecked = !checked[item];
