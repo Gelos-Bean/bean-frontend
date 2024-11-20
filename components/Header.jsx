@@ -1,17 +1,20 @@
 import React from 'react';
-import {
-    View,
-    Image,
-    StyleSheet,
-    Text,
-    Pressable
-  } from 'react-native';
-import { Button, PaperProvider, MD3LightTheme as DefaultTheme } from 'react-native-paper';
+import { View, Image, StyleSheet } from 'react-native';
+import { Button, Text, PaperProvider, MD3LightTheme as DefaultTheme } from 'react-native-paper';
+import { useRouter } from 'expo-router';
+
 import customTheme from '../styles/theme';
 const theme = customTheme;
 
-const Separator = () => <View style={styles.separator} />;
+
 export default function Header({ title, location, username }){
+  const router = useRouter();
+
+  const goTo = (route) => {
+    router.push(route);
+  };
+
+
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
@@ -32,7 +35,8 @@ export default function Header({ title, location, username }){
             style={[styles.squareButton, styles.wideButton]}
             mode="contained"
             icon="logout"
-            disabled={true}>Log Out
+            onPress={() => { goTo('/login') }}>
+            Log Out
           </Button>
         </PaperProvider>
       </View>
