@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { PaperProvider } from 'react-native-paper';
@@ -9,6 +9,7 @@ import theme from '../styles/theme.js';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const page = usePathname();
   const [fontsLoaded] = useFonts({
     SpaceMono: require('../assets/fonts/OpenSans-Regular.ttf'),
   });
@@ -28,7 +29,7 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="+not-found" /> 
       </Stack>
-      <MenuBar />
+      {page !== '/login' && <MenuBar />}
     </PaperProvider>
   );
 }
