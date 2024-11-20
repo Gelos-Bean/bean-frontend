@@ -22,6 +22,7 @@ import EditProductModal from '../components/modals/EditProduct';
 import ShowError from '../components/ShowError';
 import { withTimeout } from '../components/WithTimeout';
 import LoadingIndicator from '../components/LoadingIndicator';
+import LoadingIndicatorSmall from '../components/LoadingIndicatorSmall';
 import ErrorBoundary from '../components/ErrorBoundary';
 import ConfirmationModal from '../components/modals/ConfirmationModal';
 import styles from '../styles/posStyles';
@@ -412,24 +413,32 @@ const Manager = () => {
                   <View style={styles.verticalSeparator}></View>
                   <View style={[styles.buttonRow, {flex:1}]}>                  
                     <View style={styles.displayPortal}>
-                      <Text variant='bodySmall'>Daily Total:</Text>
-                      <Text variant='labelLarge'>
-                        {todaysReport ? `$${todaysReport.total}` : 'N/A'}
-                      </Text>
+                      {reportsLoading ? (
+                        <LoadingIndicatorSmall />
+                      ) : (
+                        <>
+                          <Text variant='bodySmall'>Daily Total:</Text>
+                          <Text variant='labelLarge'>
+                            {todaysReport != null ? `$${todaysReport.total}` : 'N/A'}
+                          </Text>
+                        </>
+                      )}
+                      
                     </View>
+                    <Button style={[styles.squareButton, styles.wideButton]}
+                      mode="contained"
+                      icon="refresh"
+                      disabled={false}
+                      onPress={populateReports}>              
+                      Refresh Total
+                    </Button>
                     <Button style={[styles.squareButton, styles.wideButton]}
                       mode="contained"
                       icon="poll"
                       disabled={true}>              
                       Report
                     </Button>
-                    <Button style={[styles.squareButton, styles.wideButton]}
-                      mode="contained"
-                      icon="poll"
-                      disabled={false}
-                      onPress={addNewReport}>              
-                      Add New Report
-                    </Button>
+                    
                   </View>
               </View>
           </View>

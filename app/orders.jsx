@@ -195,7 +195,7 @@ export default function Orders() {
                       <View key={courseIndex} style={styles.courseSection}>
                         <Text variant="labelLarge">{course}</Text>
                         {products.map((prod, prodIndex) => (
-                          <View key={prodIndex} style={styles.productContainer}>
+                          <View key={`${prod._id}-${prodIndex}`} style={styles.productContainer}>
                             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                               <Text variant="bodyMedium" style={prod.isSent ? styles.sentProduct : null}>
                                 {prod.item.name}

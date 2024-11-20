@@ -68,40 +68,40 @@ export default function ViewOneTab({ tabId, onExit }) {
                 if(!res) {
                     return ShowError(res.msg);
                 }
-                Alert.alert(res.msg)
                 onExit();
             } catch (err) {
                 ShowError(err.message);
-            }
+            }   
         }
     }
 
     async function addToSalesHistory() {
-        await findReport();
+        const report = await findReport();
+        if (!report) {
+            console.error('Failed to find or create a report.');
+            return;
+        }
         try{
-            const salesHistory = {
+            const saleToAdd = {
                 sales: {
                     tableNo: fullTab.tableNo,
                     openedAt: fullTab.openedAt,
                     pax: fullTab.pax,
                     limit: fullTab.limit,
-                    products: {...fullTab.products},
+                    products: [...fullTab.products], 
                     total: fullTab.total
                 }
             }
-            console.log(`report: ${report._id}`)
-            console.log(JSON.stringify(salesHistory));
-            
             const response = await fetch(`${connection}/reports/${report._id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(salesHistory)
+                body: JSON.stringify(saleToAdd)
               });
 
               const data = await response.json();
 
               if (data.success) {
-                Alert.alert('Added to history')
+
               } else {
                 const errorMessage = typeof data.msg === 'string' ? data.msg : 'No reports found';
                 ShowError(errorMessage);
@@ -109,6 +109,7 @@ export default function ViewOneTab({ tabId, onExit }) {
               }
 
         } catch (err) {
+            console.error('Error in addToSalesHistory:', err.message);
             ShowError(err.message);
         }
     }
@@ -121,27 +122,67 @@ export default function ViewOneTab({ tabId, onExit }) {
 
     async function findReport() {
         const date = new Date();
-        const formattedDate = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`;
+        const formattedDate = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
         try {
             const response = await fetch(`${connection}/reports/${formattedDate}`, {
                 method: 'GET'
             });            
             const data = await response.json();
             if (data.success) {
-                setReport(data.msg);  
-                console.log(`report message: ${data.msg}`)
-                console.log(`report: ${report._id}`)    
+                return data.msg; 
+                
                 } else {
-                const errorMessage = typeof data.msg === 'string' ? data.msg : 'No reports found';
-                ShowError(errorMessage);
-                console.error(errorMessage, response.statusText);
+                    console.log('Adding new report...')
+                    const newReport = await addNewReport();
+                    if (newReport.success) {
+                        const fetchNewResponse = await fetch(`${connection}/reports/${formattedDate}`, {
+                            method: 'GET',
+                        });    
+                        const fetchNewData = await fetchNewResponse.json();
+                    if (fetchNewData.success) {
+                        console.log(`Newly created report: ${JSON.stringify(fetchNewData.msg)}`);
+                        return fetchNewData.msg; 
+                    }            
                 }
+            }
         } catch (err) {
             ShowError(err.message);
         }
-        
-    }
+        return null; 
 
+    }
+    async function addNewReport(){
+        try {
+          const date = new Date();
+          const newRecord = {
+            date: `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
+          }
+          const response = await fetch(`${connection}/reports`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newRecord)
+          });
+      
+          const data = await response.json();
+    
+          if (!response.ok) {
+            ShowError(data.msg);
+            return { success: false, message: data.msg };
+          }
+            return { success: true, message: data.msg };
+          
+        } catch (error) {
+          console.error('Request failed:', error);
+          ShowError('Failed to add report. Please check your network connection')
+          return { success: false, message: 'Failed to add Report. Please check your network connection.' };
+        }
+      }
+      const dateToIso = (date) => {
+        const formatDateToISO = (date) => {
+          return date.toISOString().split('T')[0];
+        };
+        
+      }
     function handleCheckbox(item, cost, qty, options) {
         setChecked(prevState => ({
             ...prevState,
