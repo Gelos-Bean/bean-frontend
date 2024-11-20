@@ -40,8 +40,7 @@ export default function ViewOneTab({ tabId, onExit }) {
             const tabData = await response.json();
             if (!tabData.success) {
                 ShowError(tabData.msg);
-                setLoadingTabData(false);
-                return;
+                return setLoadingTabData(false);
             }
 
             setTabItems(tabData.msg);
@@ -61,9 +60,9 @@ export default function ViewOneTab({ tabId, onExit }) {
                 });
                 const res = await response.json();
     
-                if(!res) {
+                if(!res)
                     return ShowError(res.msg);
-                }
+
                 Alert.alert(res.msg)
                 onExit();
             } catch (err) {
