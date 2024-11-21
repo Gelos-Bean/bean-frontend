@@ -402,19 +402,25 @@ const App = () => {
           .map((product) => (
             <Card key={product._id} 
                   style={styles.cardStyle}
+                  mode='outlined'
                   onPress={() => handleProductSelect(product)}>
               <Card.Cover 
                 source={{ uri: product.image || 'https://www.pngkey.com/png/detail/233-2332677_image-500580-placeholder-transparent.png' }} 
                 style={styles.cardCover}
               />
-              <Card.Content>
-                <Text variant="bodySmall">{product.name}</Text>
+              <Card.Content >
+                <Text variant="bodyMedium" style={{marginTop:'5%'}}>{product.name}</Text>
               </Card.Content>
             </Card>
           ))) : (
             <View style={styles.loadingContainer}>
-              <Text variant='bodyLarge' style={{color:'grey'}}>Error loading products</Text>
-            </View>
+              <Text variant="headlineMedium" style={{}}>
+                Products
+              </Text>
+              <Text variant="bodyLarge" style={{}}>
+                No products found on the database
+              </Text>
+          </View>
           )}
       </ScrollView>
               )}

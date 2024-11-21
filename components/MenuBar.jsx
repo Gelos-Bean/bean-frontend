@@ -2,6 +2,7 @@ import React from 'react';
 import { Appbar } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
 
 export default function MenuBar(){
   const router = useRouter();

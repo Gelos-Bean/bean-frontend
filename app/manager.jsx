@@ -9,7 +9,8 @@ import {
   Button, 
   Text, 
   DataTable, 
-  List
+  List,
+  IconButton
 } from 'react-native-paper';
 
 
@@ -30,6 +31,26 @@ import Header from '../components/Header'
 
 const Manager = () => {
   const router = useRouter();
+  
+  //Sorting
+  const headers = ["Name", "Price", "Category"];
+  function sortBy(title) {
+    let sortedData = [...products];
+    switch (title) {
+      case "Name":
+        sortedData.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "Price":
+        sortedData.sort((a, b) => a.price - b.price);
+        break;
+      case "Category":
+        sortedData.sort((a, b) => a.course.localeCompare(b.course));
+        break;
+      default:
+        break;
+    }
+    setProducts(sortedData);
+  }
 
   // Search product modal 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
@@ -265,17 +286,14 @@ const Manager = () => {
       const today = new Date();
       const todayISO = dateToIso(today);
   
-      console.log('Today ISO:', todayISO);
   
       const reportMatch = reports.find((report) => {
         const reportDate = dateToIso(new Date(report.date));
-        console.log('Report date:', reportDate); // Debug original date
         return reportDate === todayISO;
       });
   
       if (reportMatch) {
         setTodaysReport(reportMatch);
-        console.log('Matched Report:', reportMatch);
       } else {
         console.log('No report found for today');
       }
@@ -305,11 +323,21 @@ const Manager = () => {
             <View style={styles.managerMainContainer}>
             <DataTable style={{ flex: 1 }}>
               <DataTable.Header>
-                <DataTable.Title>Name</DataTable.Title>
-                <DataTable.Title>Price</DataTable.Title>
-                <DataTable.Title>Course</DataTable.Title>
-                <DataTable.Title>Image</DataTable.Title>
-                <DataTable.Title>Options</DataTable.Title>
+              {headers.map((header, index) => (
+                  <DataTable.Title
+                    key={index}
+                    sortDirection='descending'
+                    onPress={() => sortBy(header)}
+                  >
+                    <Text variant='titleMedium'>{header}</Text>
+                  </DataTable.Title>
+                ))}
+                  <DataTable.Title>
+                    <Text variant='titleMedium'>Image</Text>
+                  </DataTable.Title>
+                  <DataTable.Title>
+                    <Text variant='titleMedium'>Options</Text>
+                  </DataTable.Title>
               </DataTable.Header>
               <ScrollView contentContainerStyle={{ flexDirection: 'column' }}>
                 {productsLoading ? (
@@ -341,7 +369,9 @@ const Manager = () => {
                                 paddingHorizontal: 0,
                                 marginHorizontal: 0,
                                 marginVertical: 0,
+                                height:'95%'
                               }}
+                              
                             >
                               <List.Accordion
                                 style={selectedProduct && product._id === selectedProduct._id ? styles.highlightedAccordian : styles.unhighlightedAccordian}
@@ -409,13 +439,13 @@ const Manager = () => {
                       )}
                       
                     </View>
-                    <Button style={[styles.squareButton, styles.wideButton]}
-                      mode="contained"
-                      icon="refresh"
-                      disabled={false}
-                      onPress={populateReports}>              
-                      Refresh Total
-                    </Button>
+                    <IconButton style={styles.squareButton}
+                    icon="refresh"
+                    mode="contained"
+                    selected={true}
+                    size={30}
+                    onPress={populateReports} />              
+
                     <Button style={[styles.squareButton, styles.wideButton]}
                       mode="contained"
                       icon="poll"

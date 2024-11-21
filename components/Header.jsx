@@ -24,9 +24,9 @@ export default function Header({ title, location, username }){
       </View>
       <View style={styles.centreSection}>
         <View style={styles.fixToText}>
-          <Text style={styles.textStyle}>{ location }</Text>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.textStyle}>{ username ? username : "User" } </Text>
+          <Text variant='bodyLarge' style={styles.textStyle}>{ location }</Text>
+          <Text variant='headlineMedium' style={styles.title}>{title}</Text>
+          <Text variant='bodyLarge' style={styles.textStyle}>{ username ? username : "User" } </Text>
         </View>
       </View>
       <View style={styles.loginContainer}>
@@ -82,14 +82,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   textStyle: {
-    fontSize: 16,
     margin:'auto'
   },
 
   title: {
     textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 20,
     margin:'auto'
   },
   squareButton:{
