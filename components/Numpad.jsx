@@ -8,10 +8,14 @@ import {
   StyleSheet,
 } from "react-native";
 
-const DialpadKeypad = ({ code, setCode }) => {
+const DialpadKeypad = ({ code, setCode, enter }) => {
   const dialPadContent = [1, 2, 3, 4, 5, 6, 7, 8, 9, "clear", 0, "enter"];
   const dialPadSize = 90;
   const dialPadTextSize = dialPadSize * 0.4;
+
+  const handleEnter = () => {
+    enter();
+  }
 
   return (
     <FlatList
@@ -25,7 +29,7 @@ const DialpadKeypad = ({ code, setCode }) => {
             if (item === "clear") {
               setCode(""); 
             } else if (item === "enter") {
-              Alert.alert("🎉", "Congratulations, you pressed enter!");
+              handleEnter();
             } else {
               setCode((prev) => prev + item.toString()); 
             }
@@ -35,7 +39,7 @@ const DialpadKeypad = ({ code, setCode }) => {
             style={[
               {
                 backgroundColor: item === "" ? "transparent" : "#fff",
-                width: 140,
+                width: 120,
                 height: 80,
               },
               styles.dialPadContainer,
