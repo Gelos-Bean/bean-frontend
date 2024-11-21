@@ -37,12 +37,6 @@ export default function TabBtnMenu({ tableNo, setViewTableModal, highlightOrder 
       <View style={[styles.buttonRow, {flex:1}]}>
         <Button style={[styles.squareButton, styles.wideButton]}
             mode="contained"
-            icon="send"
-            disabled={false}>              
-            Call Away
-        </Button>
-        <Button style={[styles.squareButton, styles.wideButton]}
-            mode="contained"
             icon="book-open-variant"
             disabled={false}>              
             View Details

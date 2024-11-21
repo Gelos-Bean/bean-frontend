@@ -121,7 +121,8 @@ export default styles = StyleSheet.create({
       flexWrap: 'wrap',   
     },
     cardStyle: {
-      margin: '1%',
+      marginHorizontal: '1%',
+      marginTop: 3,
       width: '18%',
       minWidth:120
     },
@@ -249,6 +250,7 @@ export default styles = StyleSheet.create({
       marginVertical: 0,
     },
     unhighlightedAccordian:{
+      backgroundColor: '#fcf8f2',
       paddingVertical: 0,
       paddingHorizontal: 0,
       marginHorizontal: 0,
@@ -278,30 +280,34 @@ export default styles = StyleSheet.create({
       minWidth: 120,
       height: 255, 
       justifyContent: 'space-between',
-      padding: '1%',
       borderRadius: 9,
     },
     titleContainer:{
       flexDirection:'row', 
       justifyContent:'space-between', 
-      height:'17%'
+      height:'20%',
+      padding:'5%',
+      paddingBottom:0
     },
     orderHeader: {
       flexDirection:'row',
-      justifyContent:'space-between', 
+      justifyContent:'space-between',
+      padding:'5%',
+      paddingVertical:0
     },
     orderButtons: {
       flexDirection: 'row',
       justifyContent:'space-between',
-      marginTop:'1%'
+      paddingVertical:'5%',
+      paddingHorizontal:'4%',
+
     },
     courseSection: {
       marginVertical: '1%',
-      paddingHorizontal:'1%',
+      paddingHorizontal:'5%',
       borderRadius: 9,
     },
     productContainer: { 
-      marginVertical:'1%'
     },
     optionsContainer: { 
       marginLeft: '5%' 

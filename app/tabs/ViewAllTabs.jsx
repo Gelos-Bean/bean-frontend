@@ -123,8 +123,13 @@ export default function ViewAllTabs({ onSelectTab }) {
                 ))
               ) : (
                 <View style={styles.loadingContainer}>
-                  <Text variant='bodyLarge' style={{color:'grey'}}>No active tables</Text>
-                </View>              
+                  <Text variant="headlineMedium" style={{}}>
+                    Tables
+                  </Text>
+                  <Text variant="bodyLarge" style={{}}>
+                    No tables are currently open
+                  </Text>
+                </View>           
               )}
             </DataTable>
         </ScrollView>

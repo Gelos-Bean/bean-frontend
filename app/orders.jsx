@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, SafeAreaView, FlatList, ScrollView, Alert, TextInput } from 'react-native';
+import { View, SafeAreaView, FlatList, ScrollView, Alert, TextInput, Pressable } from 'react-native';
 import { Button, Card, Text, IconButton, Switch, Icon } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -172,7 +172,9 @@ export default function Orders() {
               const groupedProducts = groupByCourse(order.products);
   
               return (
-                <Card style={styles.orderStyle}>
+                <Card 
+                  style={styles.orderStyle}
+                  mode='outlined'>
                   <View style={styles.titleContainer}>
                     <Text variant='titleLarge' style={{marginVertical:'auto'}}>Table {order.table ? order.table.tableNo : 'N/A'}</Text>
                     {order.comment.length > 0 ? <IconButton
@@ -225,7 +227,7 @@ export default function Orders() {
                   </ScrollView>
                   <View style={styles.orderButtons}>
                     <Button
-                      style={styles.squareButton}
+                      style={[styles.squareButton, {marginRight:"1%"}]}
                       mode="contained"
                       icon="arrow-expand-all"
                       onPress={() => ShowDetailsModal(order)}
@@ -233,7 +235,7 @@ export default function Orders() {
                       Expand
                     </Button>
                     <Button
-                      style={styles.squareButton}
+                      style={[styles.squareButton, {marginLeft:"1%"}]}
                       mode="contained"
                       icon="send"
                       onPress={() => ShowDeleteModal(order)}
@@ -248,7 +250,7 @@ export default function Orders() {
         ) : (
           <View style={styles.loadingContainer}>
             <Text variant="headlineMedium" style={{}}>
-              Relax
+              Orders
             </Text>
             <Text variant="bodyLarge" style={{}}>
               No orders currently placed
@@ -256,7 +258,8 @@ export default function Orders() {
           </View>
         )}
         <View style={styles.paginationControls}>
-          <View style={styles.controlContainer}>
+          {/* Stretch goal: implement call away functionality */}
+          {/* <View style={styles.controlContainer}>
             <Text variant="labelMedium" style={{ marginVertical: 'auto' }}>
               Toggle auto call away
             </Text>
@@ -271,7 +274,7 @@ export default function Orders() {
               minutes
             </Text>
             <Switch value={isSwitchOn} onValueChange={onToggleSwitch} style={{ marginVertical: 'auto' }} />
-          </View>
+          </View> */}
           <View style={styles.controlContainer}>
             <IconButton
               style={[styles.roundButton, { marginHorizontal: 50 }]}
