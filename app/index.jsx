@@ -195,7 +195,9 @@ const App = () => {
       const data = await response.json();
 
       if (data.success) {
-        setTables(data.msg);
+        let sortedData = data.msg;
+        sortedData.sort((a, b) => a.tableNo - b.tableNo);
+        setTables(sortedData);
       } else {
         const errorMessage = typeof data.msg === 'string' ? data.msg : 'Error retrieving tables';
         ShowError(errorMessage);
@@ -562,11 +564,11 @@ const App = () => {
                 Add to Tab
               </Button>   
               <IconButton style={styles.squareButton}
-                icon="table-furniture"
+                icon="table-chair"
                 mode="contained"
                 selected={true}
                 size={30}
-                onPress={() => setSelectTableModal(true)}/>
+                onPress={() => {setSelectTableModal(true)}}/>
             </View>
           </View>   
         </View>
