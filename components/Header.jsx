@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
-import { Button, Text, PaperProvider, MD3LightTheme as DefaultTheme } from 'react-native-paper';
+import { Button, Text, PaperProvider, Avatar, MD3LightTheme as DefaultTheme } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 
+import styles from '../styles/posStyles.js';
 import customTheme from '../styles/theme';
 const theme = customTheme;
 
 
-export default function Header({ title, location, username }){
+export default function Header({ title, location, username, image }){
   const router = useRouter();
 
   const goTo = (route) => {
@@ -16,91 +17,86 @@ export default function Header({ title, location, username }){
 
 
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
+    <View style={headerStyles.container}>
+      <View style={headerStyles.logoContainer}>
         <Image
-            style={styles.logo}
+            style={headerStyles.logo}
             source={require('../assets/images/BeanSceneLogo.png')} />
       </View>
-      <View style={styles.centreSection}>
-        <View style={styles.fixToText}>
-          <Text variant='bodyLarge' style={styles.textStyle}>{ location }</Text>
-          <Text variant='headlineMedium' style={styles.title}>{title}</Text>
-          <Text variant='bodyLarge' style={styles.textStyle}>{ username ? username : "User" } </Text>
-        </View>
+
+      <View style={headerStyles.centreContainer}>
+        <Text variant='bodyLarge'>{ location }</Text>
+        <Text variant='headlineMedium'>{ title }</Text>
       </View>
-      <View style={styles.loginContainer}>
-        <PaperProvider theme={theme}>
-          <Button
-            style={[styles.squareButton, styles.wideButton]}
-            mode="contained"
-            icon="logout"
-            onPress={() => { goTo('/login') }}>
-            Log Out
-          </Button>
-        </PaperProvider>
+
+      <View style={headerStyles.rightContainer}>
+        <View style={headerStyles.userInfo}>
+          <Text variant='bodyLarge'>{ username ? username : "User" } </Text>
+          <Avatar.Image 
+            size={50} 
+            source={{ uri: image || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541' }} 
+          />
+        </View>
+
+        <View style={headerStyles.logout}>
+          <PaperProvider theme={theme}>
+            <Button
+              style={[styles.squareButton, styles.wideButton]}
+              mode="contained"
+              icon="logout"
+              onPress={() => { goTo('/login') }}>
+              Log Out
+            </Button>
+          </PaperProvider>
+        </View>
       </View>
   </View>
   )
 }
 
-
-
-const styles = StyleSheet.create({
+const headerStyles = StyleSheet.create({
   container: {
+    display: 'flex',
     flexDirection: 'row',
-    marginTop: '2%',
-    height: 35,
+    alignItems: 'center',
+    justifyContent:'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    height: 70,
   },
+
   logoContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    height: 40,
+    width: 200,
   },
+
   logo: {
-    marginLeft: 10,
-    height: '100%',
     width: '100%',
+    height: '100%',
     resizeMode: 'contain',
   },
-  centreSection: {
-    flex:4,
-    alignContent:'center',
-    paddingHorizontal: 20,
-  },
-  bottomHalf: {
-    alignItems: 'center',
-  },
-  loginContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignContent:'center',
-    marginBottom: 1,
-    marginLeft: 10
-  },
-  fixToText: {
+
+  centreContainer: {
+    flex: 2,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  textStyle: {
-    margin:'auto'
+    alignItems: 'center',
+    justifyContent: 'space-around'
   },
 
-  title: {
-    textAlign: 'center',
-    margin:'auto'
+  rightContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16
   },
-  squareButton:{
-    borderRadius: 9,
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
-  wideButton:{
-    width: 120,
-    height: 40,
-    color:'rgb(229 220 200)',
-    margin:'auto'
+  username: {
+    marginRight: 10,
   },
-  separator: {
-    marginVertical: 8,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
+  avatar: {
+    borderRadius: 25,
   }
 });
