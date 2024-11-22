@@ -10,7 +10,7 @@ export default theme = {
       "onPrimaryContainer": "rgb(64, 0, 15)",
       "secondary": "rgb(255, 128, 0)",
       "onSecondary": "rgb(255, 255, 255)",
-      "secondaryContainer": "rgb(85, 128, 0)",
+      "secondaryContainer": "rgb(139, 149, 86)",
       "onSecondaryContainer": "rgb(255, 255, 255)",
       "tertiary": "rgb(140, 79, 0)",
       "onTertiary": "rgb(255, 255, 255)",

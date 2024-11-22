@@ -3,7 +3,8 @@ import {
   View,
   SafeAreaView,
   ScrollView,
-  Pressable
+  Pressable,
+  Alert
 } from 'react-native';
 import { 
   Button, 
@@ -20,12 +21,14 @@ import { connection } from '../config/config.json';
 import SearchModal from '../components/modals/SearchModal';
 import NewProduct from '../components/modals/NewProduct';
 import EditProductModal from '../components/modals/EditProduct';
+import SalesReportModal from '../components/modals/SalesReport';
 import ShowError from '../components/ShowError';
 import { withTimeout } from '../components/WithTimeout';
 import LoadingIndicator from '../components/LoadingIndicator';
 import LoadingIndicatorSmall from '../components/LoadingIndicatorSmall';
 import ErrorBoundary from '../components/ErrorBoundary';
-import ConfirmationModal from '../components/modals/ConfirmationModal';
+import DeleteConfirmationModal from '../components/modals/ConfirmationModal';
+import ReportConfirmationModal from '../components/modals/ConfirmationModal';
 import styles from '../styles/posStyles';
 import Header from '../components/Header'
 
@@ -59,7 +62,7 @@ const Manager = () => {
   const [newProductModalVisible, setNewProductModalVisible] = useState(false);
 
   // Delete product modal
-  const [viewConfirmationModal, setViewConfirmationModal] = useState(false);
+  const [viewDeleteConfirmationModal, setViewDeleteConfirmationModal] = useState(false);
   const [modalTitle, setModalTitle] = useState('Undefined');
   const [modalBody, setModalBody] = useState('Undefined');
 
@@ -204,7 +207,7 @@ const Manager = () => {
     setProductToDelete(selectedProduct);
     setModalTitle('Delete Product')
     setModalBody(`Are you sure you would like to to delete ${selectedProduct.name}?`)
-    setViewConfirmationModal(true);
+    setViewDeleteConfirmationModal(true);
   }
  async function DeleteProduct(selection) {
   if(!selection){
@@ -239,6 +242,8 @@ const Manager = () => {
   const [reports, setReports] = useState([]); 
   const [todaysReport, setTodaysReport] = useState(null);
   const [reportsLoading, setReportsLoading] = useState(false);
+  const [reportModalVisible, setReportModalVisible] = useState(false);
+
   async function populateReports() {
     setReportsLoading(true);
     if (!connection) {
@@ -304,6 +309,57 @@ const Manager = () => {
     return date.toISOString().split('T')[0]; // Extract YYYY-MM-DD
   };
   
+  const [viewReportConfirmationModal, setViewReportConfirmationModal] = useState(false)
+  const handleReportPress = () => {
+    if (todaysReport != null) {
+      setReportModalVisible(true)
+    } else {
+      setModalTitle('No Report')
+      setModalBody(`There is no report for today. Create one?`)
+      setViewReportConfirmationModal(true);
+    }
+  }
+
+  async function addReport(selection) {
+    if(selection == false) {
+      Alert.alert('No report created')
+      return;
+    }
+    if (!connection) {
+      ShowError('Connection configuration is missing');
+      setReportsLoading(false);
+      return;
+    }
+    try {
+      const response = await withTimeout(fetch(`${connection}/reports/today`, { method: 'GET' }), 5000);
+      if (!response.ok) {
+        const error = await response.json();
+        const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
+        ShowError(errorMessage);
+        console.error(errorMessage, response.statusText);
+        setReportsLoading(false);
+        return;
+      }
+  
+      const data = await response.json();
+  
+      if (data.success === true) {
+        const errorMessage = typeof data.msg === 'string' ? data.msg : 'A report already exists for that day';
+        ShowError(errorMessage);
+        console.error(errorMessage, response.statusText);
+        populateReports();
+      } else {
+        Alert.alert('Success', 'New report created');
+        populateReports();
+      }
+    } catch (err) {
+      console.error('Search error:', err);
+      ShowError('There was a problem creating a new report. Please check your network connection');
+    } finally {
+      setReportsLoading(false);
+    }
+  }
+
   // On Load:
   useEffect(() => {
     populateProducts();
@@ -444,12 +500,14 @@ const Manager = () => {
                     mode="contained"
                     selected={true}
                     size={30}
+                    disabled={reportsLoading}
                     onPress={populateReports} />              
 
                     <Button style={[styles.squareButton, styles.wideButton]}
                       mode="contained"
                       icon="poll"
-                      disabled={true}>              
+                      disabled={reportsLoading}
+                      onPress={handleReportPress}>              
                       Report
                     </Button>
                     
@@ -463,17 +521,28 @@ const Manager = () => {
         <NewProduct   visible={newProductModalVisible} 
                       onDismiss={() => {setNewProductModalVisible(false), populateProducts()}} 
                       onAdd={handleAddProduct}/>
-        <ConfirmationModal
-                      visible={viewConfirmationModal}
-                      onDismiss={() => setViewConfirmationModal(false)}
+        <DeleteConfirmationModal
+                      visible={viewDeleteConfirmationModal}
+                      onDismiss={() => setViewDeleteConfirmationModal(false)}
                       title={modalTitle}
                       body={modalBody}
                       onSelect={DeleteProduct}/>
+        <ReportConfirmationModal
+                      visible={viewReportConfirmationModal}
+                      onDismiss={() => setViewReportConfirmationModal(false)}
+                      title={modalTitle}
+                      body={modalBody}
+                      onSelect={addReport}/>
         <EditProductModal
                       visible={viewEditProductModel}
                       onDismiss={() => setViewEditProductModal(false)}
                       product={selectedProduct}
                       onConfirm={handleEditProduct}/>
+        <SalesReportModal
+                      visible={reportModalVisible}
+                      onDismiss={() => setReportModalVisible(false)}
+                      reports={reports}
+                      todaysReport={todaysReport}/>
       </ErrorBoundary>
       </SafeAreaView>
   );
