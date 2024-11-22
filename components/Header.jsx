@@ -18,14 +18,16 @@ export default function Header({ title, location, username, image }){
 
   return (
     <View style={headerStyles.container}>
-      <View style={headerStyles.logoContainer}>
-        <Image
-            style={headerStyles.logo}
-            source={require('../assets/images/BeanSceneLogo.png')} />
+      <View style={headerStyles.leftContainer}>
+        <View style={headerStyles.logoContainer}>
+          <Image
+              style={headerStyles.logo}
+              source={require('../assets/images/BeanSceneLogo.png')} />
+        </View>
+        <Text variant='bodyLarge'>{ location }</Text>
       </View>
 
       <View style={headerStyles.centreContainer}>
-        <Text variant='bodyLarge'>{ location }</Text>
         <Text variant='headlineMedium'>{ title }</Text>
       </View>
 
@@ -61,13 +63,20 @@ const headerStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent:'space-between',
     paddingHorizontal: 16,
-    paddingTop: 20,
-    height: 70,
+    paddingTop: 30,
+    paddingBottom: 5,
+    height: 75,
+  },
+  
+  leftContainer: { 
+    flexDirection: 'row',
+    alignItems: 'center'
   },
 
   logoContainer: {
     height: 40,
     width: 200,
+    marginRight: 10,
   },
 
   logo: {
@@ -77,12 +86,10 @@ const headerStyles = StyleSheet.create({
   },
 
   centreContainer: {
-    flex: 2,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around'
   },
-
   rightContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -92,11 +99,10 @@ const headerStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    marginRight: 20,
   },
-  username: {
-    marginRight: 10,
-  },
-  avatar: {
-    borderRadius: 25,
+  logout: { 
+    maxHeight: '100%'
   }
+  
 });
