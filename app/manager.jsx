@@ -30,7 +30,6 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import DeleteConfirmationModal from '../components/modals/ConfirmationModal';
 import ReportConfirmationModal from '../components/modals/ConfirmationModal';
 import styles from '../styles/posStyles';
-import Header from '../components/Header'
 
 const Manager = () => {
   const router = useRouter();
@@ -369,10 +368,6 @@ const Manager = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={"Manager"}
-        location={"Sydney"}
-        username={null}/>
-      <Separator />
       <Pressable style={{flex:1}}
                 onPress={() => setSelectedProduct(null)}>
         <View style={styles.body}>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   FlatList,
   TouchableOpacity,
@@ -8,14 +8,22 @@ import {
   StyleSheet,
 } from "react-native";
 
-const DialpadKeypad = ({ code, setCode, enter }) => {
+const DialpadKeypad = ({ reset, setReset, setCode, enter }) => {
+
+  useEffect(() => {
+    if (reset) {
+      setCode("");
+    }
+      setReset(false);
+  }, [reset])
+
   const dialPadContent = [1, 2, 3, 4, 5, 6, 7, 8, 9, "clear", 0, "enter"];
   const dialPadSize = 90;
   const dialPadTextSize = dialPadSize * 0.4;
 
   const handleEnter = () => {
     enter();
-  }
+  } 
 
   return (
     <FlatList

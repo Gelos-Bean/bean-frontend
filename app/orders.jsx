@@ -4,7 +4,6 @@ import { Button, Card, Text, IconButton, Switch, Icon } from 'react-native-paper
 import { useFocusEffect } from '@react-navigation/native';
 
 import styles from '../styles/posStyles.js';
-import Header from '../components/Header.jsx';
 import { connection } from '../config/config.json';
 import LoadingIndicator from '../components/LoadingIndicator.jsx';
 import ShowError from '../components/ShowError.jsx';
@@ -129,8 +128,6 @@ export default function Orders() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Orders" location="Sydney" username={null} />
-      <Separator />
       <View style={styles.fullMainContainer}>
         {loadingOrders ? (
           <LoadingIndicator />

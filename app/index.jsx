@@ -13,7 +13,6 @@ import {
   IconButton
  } from 'react-native-paper';
 
-import Header from '../components/Header.jsx';
 import { connection } from '../config/config.json';
 import styles from '../styles/posStyles';
 import ErrorBoundary from '../components/ErrorBoundary.jsx';
@@ -45,9 +44,6 @@ const App = () => {
   const [modalTitle, setModalTitle] = useState('Undefined');
   const [modalBody, setModalBody] = useState('Undefined');
 
-
-
-  const Separator = () => <View style={styles.separator} />;
   
   //Products
   const [products, setProducts] = useState([]); 
@@ -339,10 +335,6 @@ const App = () => {
 
   return (
   <SafeAreaView style={styles.container}>
-    <Header title={"Home"}
-      location={"Sydney"}
-      username={null} />
-    <Separator />
     <Pressable style={{flex:1}}
                 onPress={() => setSelectedProduct(null)}>
     <View style={styles.body}>

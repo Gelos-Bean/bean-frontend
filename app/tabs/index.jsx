@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Pressable, ScrollView, SafeAreaView } from 'react-native';
+import { View } from 'react-native';
 import { connection } from '../../config/config.json';
 
 import Header from '../../components/Header.jsx';
@@ -24,12 +24,6 @@ export default function Tabs(){
   
   return (
     <View style={styles.container}>
-      <Header title={"Tabs"} 
-        location={"Sydney"} 
-        username={null} />
-
-      <Separator />
-
       <View style={styles.body}>
         <View style={{flexDirection: 'row', flex:1}}>
           {selectView ? (
