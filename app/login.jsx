@@ -68,7 +68,6 @@ const Login = () => {
 
   const [code, setCode] = useState(""); 
   const [selectedUser, setSelectedUser] = useState();
-  
   //Log in
   const handleLogin = () => { 
     if (!selectedUser) {
@@ -114,8 +113,8 @@ const Login = () => {
       <View style={{flex:1, marginVertical:'5%',justifyContent:'space-between'}}>
         <View style={{flexDirection:'row', justifyContent:'center'}}>
           <Image 
-          source={{uri: 'https://www.sydneycityguide.com.au/img/listings/babas-place-marrickville.jpg'}}
-          style={{width: 100, height: 100, borderWidth:0.5, borderColor:'#808080',borderRadius:999}} />
+            source={{uri: 'https://www.sydneycityguide.com.au/img/listings/babas-place-marrickville.jpg'}}
+            style={{width: 100, height: 100, borderWidth:0.5, borderColor:'#808080',borderRadius:999}} />
         </View>
         <View style={{flexDirection:'row', justifyContent:'center'}}>
           <Text variant="displayLarge" style={styles.header}>Log In</Text>
