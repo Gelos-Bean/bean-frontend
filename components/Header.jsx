@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { Button, Text, PaperProvider, Avatar, MD3LightTheme as DefaultTheme } from 'react-native-paper';
 import { useRouter } from 'expo-router';
+import { AuthContext } from '../app/context/AuthContext.jsx';
 
 import styles from '../styles/posStyles.js';
 import customTheme from '../styles/theme';
@@ -10,11 +11,12 @@ const theme = customTheme;
 
 export default function Header({ title, location, username, image }){
   const router = useRouter();
+  const { logout } = useContext(AuthContext);
 
-  const goTo = (route) => {
-    router.push(route);
-  };
-
+  const handleLogout = () => { 
+    logout();
+    router.push('/login');
+  }
 
   return (
     <View style={headerStyles.container}>
@@ -46,7 +48,7 @@ export default function Header({ title, location, username, image }){
               style={[styles.squareButton, styles.wideButton]}
               mode="contained"
               icon="logout"
-              onPress={() => { goTo('/login') }}>
+              onPress={handleLogout}>
               Log Out
             </Button>
           </PaperProvider>
