@@ -51,7 +51,6 @@ export const AuthProvider = ({ children }) => {
         authentication: null
     })};
 
-    console.log(authState);
     return (
         <AuthContext.Provider 
                 value={{ authState, login, logout }}>
