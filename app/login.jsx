@@ -14,9 +14,8 @@ import {
   IconButton
  } from 'react-native-paper';
 
-import { useRouter } from 'expo-router';
 import { AuthContext } from './context/AuthContext.jsx';
-
+import { useRouter } from 'expo-router';
 import { connection } from '../config/config.json';
 import ShowError from '../components/ShowError.jsx';
 import { withTimeout } from '../components/WithTimeout.jsx';
@@ -26,9 +25,13 @@ import DialpadKeypad from '../components/Numpad.jsx';
 
 
 const Login = () => {
-  //Navigation
+  const { login, authState } = useContext(AuthContext);
   const router = useRouter();
-  const { login } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (authState.authenticated) router.push('/');
+  }, [authState.authenticated]);
+
 
   //Get users
   const [users, setUsers] = useState([]); 
@@ -43,12 +46,8 @@ const Login = () => {
     try {
       const response = await withTimeout(fetch(`${connection}/users`, { method: 'GET' }), 5000);
   
-      if (!response.ok) {
-        const errorMessage = 'Server responded with an error';
-        ShowError(errorMessage);
-        console.error(errorMessage, response.statusText);
-        return;
-      }
+      if (!response.ok)
+        return ShowError('Server responded with an error');
   
       const data = await response.json();
   
@@ -58,7 +57,6 @@ const Login = () => {
         ShowError(data.msg);
       }
     } catch (err) {
-      console.error('Search error:', err);
       ShowError('Failed to load users. Please check your network connection and try again.');
     } finally {
       setUsersLoading(false);
@@ -66,20 +64,31 @@ const Login = () => {
   }
 
 
+  //Log in
   const [code, setCode] = useState(""); 
   const [selectedUser, setSelectedUser] = useState();
-  //Log in
-  const handleLogin = () => { 
-    if (!selectedUser) {
-      return Alert.alert('Select user before logging in');
-    }
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [reset, setReset] = useState(false);
+  const handleLogin = async () => {
+    if (!selectedUser)
+      return Alert.alert('Missing Details', 'Please select a user before logging in.');
 
-    login(selectedUser.username, 
-      code, 
-      () => router.push('/'),
-      (error) => Alert.alert('Login failed: ', error)
-    );
-  }
+    try {
+      setLoginLoading(true);
+      setReset(false);
+
+      await login(selectedUser.username, code);
+
+      setReset(true);
+
+    } catch (error) {
+      return Alert.alert('Login error:', error);
+
+    } finally {
+      setLoginLoading(false);
+      setReset(false);
+    }
+  };
 
   //Handle dropdown animation
   const [expanded, setExpanded] = useState(false);
@@ -129,11 +138,15 @@ const Login = () => {
                           height: 75,
                           borderWidth: 0.5,
                           margin: '1%',
-                          fontSize:45}}
+                          fontSize: 45}}
                       />
         </View>
         <View style={{flexDirection:'row', justifyContent:'center'}}>
-          <DialpadKeypad code={code} setCode={setCode} enter={handleLogin}/>
+          { loginLoading ? (
+            <LoadingIndicator />
+           ) : (
+            <DialpadKeypad reset={reset} setReset={setReset} setCode={setCode} enter={handleLogin}/>
+           )}
         </View>
       </View>   
       <View style={{flex:1,marginVertical:'auto'}}>
@@ -150,14 +163,14 @@ const Login = () => {
             left={props => <List.Icon {...props} icon="account-group" />}
             expanded={expanded}
             onPress={handlePress}
-            background='#fffff'
+            background='#ffffff'
             style={
-              { backgroundColor:'#fffff',
+              { backgroundColor:'#ffffff',
                 borderRadius:999
               }
             }
             titleStyle={
-              { color:'#fffff'
+              { color:'#ffffff'
               }
             }>
               <ScrollView>
