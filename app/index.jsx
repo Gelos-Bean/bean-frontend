@@ -44,9 +44,6 @@ const App = () => {
   const [modalTitle, setModalTitle] = useState('Undefined');
   const [modalBody, setModalBody] = useState('Undefined');
 
-
-
-  const Separator = () => <View style={styles.separator} />;
   
   //Products
   const [products, setProducts] = useState([]); 
