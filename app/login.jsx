@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   SafeAreaView,
@@ -15,7 +15,7 @@ import {
  } from 'react-native-paper';
 
 import { useRouter } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from './context/AuthContext.jsx';
 
 import { connection } from '../config/config.json';
 import ShowError from '../components/ShowError.jsx';
@@ -28,11 +28,7 @@ import DialpadKeypad from '../components/Numpad.jsx';
 const Login = () => {
   //Navigation
   const router = useRouter();
-  const navigation = useNavigation();
-
-  const goTo = (route) => {
-    router.push(route);
-  };
+  const { login } = useContext(AuthContext);
 
   //Get users
   const [users, setUsers] = useState([]); 
@@ -69,54 +65,21 @@ const Login = () => {
     }
   }
 
-  //Log in
-  const [user, setUser] = useState();
+
   const [code, setCode] = useState(""); 
   const [selectedUser, setSelectedUser] = useState();
-  async function tryLogin() {
-    if(code.length <= 0){
-      Alert.alert('No Pin', 'Pin is required to log in.');
-      return;
-    } else if (!parseInt(code)) {
-      Alert.alert('Invalid Pin', 'Pin may only contain numbers.');
-      setCode("");
-      return;
-    } else if (!selectedUser) {
-      Alert.alert('No User', 'A user must be selected to log in.');
-      return;
-    }
-    try{
-      const credentials = {
-        username: selectedUser.username,
-        pin: code
-      }
-
-      const response = await fetch(`${connection}/users/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
-      });
   
-      if (!response.ok) {
-        const error = await response.json();
-        Alert.alert('Login Failed', 'Incorrect username and pin combination');
-        console.error('Response error',error.msg);
-        return;
-      }
-  
-      const data = await response.json();
-
-      if (data.success) {
-        setUser(selectedUser)
-        goTo('/'); //This has gotta be tidied up
-      } else {
-        ShowError(error.msg);
-        console.error('Error', data.msg);
-      }
-    } catch(err) {
-      console.error(`Server error`, err)
-      ShowError(`There was a problem logging in. Please check your network connection and try again.`)
+  //Log in
+  const handleLogin = () => { 
+    if (!selectedUser) {
+      return Alert.alert('Select user before logging in');
     }
+
+    login(selectedUser.username, 
+      code, 
+      () => router.push('/'),
+      (error) => Alert.alert('Login failed: ', error)
+    );
   }
 
   //Handle dropdown animation
@@ -171,7 +134,7 @@ const Login = () => {
                       />
         </View>
         <View style={{flexDirection:'row', justifyContent:'center'}}>
-          <DialpadKeypad code={code} setCode={setCode} enter={() => tryLogin()}/>
+          <DialpadKeypad code={code} setCode={setCode} enter={handleLogin}/>
         </View>
       </View>   
       <View style={{flex:1,marginVertical:'auto'}}>
