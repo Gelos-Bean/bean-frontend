@@ -150,4 +150,21 @@ export default styles = StyleSheet.create({
       opacity: 0.5, 
       color: 'grey', 
     },
+    widgetContainer: {
+      flex:1,
+      padding:'1%',
+      paddingHorizontal:'20%',
+      marginHorizontal:'5%',
+      marginVertical:'1%',
+      flexDirection:'row',
+      justifyContent:'space-between',
+      alignContent:'center',
+      borderRadius:9,
+      backgroundColor:'#8B9556'
+    },
+    widgetText: {
+      color:"rgb(255, 255, 255)",
+      textAlign:'center',
+      marginVertical:'auto'
+    },
   });

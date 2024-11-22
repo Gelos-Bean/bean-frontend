@@ -142,10 +142,10 @@ const Login = () => {
           <LoadingIndicator />
         ) : (
         <List.Section          
-        style={{
-            margin:'10%',
-          }}
-        >
+          style={{
+              margin:'10%',
+            }}
+          >
           <List.Accordion
             title={<Text variant='headlineSmall'>Users</Text>}
             left={props => <List.Icon {...props} icon="account-group" />}
