@@ -18,12 +18,12 @@ export default function PaymentScreen({
         setRemaining, 
         toPay, 
         setToPay,
+        passData,
         disableItems,
         setConfirmDelete
     }){
 
     const tips = [5, 10, 15];
-
     const [email, setEmail] = useState("");
     const [pressed, setPressed] = useState(
             tips.reduce((acc, tip) => ({...acc, [tip]: false}), {}));
@@ -263,30 +263,44 @@ export default function PaymentScreen({
                     />
                 </View>    
             </View>
-            <View style={[styles.buttonRow]}>
-                <View style={styles.buttonText}>
-                    <IconButton 
-                        style={styles.squareButton}
-                        icon="minus-circle"
+            
+            <View style={[styles.buttonRow, {display: 'inline-block'}]}>
+                <View style={{justifyContent:'center'}}>
+                    <Button style={[styles.squareButton, {paddingVertical: 5}]}
                         mode="contained"
-                        selected={true}
-                        onPress={() => handleVoidItem()}
-                        size={30}
-                    />
-                    <Text variant='bodySmall'>Void Item</Text>
+                        icon="send"
+                        onPress={() => passData()}
+                    >             
+                    Add to Tab
+                    </Button> 
                 </View>
-                <View style={styles.buttonText}>
-                    <IconButton 
-                        style={styles.squareButton}
-                        icon="minus-circle-multiple"
-                        mode="contained"
-                        selected={true}
-                        size={30}
-                        onPress={() => setPaidInFull(true)}
-                    />
-                    <Text variant='bodySmall'>Void Tab</Text>
-                </View>
-            </View> 
+
+                <View style={{flexDirection: 'row', justifyContent:'center'}}>
+                    <View style={styles.buttonText}>
+                        <IconButton 
+                            style={styles.squareButton}
+                            icon="minus-circle"
+                            mode="contained"
+                            selected={true}
+                            onPress={() => handleVoidItem()}
+                            disabled={true}
+                            size={30}
+                        />
+                        <Text variant='bodySmall'>Void Item</Text>
+                    </View>
+                    <View style={styles.buttonText}>
+                        <IconButton 
+                            style={styles.squareButton}
+                            icon="minus-circle-multiple"
+                            mode="contained"
+                            selected={true}
+                            size={30}
+                            onPress={() => setPaidInFull(true)}
+                        />
+                        <Text variant='bodySmall'>Void Tab</Text>
+                    </View>
+                </View> 
+            </View>
             <MemoPaymentOptions 
                 remaining={remaining}
                 toPay={toPay}
