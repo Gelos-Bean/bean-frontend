@@ -19,6 +19,7 @@ import ErrorBoundary from '../components/ErrorBoundary.jsx';
 import LoadingIndicator from '../components/LoadingIndicator.jsx';
 import ShowError from '../components/ShowError.jsx';
 import { withTimeout } from '../components/WithTimeout.jsx';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import AddTableModal from '../components/modals/AddTable.jsx';
 import SelectTableModal from '../components/modals/SelectTable.jsx';
@@ -44,7 +45,21 @@ const App = () => {
   const [modalTitle, setModalTitle] = useState('Undefined');
   const [modalBody, setModalBody] = useState('Undefined');
 
-  
+  // For redirect to Table
+  const router = useRouter();  
+  // populate data from ViewOneTab when "Add To Tab" on that screen is hit
+  const { redirectId, redirectTabNo } = useLocalSearchParams();
+  const [selectedTable, setSelectedTable] = useState(null);
+
+  useEffect(() => {
+    if(redirectId && redirectTabNo) {
+      setSelectedTable({
+        _id: redirectId,
+        tableNo: redirectTabNo
+      })
+    }
+  }, [redirectId, redirectTabNo])
+
   //Products
   const [products, setProducts] = useState([]); 
   async function PopulateProducts() {
@@ -123,7 +138,6 @@ const App = () => {
   //Add comment to order
   const [comment, setComment] = useState('');
   const addComment = (newComment) => {
-    console.log(newComment);
     if(newComment.length <= 0) {
       Alert.alert('Error', 'Comment must be longer than 0 characters')
       return;
@@ -165,10 +179,21 @@ const App = () => {
   };
   
 
+  // handle redirections both to and from tab
+  
+  async function redirectToTab() {
+    const table = selectedTable?.tableNo || undefined;
+    const order = await PlaceOrder(true);
+    if (order && table) {
+      router.push({
+        pathname: '/tabs',
+        params: { id: Number(table) }
+      }) 
+    }
+  }
 
   //Tables:
-  const [tables, setTables] = useState([])
-  const [selectedTable, setSelectedTable] = useState(null);
+  const [tables, setTables] = useState([]);
 
   //Populate tables
   async function PopulateTables() {
@@ -241,7 +266,6 @@ const App = () => {
         console.error('Error', data.msg);
         return;
       }
-
       setSelectedTable({ tableNo: tableNum, _id: data._id });
       setViewAddTableModal(false);  
 
@@ -256,7 +280,7 @@ const App = () => {
     
 
   // Place order:
-  async function PlaceOrder() {
+  async function PlaceOrder(redirect = false) {
     if(selectedTable === null)
     {
       Alert.alert('Error', 'Please select a table before placing an order')
@@ -304,13 +328,16 @@ const App = () => {
         console.error('Error', data.msg);
 
       }
-
+        
       setOrderProducts([]);
       setSelectedTable(null);
       setComment('');
 
+
+      if (redirect)
+        return true;
+
     } catch (error) {
-      console.error('Error placing order:', error);
       ShowError('Failed to place order. Please check your network connection.');
     }
   }
@@ -546,7 +573,7 @@ const App = () => {
               <Button style={[styles.squareButton, styles.wideButton]}
                 mode="contained"
                 icon="credit-card-outline"
-                disabled={true}>              
+                onPress={() => redirectToTab()}>              
                 Quick Pay
               </Button>
               <Button style={[styles.squareButton, styles.wideButton]}

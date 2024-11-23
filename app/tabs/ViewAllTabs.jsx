@@ -1,55 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Pressable, SafeAreaView } from 'react-native';
+import { View, ScrollView, Pressable, SafeAreaView, StyleSheet } from 'react-native';
 import { DataTable, Text } from 'react-native-paper';
 import { connection } from '../../config/config.json';
 
 import TabBtnMenu from '../../components/tab/TabBtnMenu.jsx';
-import AddTableModal from '../../components/modals/AddTable.jsx';
-import SelectTableModal from '../../components/modals/SelectTable.jsx';
-
-import handleAddTable from '../../utils/addTable.jsx';
 
 import LoadingIndicator from '../../components/LoadingIndicator.jsx';
 import ShowError from '../../components/ShowError.jsx';
 import { withTimeout } from '../../components/WithTimeout.jsx';
 import styles from '../../styles/posStyles.js';
-import ErrorBoundary from '../../components/ErrorBoundary.jsx';
 
 export default function ViewAllTabs({ onSelectTab }) {
   const headers = ["Tab", "Arrival", "PAX", "Total"];
+
   const [tables, setTables] = useState([]);
-  const [newTable, setNewTable] = useState({});
-  const [viewTableModal, setViewTableModal] = useState(false);
-  const [viewSelectTableModal, setSelectTableModal] = useState(false);
-  const [highlightOrder, setHighlightOrder] = useState(false);
-  const [loadingTables, setLoadingTables] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedTable, setSelectedTable] = useState(undefined);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if(refresh) {
+      fetchData();
+      setRefresh(false);
+    }
+  }, [refresh]);
+
   async function fetchData() {
-    setLoadingTables(true);
+    setLoading(true);
     try {
       const response = await withTimeout(fetch(`${connection}/tables`, { method: 'GET' }), 5000);
       const tabs = await response.json();
 
       if (!tabs.success) {
-        ShowError('No tables found');
-        console.error('Fetch error', tabs.msg);
-        return;
+        return ShowError('No tables found');
       }
+
       setTables(tabs.msg);
     } catch (err) {
-      console.error('Error', err)
-      ShowError('Failed to load tables. Please check your network connection');
+      
+      ShowError('Failed to load tables. ' + err);
     } finally {
-      setLoadingTables(false);
+      setLoading(false);
     }
   }
 
-  async function addTable(tableNum, pax, limit) {
-    await handleAddTable(tableNum, pax, limit);
+  function handleHighlightTable(tableNo){
+    if(selectedTable == tableNo) {
+      return setSelectedTable(undefined);
+    }
+    setSelectedTable(tableNo);
   }
 
   function formatTime(formatDate) {
@@ -82,7 +85,7 @@ export default function ViewAllTabs({ onSelectTab }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.managerMainContainer}>
-      {loadingTables ? (
+      {loading ? (
             <LoadingIndicator/>
           ) : (
         <ScrollView  style={{flex:1}}>         
@@ -102,21 +105,23 @@ export default function ViewAllTabs({ onSelectTab }) {
                 tables.map((item, index) => (
                   <Pressable
                     key={index}
-                    onPress={() => onSelectTab(item.tableNo)}
-                    onLongPress={() => setHighlightOrder(true)}
+                    onPress={() => handleHighlightTable(item.tableNo)}
+                    onLongPress={() => onSelectTab(item.tableNo)}
                   >
-                    <DataTable.Row>
+                     <DataTable.Row
+                        style={selectedTable === item.tableNo ? tabStyle.highlightedRow : null}
+                      >
                       <DataTable.Cell>
-                        <Text>{item.tableNo}</Text>
+                        <Text style={selectedTable === item.tableNo && tabStyle.highlightText}>{item.tableNo}</Text>
                       </DataTable.Cell>
                       <DataTable.Cell>
-                        <Text>{item.openedAt ? formatTime(item.openedAt) : ""}</Text>
+                        <Text style={selectedTable === item.tableNo && tabStyle.highlightText}>{item.openedAt ? formatTime(item.openedAt) : ""}</Text>
                       </DataTable.Cell>
                       <DataTable.Cell>
-                        <Text>{item.pax}</Text>
+                        <Text style={selectedTable === item.tableNo && tabStyle.highlightText}>{item.pax}</Text>
                       </DataTable.Cell>
                       <DataTable.Cell>
-                        <Text>{`$${item.total.toFixed(2)}`}</Text>
+                        <Text style={selectedTable === item.tableNo && tabStyle.highlightText}>{`$${item.total.toFixed(2)}`}</Text>
                       </DataTable.Cell>
                     </DataTable.Row>
                   </Pressable>
@@ -136,14 +141,23 @@ export default function ViewAllTabs({ onSelectTab }) {
         )}
       </View>
       <TabBtnMenu
-        tableNo={newTable.tableNo}
-        setViewTableModal={setViewTableModal}
-        highlightOrder={highlightOrder}
+        tableNo={tables.filter(t => t.tableNo == selectedTable)}
+        handleSelectedTab={() => onSelectTab(selectedTable)}
+        refresh={setRefresh}
+        loading={setLoading}
       />
-      <ErrorBoundary>
-        <AddTableModal visible={viewTableModal} onDismiss={() => setViewTableModal(false)} onAdd={addTable} loading={true} />
-        <SelectTableModal visible={viewSelectTableModal} setVisibility={setSelectTableModal} onSelect={onSelectTab} tables={tables} />
-      </ErrorBoundary>
     </SafeAreaView>
   );
 }
+
+const tabStyle = StyleSheet.create({
+  highlightedRow: {
+    borderBottomWidth: 1,
+    borderColor: '#9C404D',
+    backgroundColor: '#9C404D',
+    borderRadius: 5
+  },
+  highlightText:{
+    color: '#ffffff',
+  }
+})

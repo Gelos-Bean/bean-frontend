@@ -1,40 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View } from 'react-native';
-import { connection } from '../../config/config.json';
 
-import Header from '../../components/Header.jsx';
 import styles from '../../styles/posStyles.js';
 import ViewAllTabs from './ViewAllTabs.jsx';
 import ViewOneTab from './ViewOneTab.jsx';
+import { useLocalSearchParams } from 'expo-router';
 
-
-const Separator = () => <View style={styles.separator} />;
-
-
-export default function Tabs(){
-
+export default function Tabs() {;
+  const { id } = useLocalSearchParams(); 
   const [selectView, setSelectView] = useState(null);
+
+  useEffect(() => {
+    if (id) {
+      handleSelectedTab(Number(id));
+    }
+  }, [id]);
+
+
   const handleSelectedTab = (tabNo) => {
     setSelectView(tabNo);
-  }
+  };
 
   const handleViewAllTabs = () => {
     setSelectView(null);
-  }
-  
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.body}>
-        <View style={{flexDirection: 'row', flex:1}}>
+        <View style={{ flexDirection: 'row', flex: 1 }}>
           {selectView ? (
-            <ViewOneTab 
-              tabId={ selectView } 
-              onExit={ handleViewAllTabs } 
-            />
-            ) : <ViewAllTabs onSelectTab={ handleSelectedTab } />
-          }
+            <ViewOneTab tabId={selectView} onExit={handleViewAllTabs} />
+          ) : (
+            <ViewAllTabs onSelectTab={handleSelectedTab} />
+          )}
         </View>
       </View>
-    </View> 
+    </View>
   );
-};
+}

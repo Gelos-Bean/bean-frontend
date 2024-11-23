@@ -9,14 +9,18 @@ const AddTableModal = ({ visible, onDismiss, onAdd, loading}) => {
   const [pax, setPax] = useState(0);
   const [limit, setLimit] = useState('');
 
+  function resetFields() {
+    setTableNum(0);
+    setPax(0);
+    setLimit('');
+  }
+
   const handleAdd = () => {
     if (tableNum && pax) {
       onAdd(tableNum, pax, limit)
         .then(() => {
           // Reset modal values on successful save
-          setTableNum(0);
-          setPax(0);
-          setLimit('');
+          resetFields();
           onDismiss(); 
         })
         .catch((err) => {
@@ -123,8 +127,11 @@ const AddTableModal = ({ visible, onDismiss, onAdd, loading}) => {
               style={[styles.squareButton, styles.wideButton]}
               icon="window-close"
               mode="contained"
-              onPress={onDismiss}
-            >
+              onPress={() => {
+                resetFields();
+                onDismiss()
+              }}
+              >
               Cancel
             </Button>
             <Button
