@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { DataTable, Text, Checkbox, IconButton } from 'react-native-paper';
 import { connection } from '../../config/config.json';
+import { useRouter } from 'expo-router';
 
 import styles from '../../styles/posStyles.js';
 import Payment from '../../components/tab/Payment.jsx';
@@ -12,7 +13,8 @@ import { withTimeout } from '../../components/WithTimeout.jsx';
 
 export default function ViewOneTab({ tabId, onExit }) {
     const headers = ["Products", "Quantity", "Cost", "Select"];
-   
+    const router = useRouter();
+
     const [tabItems, setTabItems] = useState({});
     const [checked, setChecked] = useState({});
     const [paidItems, setPaidItems] = useState([]);
@@ -28,9 +30,9 @@ export default function ViewOneTab({ tabId, onExit }) {
     // setRemaining to tabTotal after data is received
     useEffect(() => {
         if (tabItems.total) {
-          setRemaining(parseFloat(tabItems.total).toFixed(2));
+            setRemaining(parseFloat(tabItems.total).toFixed(2));
         }
-      }, [tabItems.total]);
+        }, [tabItems.total]);
 
 
     async function getTabData(id) {
@@ -70,6 +72,17 @@ export default function ViewOneTab({ tabId, onExit }) {
             }
         }
     }
+    
+    function passTableData() {
+        router.push({
+            pathname: '/',
+            params: { 
+                redirectId: tabItems._id,
+                redirectTabNo: tabItems.tableNo
+            },
+        });
+    }
+
 
     function formatTime(formatDate) {
         const date = new Date(formatDate);
@@ -205,6 +218,7 @@ export default function ViewOneTab({ tabId, onExit }) {
                         total={tabItems.total}
                         remaining={remaining}
                         toPay={toPay}
+                        passData={passTableData}
 
                         setConfirmDelete={setConfirmDelete}
                         setRemaining={setRemaining}
