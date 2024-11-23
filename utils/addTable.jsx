@@ -1,7 +1,7 @@
 import ShowError from '../components/ShowError';
 import { connection } from '../config/config.json';
 
-export async function handleAddTable(tableNum, pax, limit) {
+const AddTable = async (tableNum, pax, limit)  => {
 
   if (!connection)
     return ShowError('Connection configuration is missing');
@@ -30,3 +30,5 @@ export async function handleAddTable(tableNum, pax, limit) {
     ShowError(err.message || 'Failed to connect to the server. Please check your network.');
   }
 };
+
+export default AddTable;
