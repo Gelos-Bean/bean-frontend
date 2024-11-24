@@ -20,6 +20,7 @@ function RootLayoutContent() {
   const { authState } = useContext(AuthContext);
   const userName = authState?.user?.name || "User";
   const userImg = authState?.user?.image || "";
+  const userRole = authState?.user?.role || "Staff";
 
   const page = usePathname();
   const pageName = convertPageName(page);
@@ -53,6 +54,7 @@ function RootLayoutContent() {
               title={pageName} 
               location="Sydney" 
               username={userName}
+              role={userRole}
               image={userImg} />
             <Separator />
           </>
