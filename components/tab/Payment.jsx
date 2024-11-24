@@ -6,6 +6,7 @@ import PaymentOptions from '../modals/PayOptions.jsx';
 import UserInput from '../modals/UserInput.jsx';
 import Discount from '../modals/Discount.jsx';
 import ManagerOverride from '../modals/ManagerOverride.jsx';
+import { AuthContext } from '../../app/context/AuthContext.jsx';
 
 import styles from '../../styles/posStyles'; 
 
@@ -23,6 +24,8 @@ export default function PaymentScreen({
         disableItems,
         setConfirmDelete
     }){
+
+    const { isManager } = useContext(AuthContext);
 
     const tips = [5, 10, 15];
     const [email, setEmail] = useState("");
@@ -300,7 +303,11 @@ export default function PaymentScreen({
                             mode="contained"
                             selected={true}
                             size={30}
-                            onPress={() => setOverride(true)}
+                            onPress={() => {
+                                if (isManager)
+                                    return setPaidInFull(true);
+                                setOverride(true)}
+                            }
                         />
                         <Text variant='bodySmall'>Void Tab</Text>
                     </View>
