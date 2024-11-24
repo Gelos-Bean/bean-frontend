@@ -1,10 +1,11 @@
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect, useContext, memo } from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { Text, IconButton, TextInput, Button } from 'react-native-paper';
 
 import PaymentOptions from '../modals/PayOptions.jsx';
 import UserInput from '../modals/UserInput.jsx';
 import Discount from '../modals/Discount.jsx';
+import ManagerOverride from '../modals/ManagerOverride.jsx';
 
 import styles from '../../styles/posStyles'; 
 
@@ -36,6 +37,7 @@ export default function PaymentScreen({
     const [userInputConfig, setUserInputConfig] = useState(null);
     const [paidInFull, setPaidInFull] = useState(false);
     const [remainZero, setRemainZero] = useState(false);
+    const [override, setOverride] = useState(false);
 
     useEffect(() => {
         if (customAmount > 0 && !inputView) {
@@ -119,7 +121,6 @@ export default function PaymentScreen({
             setCustomAmount(0);
         } else { 
             //configure for handlePayment function
-            
             //disables ability to select items when custom payment amount is chosen
             setCustomAmount(-1);
 
@@ -166,6 +167,10 @@ export default function PaymentScreen({
 
         Alert.alert(`Sent receipt to ${email}`);
         setEmail("");
+    }
+
+    function voidOrder() {
+        setPaidInFull(true);
     }
 
     return (
@@ -290,12 +295,12 @@ export default function PaymentScreen({
                     </View>
                     <View style={styles.buttonText}>
                         <IconButton 
-                            style={styles.squareButton}
+                            style={[styles.squareButton]}
                             icon="minus-circle-multiple"
                             mode="contained"
                             selected={true}
                             size={30}
-                            onPress={() => setPaidInFull(true)}
+                            onPress={() => setOverride(true)}
                         />
                         <Text variant='bodySmall'>Void Tab</Text>
                     </View>
@@ -326,6 +331,13 @@ export default function PaymentScreen({
                 remaining = {Number(remaining)}
                 total = {total}
             />
+
+            <ManagerOverride 
+                visibility={override}
+                setVisibility={setOverride}
+                onDismiss={() => voidOrder()}
+            />
+                
         </View>
     );
 };

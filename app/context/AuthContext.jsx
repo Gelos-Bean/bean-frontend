@@ -16,6 +16,10 @@ export const AuthProvider = ({ children }) => {
         authenticated: null
     });
 
+    const [isAdmin, setAdmin] = useState(false);
+    const [isManager, setManager] = useState(false);
+
+
     const login = async (username, pin) => {
         if (!username || !pin) {
             return Alert.alert('Missing Details', 'Both username and pin are required to log in.'); 
@@ -42,18 +46,29 @@ export const AuthProvider = ({ children }) => {
             token: data.token, 
             authenticated: true 
         });
+
+        const userRoleCheck = decodeToken.role?.toLowerCase();
+        userRoleCheck === 'admin' && setAdmin(true);
+        userRoleCheck === 'manager' && setManager(true);
     };
 
     const logout = () => {
         setAuthState({
-        user: null,
-        token: null,
-        authentication: null
-    })};
+            user: null,
+            token: null,
+            authentication: null
+        })
+        setAdmin(false);
+        setManager(false);
+    };
+
+    const managerOverride = (mgrName, mgrPin) => { 
+        return login(mgrName, mgrPin) ? true : false
+    }
 
     return (
         <AuthContext.Provider 
-                value={{ authState, login, logout }}>
+                value={{ authState, login, isAdmin, isManager, logout, managerOverride }}>
             {children}
         </AuthContext.Provider>
     )

@@ -13,8 +13,8 @@ const DialpadKeypad = ({ reset, setReset, setCode, enter }) => {
   useEffect(() => {
     if (reset) {
       setCode("");
-    }
       setReset(false);
+    }
   }, [reset])
 
   const dialPadContent = [1, 2, 3, 4, 5, 6, 7, 8, 9, "clear", 0, "enter"];
