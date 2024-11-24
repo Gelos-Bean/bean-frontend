@@ -19,7 +19,7 @@ import styles from '../../styles/modalStyles';
 import { connection } from '../../config/config.json';
 
 
-const SalesReportModal = ({ visible, onDismiss, reports, todaysReport }) => {
+const SalesReportModal = ({ visible, onDismiss, reports, todaysReport, printReport }) => {
 
   if (reports.length >= 0 && !todaysReport) {
     return;
@@ -28,10 +28,11 @@ const SalesReportModal = ({ visible, onDismiss, reports, todaysReport }) => {
   const [selectedReport, setSelectedReport] = useState(todaysReport)
 
   const handleAdd = () => {
-    onDismiss()
+    printReport(selectedReport);
+    onDismiss();
   }
   const handleDismiss =  () => {
-    onDismiss()
+    onDismiss();
   }
 
   const [expanded, setExpanded] = useState(true);
@@ -44,11 +45,14 @@ const SalesReportModal = ({ visible, onDismiss, reports, todaysReport }) => {
           <Text variant="headlineMedium" style={styles.modalText}>Reports</Text>
             <View style={{ flexDirection: 'row', flex:1 }}>
               <View style={{ flex: 1, marginHorizontal: '1%', justifyContent:'flex-start'}}>
-                <Text variant="bodyLarge">Select report</Text>
                 {reports.length > 0 ? (
                   <List.Section
                     style={{
                       margin:'10%',
+                      paddingVertical: 0,
+                      paddingHorizontal: 0,
+                      marginHorizontal: 0,
+                      marginVertical: 0,
                     }}>
                       <List.Accordion
                         title={<Text variant='labelLarge'>Sales Reports</Text>}
@@ -65,7 +69,7 @@ const SalesReportModal = ({ visible, onDismiss, reports, todaysReport }) => {
                           { color:'#fffff'
                           }
                         }>
-                          <ScrollView>
+                          <ScrollView style={{height:'80%'}}>
                             {reports.map((report, index) => (
                               <List.Item
                                 key={index}
@@ -80,11 +84,8 @@ const SalesReportModal = ({ visible, onDismiss, reports, todaysReport }) => {
                 ) : (null)}
               </View>
               <View style={{ flex: 1, marginHorizontal: '1%' }}>
-                <View style={{flexDirection:'row', justifyContent:'space-evenly',marginBottom:'5%'}}>
-                  <Text variant="bodyLarge">Report for</Text>
-                  <Text variant="titleLarge">{selectedReport.date}</Text>
-                </View>
-                
+              <Text variant="bodyLarge" style={{marginHorizontal:'1%'}}>Report for</Text>
+              <Text variant="titleLarge" style={{marginHorizontal:'1%',marginBottom:'5%'}}>{selectedReport.date}</Text>                
 
                 <View style={styles.widgetContainer}>
                   <IconButton

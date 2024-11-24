@@ -22,7 +22,7 @@ import { withTimeout } from '../components/WithTimeout.jsx';
 import LoadingIndicator from '../components/LoadingIndicator.jsx';
 import styles from '../styles/posStyles';
 import DialpadKeypad from '../components/Numpad.jsx';
-
+import AddUserModal from '../components/modals/AddUser.jsx';
 
 const Login = () => {
   const { login, authState } = useContext(AuthContext);
@@ -63,7 +63,6 @@ const Login = () => {
     }
   }
 
-
   //Log in
   const [code, setCode] = useState(""); 
   const [selectedUser, setSelectedUser] = useState();
@@ -94,11 +93,53 @@ const Login = () => {
   const [expanded, setExpanded] = useState(false);
   const handlePress = () => setExpanded(!expanded);
 
+  //Add user
+  const [viewAddUserModal, setViewAddUserModal] = useState(false);
+  const [loadingAddUser, setLoadingAddUser] = useState(false);
+  async function AddUser(name, username, pin, image) {
+    if (!connection) {
+      ShowError('Connection configuration is missing');
+      return;
+    }
+
+    setLoadingAddUser(true); 
+
+    try {
+      const user = {
+        name: name,
+        username: username,
+        pin: pin,
+        image: image ? image : ""
+      };
+
+      const addResponse = await fetch(`${connection}/users`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+
+      const data = await addResponse.json();
+
+      if (data.success) {
+        Alert.alert(`Success`, `${data.msg}`);
+        return;
+      }
+      setViewAddUserModal(false);  
+
+    } catch (err) {
+      ShowError(`Catch message There was a problem adding the user ${username}. ${err}`);      
+    } finally {
+      setLoadingAddUser(false); 
+      PopulateUsers();
+    }
+  }
+
   //On mount
   useEffect(() => {
     PopulateUsers();
   }, []);
-
 
   return (
   <SafeAreaView style={styles.container}>
@@ -106,12 +147,14 @@ const Login = () => {
       <View style={{flex:1,marginVertical:'auto'}}>
         {selectedUser ? (
           <View>
-            <View style={{flexDirection:'row', justifyContent:'center', marginVertical:'auto'}}>
-              <Avatar.Image size={60} style={{marginVertical:'auto'}} source={{ uri: selectedUser.image || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541' }} />
+            <View style={{flexDirection:'row', justifyContent:'space-between', marginVertical:'auto', marginHorizontal:'5%'}}>
+              <Avatar.Image size={48} style={{marginVertical:'auto'}} source={{ uri: selectedUser.image || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541' }} />
               <Text variant='headlineSmall' style={{marginVertical:'auto', paddingHorizontal:'10%'}}>{selectedUser.name}</Text>
               <IconButton
-                  icon="close-circle"
-                  iconColor='#000000'
+                  icon="account-cancel"
+                  mode="contained"
+                  selected={true}
+                  size={30}
                   style={{marginVertical:'auto'}}
                   onPress={() => setSelectedUser(null)}
                 />
@@ -150,6 +193,13 @@ const Login = () => {
         </View>
       </View>   
       <View style={{flex:1,marginVertical:'auto'}}>
+      <View style={{flexDirection:'row', justifyContent:'space-between', marginVertical:'auto', marginHorizontal:'5%'}}>
+      <IconButton icon="account-plus"
+                    mode="contained"
+                    selected={true}
+                    size={30}
+                    style={{marginVertical:'auto'}}
+                    onPress={() => setViewAddUserModal(true)}/>
     {usersLoading ? (
           <LoadingIndicator />
         ) : (
@@ -166,14 +216,15 @@ const Login = () => {
             background='#ffffff'
             style={
               { backgroundColor:'#ffffff',
-                borderRadius:999
+                borderRadius:999,
+                width:300
               }
             }
             titleStyle={
               { color:'#ffffff'
               }
             }>
-              <ScrollView>
+              <ScrollView style={{maxHeight:600}}>
                 {users.map((user, index) => (
                   <List.Item
                     key={index}
@@ -187,10 +238,12 @@ const Login = () => {
           </List.Accordion>
         </List.Section>
         )
-
         }  
+        </View>
       </View>
     </View>      
+    <AddUserModal visible={viewAddUserModal} onDismiss={() => setViewAddUserModal(false)} 
+                  onAdd={AddUser}  loading={loadingAddUser}/>
   </SafeAreaView>
   
 )};

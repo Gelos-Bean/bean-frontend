@@ -74,8 +74,7 @@ const App = () => {
   
       if (!response.ok) {
         const errorMessage = 'Server responded with an error';
-        ShowError(errorMessage);
-        console.error(errorMessage, response.statusText);
+        ShowError(`${errorMessage} ${response.statusText}`);
         return;
       }
   
@@ -88,8 +87,7 @@ const App = () => {
         ShowError(errorMessage);
       }
     } catch (err) {
-      console.error('Search error:', err);
-      ShowError('Failed to load products. Please check your network connection.');
+      ShowError(`There was a problem loading products. ${err}`);
     } finally {
       setLoadingProducts(false);
     }
@@ -208,8 +206,7 @@ const App = () => {
 
       if (!response.ok) {
         const errorMessage = 'Server responded with an error';
-        ShowError(errorMessage);
-        console.error(errorMessage, response.statusText);
+        ShowError(`${errorMessage} ${response.statusText}`);
         return;
       }
 
@@ -224,8 +221,7 @@ const App = () => {
         ShowError(errorMessage);
       }
     } catch (err) {
-      console.error('Error fetching tables:', err);
-      ShowError('Failed to load tables. Please check your network connection.');
+      ShowError(`There was a problem loading open tables. ${err}`);
     }
   }
 
@@ -255,24 +251,21 @@ const App = () => {
 
       if (!addResponse.ok) {
         const errorData = await addResponse.json();
-        ShowError(errorData.msg || 'Failed to add table');
+        ShowError(`There was a problem adding the table. ${errorData}`);
         return;
       }
 
       const data = await addResponse.json();
 
       if (!data.success) {
-        ShowError(data.msg);
-        console.error('Error', data.msg);
+        ShowError(`There was a problem adding the table. ${data.msg}`);
         return;
       }
       setSelectedTable({ tableNo: tableNum, _id: data._id });
       setViewAddTableModal(false);  
 
     } catch (err) {
-      ShowError('Failed to connect to the server. Please check your network.');
-      console.error('Error', err);
-      
+      ShowError(`There was a problem adding the table. ${err}`);      
     } finally {
       setLoadingAddTable(false); 
     }
@@ -317,16 +310,13 @@ const App = () => {
 
       if (!response.ok) {
         const errorMessage = 'Order not placed. The server responded with an error';
-        ShowError(errorMessage);
-        console.error(errorMessage, response.statusText);
+        ShowError(`${errorMessage} ${response.statusText}`);
         return;
       }
   
       const data = await response.json();
       if (!data.success) {
-        ShowError(data.msg);
-        console.error('Error', data.msg);
-
+        ShowError(`Could not place order. ${data.msg}`);
       }
         
       setOrderProducts([]);
@@ -583,7 +573,7 @@ const App = () => {
                 Add to Tab
               </Button>   
               <IconButton style={styles.squareButton}
-                icon="table-chair"
+                icon="table-furniture"
                 mode="contained"
                 selected={true}
                 size={30}
@@ -596,8 +586,7 @@ const App = () => {
     {/* Modals */}
     <ErrorBoundary>
       <AddTableModal    visible={viewAddTableModal} onDismiss={() => setViewAddTableModal(false)} 
-                        onAdd={AddTable}  loading={loadingAddTable}
-/>
+                        onAdd={AddTable}  loading={loadingAddTable}/>
       <SelectTableModal visible={selectTableModal} setVisibility={setSelectTableModal} 
                         tables={tables} onSelect={setSelectedTable}/>
       <OptionModal      visible={optionModalVisible} onDismiss={() => setOptionModalVisible(false)} 
