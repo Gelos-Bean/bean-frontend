@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     const [isManager, setManager] = useState(false);
 
 
-    const login = async (username, pin) => {
+    const login = async (username, pin, override = false) => {
         if (!username || !pin) {
             return Alert.alert('Missing Details', 'Both username and pin are required to log in.'); 
         }
@@ -41,15 +41,17 @@ export const AuthProvider = ({ children }) => {
         if(!decodeToken)
             return Alert.alert('Authentication failed');
         
-        setAuthState({ 
-            user: decodeToken, 
-            token: data.token, 
-            authenticated: true 
-        });
+        if (!override) {
+            setAuthState({ 
+                user: decodeToken, 
+                token: data.token, 
+                authenticated: true 
+            });
 
-        const userRoleCheck = decodeToken.role?.toLowerCase();
-        userRoleCheck === 'admin' && setAdmin(true);
-        userRoleCheck === 'manager' && setManager(true);
+            const userRoleCheck = decodeToken.role?.toLowerCase();
+            userRoleCheck === 'admin' && setAdmin(true);
+            userRoleCheck === 'manager' && setManager(true);
+        }
     };
 
     const logout = () => {
@@ -63,7 +65,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const managerOverride = (mgrName, mgrPin) => { 
-        return login(mgrName, mgrPin) ? true : false
+        return login(mgrName, mgrPin, override = true) ? true : false
     }
 
     return (
