@@ -5,6 +5,7 @@ import styles from '../../styles/posStyles.js';
 import ViewAllTabs from './ViewAllTabs.jsx';
 import ViewOneTab from './ViewOneTab.jsx';
 import { useLocalSearchParams } from 'expo-router';
+import ShowError from '../../components/ShowError.jsx';
 
 export default function Tabs() {;
   const { id } = useLocalSearchParams(); 
@@ -18,6 +19,8 @@ export default function Tabs() {;
 
 
   const handleSelectedTab = (tabNo) => {
+    if (!tabNo) 
+      return ShowError("Please select a table")
     setSelectView(tabNo);
   };
 
