@@ -16,9 +16,8 @@ export default function TabBtnMenu({ tableNo, handleSelectedTab, setLoading, ref
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [addTableModal, setAddTableModal] = useState(false);
 
-  async function deleteTab() {
-    if (!tableNo) 
-      return Alert.alert('Select a table to delete');
+
+  async function deleteTab(tableNo) {
     try { 
       const response = await fetch(`${connection}/tables/${tableNo[0]._id}`, {
           method: 'DELETE'
@@ -58,7 +57,12 @@ export default function TabBtnMenu({ tableNo, handleSelectedTab, setLoading, ref
         <Button style={[styles.squareButton, styles.wideButton]}
             mode="contained"
             icon="broom"
-            onPress={() => setConfirmDelete(true)}>              
+            onPress={() => {
+              if (!tableNo) {
+                return ShowError('Select a table to delete');
+              } else setConfirmDelete(true)
+            }}
+            >
             Clear Table
         </Button>
       </View>
