@@ -53,7 +53,8 @@ export default function ViewAllTabs({ onSelectTab }) {
       return setSelectedTable(undefined);
     }
     setSelectedTable(tableNo);
-  }
+  }  
+
 
   function formatTime(formatDate) {
     const date = new Date(formatDate);
@@ -106,7 +107,6 @@ export default function ViewAllTabs({ onSelectTab }) {
                   <Pressable
                     key={index}
                     onPress={() => handleHighlightTable(item.tableNo)}
-                    onLongPress={() => onSelectTab(item.tableNo)}
                   >
                      <DataTable.Row
                         style={selectedTable === item.tableNo ? tabStyle.highlightedRow : null}
@@ -134,14 +134,14 @@ export default function ViewAllTabs({ onSelectTab }) {
                   <Text variant="bodyLarge" style={{}}>
                     No tables are currently open
                   </Text>
-                </View>           
+                </View>
               )}
             </DataTable>
         </ScrollView>
         )}
       </View>
       <TabBtnMenu
-        tableNo={tables.filter(t => t.tableNo == selectedTable)}
+        tableNo={tables.filter(t => t.tableNo == selectedTable).toString()}
         handleSelectedTab={() => onSelectTab(selectedTable)}
         refresh={setRefresh}
         loading={setLoading}
