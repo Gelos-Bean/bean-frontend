@@ -9,7 +9,7 @@ import customTheme from '../styles/theme';
 const theme = customTheme;
 
 
-export default function Header({ title, location, username, image }){
+export default function Header({ title, location, username, role, image }){
   const router = useRouter();
   const { logout } = useContext(AuthContext);
 
@@ -35,7 +35,10 @@ export default function Header({ title, location, username, image }){
 
       <View style={headerStyles.rightContainer}>
         <View style={headerStyles.userInfo}>
-          <Text variant='bodyLarge'>{ username ? username : "User" } </Text>
+          <View style={{flexDirection: 'column'}}>
+            <Text variant='bodyLarge'>{ username } </Text>
+            <Text variant='bodySmall'>{`(${role})`}</Text>
+          </View>
           <Avatar.Image 
             size={50} 
             source={{ uri: image || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541' }} 
