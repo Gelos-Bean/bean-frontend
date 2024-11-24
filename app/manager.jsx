@@ -13,6 +13,7 @@ import {
   List,
   IconButton
 } from 'react-native-paper';
+import * as FileSystem from 'expo-file-system';
 
 
 import { useRouter } from 'expo-router';
@@ -29,6 +30,7 @@ import LoadingIndicatorSmall from '../components/LoadingIndicatorSmall';
 import ErrorBoundary from '../components/ErrorBoundary';
 import DeleteConfirmationModal from '../components/modals/ConfirmationModal';
 import ReportConfirmationModal from '../components/modals/ConfirmationModal';
+import SelectUserModal from '../components/modals/SelectUser';
 import styles from '../styles/posStyles';
 
 const Manager = () => {
@@ -85,8 +87,7 @@ const Manager = () => {
       if (!response.ok) {
         const error = await response.json();
         const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
-        ShowError(errorMessage);
-        console.error(errorMessage, response.statusText);
+        ShowError(`${errorMessage} ${response.statusText}`);
         setProductsLoading(false);
         return;
       }
@@ -95,32 +96,17 @@ const Manager = () => {
 
       if (data.success && Array.isArray(data.msg)) {
         setProducts(data.msg);
-        populateOptions();
       } else {
         const errorMessage = typeof data.msg === 'string' ? data.msg : 'No products found';
-        ShowError(errorMessage);
-        console.error(errorMessage, response.statusText);
+        ShowError(`${errorMessage} ${response.statusText}`);
       }
     } catch (err) {
-      console.error('Search error:', err);
-      ShowError('There was a problem retrieving products. Please check your network connection');
+      ShowError(`There was a problem retrieving products. ${err}`);
     } finally {
       setProductsLoading(false);
     }
   }
-  const [options, setOptions] = useState([]);
-  async function populateOptions() {
-    try {
-      const response = await withTimeout(fetch(`${connection}/options`, { method: 'GET' }), 5000);
-      const data = await response.json();
-      if (data.success && Array.isArray(data.msg)) {
-        setOptions(data.msg);
-      }
-    } catch (err) {
-      console.error('Search error:', err);
-      ShowError('Problem fetching options, something went wrong');
-    }
-  }
+
 
   //Handle options dropdown
   const [expanded, setExpanded] = useState({});
@@ -156,15 +142,13 @@ const Manager = () => {
       const data = await response.json();
   
       if (!response.ok) {
-        console.error('Error:', data.msg);
-        ShowError('Server connection issue. Product not added');
+        ShowError(`There was an error adding the product. ${data.msg}`);
         return { success: false, message: data.msg };
       }
         return { success: true, message: data.msg };
       
-    } catch (error) {
-      console.error('Request failed:', error);
-      ShowError('Failed to add product. Please check your network connection')
+    } catch (err) {
+      ShowError(`Failed to add product. ${err}`)
       return { success: false, message: 'Failed to add product. Please check your network connection.' };
     }
   }
@@ -187,16 +171,14 @@ const Manager = () => {
       const data = await response.json();
   
       if (!response.ok) {
-        console.error('Error:', data.msg);
-        ShowError('Server connection issue. Product not changed');
+        ShowError(`There was an error updating the product. ${data.msg}`);
         return { success: false, message: data.msg };
       }
         populateProducts();
         return { success: true, message: data.msg };
       
-    } catch (error) {
-      console.error('Request failed:', error);
-      ShowError('Failed to edit product. Please check your network connection')
+    } catch (err) {
+      ShowError(`Failed to edit product. ${err}`)
       return { success: false, message: 'Failed to edit product. Please check your network connection.' };
     }
   }
@@ -222,8 +204,7 @@ const Manager = () => {
   
       const data = await response.json();
       if (!data.success) {
-        console.error('Error:', data.msg);
-        ShowError('Server connection issue. Product not deleted');
+        ShowError(`There an an error deleting the product. ${data.msg}`);
         return;
       }
   
@@ -255,8 +236,7 @@ const Manager = () => {
       if (!response.ok) {
         const error = await response.json();
         const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
-        ShowError(errorMessage);
-        console.error(errorMessage, response.statusText);
+        ShowError(`${errorMessage} ${response.statusText}`);
         setReportsLoading(false);
         return;
       }
@@ -264,20 +244,57 @@ const Manager = () => {
       const data = await response.json();
   
       if (data.success && Array.isArray(data.msg)) {
-        setReports(data.msg); // Updates reports state
+        let sortedData = [...data.msg];
+        sortedData.sort((a, b) => b.date.localeCompare(a.date));
+
+        setReports(sortedData); 
       } else {
         const errorMessage = typeof data.msg === 'string' ? data.msg : 'No reports found';
-        ShowError(errorMessage);
-        console.error(errorMessage, response.statusText);
+        ShowError(`${errorMessage} ${response.statusText}`);
       }
     } catch (err) {
-      console.error('Search error:', err);
-      ShowError('There was a problem retrieving sales history. Please check your network connection');
+      ShowError(`Could not retrieve sales history. ${err}`);
     } finally {
       setReportsLoading(false);
     }
   }
   
+  //Print reports
+  async function handlePrintReport(report) {
+    csvReport = await convertToCSV(report);
+    savedFile = await saveFile(csvReport, report.date)
+  }
+
+  function convertToCSV(report) {
+    csvRows = [];
+    const data = {
+        Date: report.date,
+        Covers: report.sales.reduce((total, sale) => total + (sale.pax || 0), 0), 
+        TotalFood: report.totalFood,
+        TotalBev: report.totalBev,
+        Total: report.total,
+      };
+      const headers = Object.keys(data);
+      csvRows.push(headers.join(','));
+      const values = Object.values(data).join(',');
+      csvRows.push(values)
+
+    return csvRows.join('\n');
+  }
+  async function saveFile(content, fileName, ) {
+    const fileUri = FileSystem.documentDirectory + fileName;
+    try {
+      await FileSystem.writeAsStringAsync(fileUri, content, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+      Alert.alert('Success', `Report for ${fileName} saved to ${fileUri}`);
+      return fileUri; 
+    } catch (error) {
+      ShowError(`There was a problem saving the report. ${error.message}`);
+    }
+  }
+  
+
   // Automatically run updateDailyReport when `reports` changes
   useEffect(() => {
     if (reports.length > 0) {
@@ -334,8 +351,7 @@ const Manager = () => {
       if (!response.ok) {
         const error = await response.json();
         const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
-        ShowError(errorMessage);
-        console.error(errorMessage, response.statusText);
+        ShowError(`${errorMessage} ${response.statusText}`);
         setReportsLoading(false);
         return;
       }
@@ -344,18 +360,77 @@ const Manager = () => {
   
       if (data.success === true) {
         const errorMessage = typeof data.msg === 'string' ? data.msg : 'A report already exists for that day';
-        ShowError(errorMessage);
-        console.error(errorMessage, response.statusText);
+        ShowError(`${errorMessage} ${response.statusText}`);
         populateReports();
       } else {
         Alert.alert('Success', 'New report created');
         populateReports();
       }
     } catch (err) {
-      console.error('Search error:', err);
-      ShowError('There was a problem creating a new report. Please check your network connection');
+      ShowError(`There was a problem creating a new report. ${err}`);
     } finally {
       setReportsLoading(false);
+    }
+  }
+
+  //Manage users
+  const [users, setUsers] = useState([]); 
+  const [usersLoading, setUsersLoading] = useState(false);
+  async function populateUsers() {
+    setUsersLoading(true);
+    if (!connection) {
+      ShowError('Connection configuration is missing');
+      setUsersLoading(false); 
+      return;
+    }
+    try {
+      const response = await withTimeout(fetch(`${connection}/users`, { method: 'GET' }), 5000);
+  
+      if (!response.ok)
+        return ShowError('Server responded with an error');
+  
+      const data = await response.json();
+  
+      if (data.success && Array.isArray(data.msg)) {
+        setUsers(data.msg);
+      } else {
+        ShowError(data.msg);
+      }
+    } catch (err) {
+      ShowError('Failed to load users. Please check your network connection and try again.');
+    } finally {
+      setUsersLoading(false);
+    }
+  }
+
+  const [viewUsersModal, setViewUsersModal] = useState(false);
+
+  const editUser = async (user) => { 
+    try {
+      const response = await fetch(`${connection}/users/${user._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pin: user.pin,
+          username: user.username,
+          name: user.name,
+          role: user.role,
+          image: user.image,
+        })
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        ShowError(`There was an error updating the account ${user.username}. ${data.msg}`);
+        return { success: false, message: data.msg };
+      }
+        populateUsers();
+        return { success: true, message: data.msg };
+      
+    } catch (err) {
+      ShowError(`Failed to edit user. ${err}`)
+      return { success: false, message: 'Failed to edit product. Please check your network connection.' };
     }
   }
 
@@ -363,6 +438,7 @@ const Manager = () => {
   useEffect(() => {
     populateProducts();
     populateReports();
+    populateUsers();
   }, []);
   
 
@@ -449,34 +525,48 @@ const Manager = () => {
             </View>
               <View style={[styles.managerButtonContainer, {flexDirection:'row'}]}>
                   <View style={[styles.buttonRow, {flex:1}]}>
-                    <Button style={[styles.squareButton, styles.wideButton]}
-                        mode="contained"
-                        icon="plus"
-                        onPress={() => setNewProductModalVisible(true)}>              
-                        Add
-                    </Button>
-                    <Button style={[styles.squareButton, styles.wideButton]}
-                          mode="contained"
-                          icon="magnify"
-                          onPress={() => setSearchModalVisible(true)}>              
-                          Lookup
-                    </Button>
-                    <Button style={[styles.squareButton, styles.wideButton]}
-                        mode="contained"
-                        disabled={!selectedProduct}
-                        onPress={() => setViewEditProductModal(true)}>             
-                        Edit
-                    </Button>   
-                    <Button style={[styles.squareButton, styles.wideButton]}
-                        mode="contained"
-                        icon="delete"
-                        disabled={!selectedProduct}
-                        onPress={ShowDeleteModal}>              
-                        Delete
-                    </Button>
+                    <IconButton style={styles.squareButton}
+                      icon="plus"
+                      mode="contained"
+                      selected={true}
+                      size={30}
+                      onPress={() => setNewProductModalVisible(true)}>              
+                    </IconButton>
+                    <IconButton style={styles.squareButton}
+                      icon="magnify"
+                      mode="contained"
+                      selected={true}
+                      size={30}
+                      onPress={() => setSearchModalVisible(true)}>              
+                    </IconButton>
+                    <IconButton style={styles.squareButton}
+                      icon="pencil"
+                      mode="contained"
+                      selected={true}
+                      size={30}
+                      disabled={!selectedProduct}
+                      onPress={() => setViewEditProductModal(true)}>             
+                    </IconButton>   
+                    <IconButton style={styles.squareButton}
+                      icon="delete"
+                      mode="contained"
+                      selected={true}
+                      size={30}
+                      disabled={!selectedProduct}
+                      onPress={ShowDeleteModal}>              
+                    </IconButton>
                   </View>
                   <View style={styles.verticalSeparator}></View>
-                  <View style={[styles.buttonRow, {flex:1}]}>                  
+                  <View style={[styles.buttonRow, {flex:1}]}>
+                    <Button style={[styles.squareButton, styles.wideButton]}
+                        mode="contained"
+                        icon="account-cog"
+                        onPress={() => setViewUsersModal(true)}>              
+                        Manage Users
+                      </Button>
+                  </View>
+                  <View style={styles.verticalSeparator}></View>
+                  <View style={[styles.buttonRow, {flex:2}]}>                 
                     <View style={styles.displayPortal}>
                       {reportsLoading ? (
                         <LoadingIndicatorSmall />
@@ -534,10 +624,11 @@ const Manager = () => {
                       product={selectedProduct}
                       onConfirm={handleEditProduct}/>
         <SalesReportModal
-                      visible={reportModalVisible}
-                      onDismiss={() => setReportModalVisible(false)}
-                      reports={reports}
-                      todaysReport={todaysReport}/>
+                      visible={reportModalVisible} onDismiss={() => setReportModalVisible(false)}
+                      reports={reports} todaysReport={todaysReport} printReport={handlePrintReport}/>
+        <SelectUserModal 
+                      visible={viewUsersModal} onDismiss={() => setViewUsersModal(false)}
+                      users={users} onEdit={editUser}/>
       </ErrorBoundary>
       </SafeAreaView>
   );

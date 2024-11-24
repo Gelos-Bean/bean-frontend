@@ -34,8 +34,7 @@ export default function Orders() {
       const orders = await response.json();
 
       if (!orders.success) {
-        ShowError('Problem loading orders')
-        console.error(`Fetch Error: ${orders.msg}`);
+        ShowError(`Could not load orders. ${orders.msg}`)
         setLoadingOrders(false);
         return;
       }
@@ -44,8 +43,7 @@ export default function Orders() {
       setErrorLoadingOrders(false);
 
     } catch (err) {
-      console.error('Error', err.message);
-      ShowError('Failed to load orders. Please check your network connection');
+      ShowError(`Could not load orders. ${err}`);
       setErrorLoadingOrders(true);
     } finally {
       setLoadingOrders(false);

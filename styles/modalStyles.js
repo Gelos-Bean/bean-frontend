@@ -153,7 +153,7 @@ export default styles = StyleSheet.create({
     widgetContainer: {
       flex:1,
       padding:'1%',
-      paddingHorizontal:'20%',
+      paddingHorizontal:'5%',
       marginHorizontal:'5%',
       marginVertical:'1%',
       flexDirection:'row',
