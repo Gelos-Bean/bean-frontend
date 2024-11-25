@@ -15,7 +15,7 @@ export default function Header({ title, location, username, role, image }){
 
   const handleLogout = () => { 
     logout();
-    router.push('/login');
+    router.push('/');
   }
 
   return (

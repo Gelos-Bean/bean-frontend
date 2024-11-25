@@ -28,7 +28,7 @@ import SearchModal from '../components/modals/SearchModal.jsx';
 import FreeTextModal from '../components/modals/FreeText.jsx';
 import ConfirmationModal from '../components/modals/ConfirmationModal.jsx';
 
-const App = () => {
+const Products = () => {
   
   // Loading indicators
   const [loadingProducts, setLoadingProducts] = useState(false);
@@ -595,4 +595,4 @@ const App = () => {
   
 )};
 
-export default App;
+export default Products;

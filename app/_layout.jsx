@@ -26,7 +26,7 @@ function RootLayoutContent() {
   const pageName = convertPageName(page);
 
   function convertPageName(path) {
-    if (path == '/') {
+    if (path == '/products') {
       return 'Home';
     }
     return path.replace('/', '').replace(/^./, (str) => str.toUpperCase());
@@ -48,7 +48,7 @@ function RootLayoutContent() {
   return (
     <PaperProvider theme={theme}>
       <SafeAreaView style={styles.container}>
-        {page !== '/login' && (
+        {page !== '/' && (
           <>
             <Header 
               title={pageName} 
@@ -62,7 +62,7 @@ function RootLayoutContent() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="+not-found" /> 
         </Stack>
-        {page !== '/login' && <MenuBar />}
+        {page !== '/' && <MenuBar />}
       </SafeAreaView>
     </PaperProvider>
   );
