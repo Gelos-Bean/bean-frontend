@@ -29,7 +29,7 @@ const SelectUserModal = ({ visible, onDismiss, users, onEdit }) => {
       <View style={styles.centeredView}>
         <View style={[styles.modalView, {width:'40%'}]}>
           <Text variant='headlineMedium' style={styles.modalText}>Manage Users</Text>
-          <Text variant="bodyLarge">Select a user to edit*</Text>
+          <Text variant="bodyLarge">Select a user to edit</Text>
           <ScrollView style={styles.scrollableContent}>
             <List.Accordion
               title={<Text variant='titleMedium'>Users</Text>}

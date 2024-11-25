@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Alert, Modal, View, TextInput, ScrollView } from 'react-native';
 import { Button, Text, IconButton, Card } from 'react-native-paper';
 import styles from '../../styles/modalStyles';
+import LoadingIndicator from '../LoadingIndicator';
 import { connection } from '../../config/config.json';
 
 const SearchModal = ({ visible, onDismiss, onSelect }) => {
   const [products, setProducts] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSelect = (product) => {
     onSelect(product);
@@ -20,6 +22,7 @@ const SearchModal = ({ visible, onDismiss, onSelect }) => {
   }
 
   const handleSearch = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${connection}/products/${inputValue}`, {
         method: 'GET',
@@ -29,6 +32,7 @@ const SearchModal = ({ visible, onDismiss, onSelect }) => {
         const error = await response.json();
         const errorMessage = typeof error.msg === 'string' ? error.msg : 'Unexpected error';
         Alert.alert('Error', errorMessage);
+        setLoading(false)
         return;
       }
   
@@ -45,6 +49,8 @@ const SearchModal = ({ visible, onDismiss, onSelect }) => {
     } catch (err) {
       console.error('Search error:', err);
       Alert.alert('Error', 'Something went wrong');
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -68,25 +74,39 @@ const SearchModal = ({ visible, onDismiss, onSelect }) => {
               onPress={() => { setInputValue(''); setProducts([]); }}
             />
           </View>
-          {products.length > 0 && (
-            <ScrollView contentContainerStyle={styles.resultsContainer}>
-              {products.map((product) => (
-                <Card 
-                  key={product._id} 
-                  style={styles.cardStyle}
-                  onPress={() => handleSelect(product)}
-                >
-                  <Card.Cover
-                    source={{ uri: product.image || 'https://www.pngkey.com/png/detail/233-2332677_image-500580-placeholder-transparent.png' }}
-                    style={styles.cardCover}
-                  />
-                  <Card.Content>
-                    <Text variant="bodySmall">{product.name}</Text>
-                  </Card.Content>
-                </Card>
-              ))}
-            </ScrollView>
+          {loading ? (
+            <LoadingIndicator />
+          ) : (
+            products.length > 0 ? (
+              <ScrollView contentContainerStyle={styles.resultsContainer}>
+                {products.map((product) => (
+                  <Card 
+                    key={product._id} 
+                    style={styles.cardStyle}
+                    onPress={() => handleSelect(product)}
+                  >
+                    <Card.Cover
+                      source={{ uri: product.image || 'https://www.pngkey.com/png/detail/233-2332677_image-500580-placeholder-transparent.png' }}
+                      style={styles.cardCover}
+                    />
+                    <Card.Content>
+                      <Text variant="bodySmall">{product.name}</Text>
+                    </Card.Content>
+                  </Card>
+                ))}
+              </ScrollView>
+            ) : (
+              <View style={styles.loadingContainer}>
+              <Text variant="titleMedium" style={{textAlign:'center'}}>
+                No Results
+              </Text>
+              <Text variant="bodyMedium" style={{textAlign:'center'}}>
+                There are no products that match that name
+              </Text>
+           </View>
+            )
           )}
+         
           <View style={styles.bottomButtonRow}>
             <Button
               style={[styles.squareButton, styles.wideButton]}

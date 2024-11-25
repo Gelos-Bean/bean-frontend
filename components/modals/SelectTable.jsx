@@ -5,13 +5,9 @@ import styles from '../../styles/modalStyles';
 import LoadingIndicator from '../LoadingIndicator';
 
 const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
-  
-  const [selectedTable, setSelectedTable] = useState(null);
-  
 
-
-  const handleSelect = () => {
-    onSelect(selectedTable); 
+  const handleSelect = (table) => {
+    onSelect(table); 
     setVisibility(false);
   };
 
@@ -43,16 +39,16 @@ const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
               <ScrollView style={styles.scrollableContent}>
                 {tables.map((table) => (
                     <List.Item  key={table._id}
-                                variant="bodySmall"
-                                title={table.tableNo}
-                                onPress={() => setSelectedTable(table)}/>
+                                title={<Text variant='titleMedium'>{table.tableNo}</Text>}
+                                right={props => <Text variant='bodyMedium'>${table.total}</Text>}
+                                onPress={() => handleSelect(table)}/>
                 ))}
                 
               </ScrollView>    
             </List.Accordion>
           </>
         )}
-          <View style={styles.bottomButtonRow}>
+          <View style={[styles.bottomButtonRow, {justifyContent:'center'}]}>
             <Button
               style={[styles.squareButton, styles.wideButton]}
               icon="window-close"
@@ -60,14 +56,6 @@ const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
               onPress={() => setVisibility(false)}
             >
               Cancel
-            </Button>
-            <Button
-              style={[styles.squareButton, styles.wideButton]}
-              icon="check"
-              mode="contained"
-              onPress={handleSelect}
-            >
-              Select
             </Button>
           </View>
         </View>

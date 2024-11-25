@@ -604,7 +604,8 @@ const Manager = () => {
         </Pressable>
       {/* Modals */}
       <ErrorBoundary>
-        <SearchModal  visible={searchModalVisible} onDismiss={() => setSearchModalVisible(false)} />
+        <SearchModal  visible={searchModalVisible} onDismiss={() => setSearchModalVisible(false)} 
+                      onSelect={(product) => setSelectedProduct(product)}/>
         <NewProduct   visible={newProductModalVisible} 
                       onDismiss={() => {setNewProductModalVisible(false), populateProducts()}} 
                       onAdd={handleAddProduct}/>
