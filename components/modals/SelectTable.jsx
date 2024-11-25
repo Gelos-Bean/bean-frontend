@@ -23,28 +23,35 @@ const SelectTableModal = ({ visible, setVisibility, tables, onSelect }) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text variant='headlineMedium' style={styles.modalText}>Select table</Text>
-          <Text variant="bodyLarge">Table number*</Text>
-          <ScrollView style={styles.scrollableContent}>
+          {tables.length === 0 ? (
+            <View style={styles.loadingContainer}>
+              <Text variant="titleMedium" style={{textAlign:'center'}}>
+                Open Tables
+              </Text>
+              <Text variant="bodyMedium" style={{textAlign:'center'}}>
+                There are no open tables
+              </Text>
+           </View>
+          ) : ( 
+            <>
+            <Text variant="bodyLarge">Table number*</Text>
             <List.Accordion
               title="Tables"
               left={props => <List.Icon {...props} icon="table-furniture" />}
               expanded={expanded}
               onPress={handlePress}>
+              <ScrollView style={styles.scrollableContent}>
+                {tables.map((table) => (
+                    <List.Item  key={table._id}
+                                variant="bodySmall"
+                                title={table.tableNo}
+                                onPress={() => setSelectedTable(table)}/>
+                ))}
                 
-                {tables.length === 0 ? (
-                <LoadingIndicator />
-              ) : (
-
-                  tables.map((table) => (
-                      <List.Item  key={table._id}
-                                  variant="bodySmall"
-                                  title={table.tableNo}
-                                  onPress={() => setSelectedTable(table)}/>
-                  ))
-              )} 
+              </ScrollView>    
             </List.Accordion>
-            </ScrollView>    
-          {/* Buttons */}
+          </>
+        )}
           <View style={styles.bottomButtonRow}>
             <Button
               style={[styles.squareButton, styles.wideButton]}

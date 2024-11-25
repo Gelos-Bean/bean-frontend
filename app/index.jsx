@@ -61,7 +61,7 @@ const App = () => {
   }, [redirectId, redirectTabNo])
 
   //Products
-  const [products, setProducts] = useState([]); 
+  const [products, setProducts] = useState(undefined);
   async function PopulateProducts() {
     setLoadingProducts(true);
     if (!connection) {
@@ -517,46 +517,34 @@ const App = () => {
                   />
           </View>
           <View style={styles.buttonRow}>
-             <View>
-              <IconButton style={styles.squareButton}
-                  icon="minus-circle"
-                  mode="contained"
-                  selected={true}
-                  onPress={() => voidItem()}
-                  size={30}
-                />
-                <Text variant='bodySmall' style={styles.buttonText}>Void Item</Text>
-            </View>
-            <View>
-              <IconButton style={styles.squareButton}
+            <Button style={[styles.squareButton, styles.wideButton]}
+                mode="contained"
+                icon="minus-circle"
+                compact={true}
+                onPress={() => voidItem()}>             
+                Void Item
+            </Button> 
+            <Button style={[styles.squareButton, styles.wideButton]}
+                mode="contained"
                 icon="minus-circle-multiple"
+                compact={true}
+                onPress={() => setOrderProducts([])}>             
+                Void Order
+            </Button> 
+            <Button style={[styles.squareButton, styles.wideButton]}
                 mode="contained"
-                selected={true}
-                size={30}
-                onPress={() => setOrderProducts([])}
-              />
-              <Text variant='bodySmall' style={styles.buttonText}>Void Order</Text>
-            </View>
-            <View>
-              <IconButton style={styles.squareButton}
-                icon="pencil"
-                mode="contained"
-                selected={true}
-                size={30}
-                onPress={() => setFreeTextModalVisible(true)}
-              />
-              <Text variant='bodySmall' style={styles.buttonText}>Free Text</Text>
-            </View>
-            <View>
-              <IconButton style={styles.squareButton}
-                icon="magnify"
-                mode="contained"
-                selected={true}
-                size={30}
-                onPress={() => setSearchModalVisible(true)}
-              />
-              <Text variant='bodySmall' style={styles.buttonText}>Search</Text>
-            </View>
+                icon="table-furniture"
+                compact={true}
+                onPress={() => {setSelectTableModal(true)}}>             
+                Select Table
+            </Button> 
+            <IconButton style={styles.squareButton}
+              icon="magnify"
+              mode="contained"
+              selected={true}
+              size={30}
+              onPress={() => setSearchModalVisible(true)}
+            />
           </View>
             
             <View style={styles.buttonRow}>
@@ -573,11 +561,12 @@ const App = () => {
                 Add to Tab
               </Button>   
               <IconButton style={styles.squareButton}
-                icon="table-furniture"
+                icon="pencil"
                 mode="contained"
                 selected={true}
                 size={30}
-                onPress={() => {setSelectTableModal(true)}}/>
+                onPress={() => setFreeTextModalVisible(true)}
+              />
             </View>
           </View>   
         </View>
