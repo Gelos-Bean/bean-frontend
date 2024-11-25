@@ -122,12 +122,12 @@ export default styles = StyleSheet.create({
     },
     cardStyle: {
       marginHorizontal: '1%',
-      marginTop: 3,
+      marginTop: 5,
       width: '18%',
       minWidth:120
     },
     cardCover: {
-      height: 100,
+      height: 95,
       borderBottomRightRadius: 0,
       borderBottomLeftRadius: 0,
     },
@@ -273,12 +273,12 @@ export default styles = StyleSheet.create({
     },
     orderStyle: {
       flex: 1,
-      marginBottom: '1%',
+      marginTop: '0.5%',
       marginHorizontal:'2%',
       width: '21%',
       maxWidth: '21%',
       minWidth: 120,
-      height: 255, 
+      height: 250, 
       justifyContent: 'space-between',
       borderRadius: 9,
     },

@@ -194,8 +194,8 @@ export default function PaymentScreen({
                         })}
                 </View>
 
-                <View style={styles.buttonRow}>
-                    <Button style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start' }]}
+                <View style={[styles.buttonRow, {marginBottom:10}]}>     
+                <Button style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start' }]}
                         mode= {customTip > 0 ? "contained-tonal" : "contained"}
                         icon="cash-plus"
                         onPress={() => handleUserInput("Custom Tip", "numeric", setCustomTip)}
@@ -206,8 +206,8 @@ export default function PaymentScreen({
 
                 <View style={pStyles.separator} />
 
-                <View style={styles.buttonRow}>
-                    <Button style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start' }]}
+                <View style={[styles.buttonRow, {marginTop:10}]}>     
+                <Button style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start' }]}
                             mode="contained"
                             icon='pencil-plus-outline'
                             onPress={() => handleUserInput("Input Amount", "numeric", setCustomAmount) }
@@ -215,7 +215,7 @@ export default function PaymentScreen({
                         Pay Custom Amount
                     </Button>
                 </View>
-                <View style={styles.buttonRow}>
+                <View style={[styles.buttonRow, {marginBottom:10}]}>     
                 <Button style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start' }]}
                         mode= {discount !== null ? "contained-tonal" : "contained"}
                         icon="percent"
@@ -227,18 +227,18 @@ export default function PaymentScreen({
 
                 <View style={pStyles.separator} />
 
-                <View style={styles.buttonRow}>
-                    <Button
+                <View style={[styles.buttonRow, {marginTop:10}]}>     
+                <Button
                         style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start' }]}
                         mode="contained"
                         icon="cash-multiple"
-                        onPress={() => { handlePayment(toPay) }}>                        
+                        onPress={() => { handlePayment(toPay) }}>                     
                         Pay Selected: 
                         ${parseFloat(toPay).toFixed(2)}
                     </Button>
                 </View>
-                <View style={styles.buttonRow}>
-                    <Button style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start', marginBottom: 10}]}
+            <View style={[styles.buttonRow, {marginBottom:10}]}>     
+                    <Button style={[styles.squareButton, styles.wideButton, { alignItems: 'flex-start'}]}
                         mode="contained"
                         icon="cash-check"
                         onPress={() => handlePayment(remaining, true)}>
@@ -249,9 +249,10 @@ export default function PaymentScreen({
                 <View style={pStyles.box}>
                     <View style={[pStyles.total, pStyles.textSpacing]}>
                         <Text variant='titleMedium'>Total: </Text>
-                        <Text variant='titleMedium'>${parseFloat(remaining).toFixed(2)}</Text>
+                        <Text variant='bodyLarge'>${parseFloat(remaining).toFixed(2)}</Text>
                     </View>
                 </View>
+                
 
                 <View style={pStyles.eContainer}>
                     <TextInput
@@ -261,9 +262,8 @@ export default function PaymentScreen({
                         onChangeText={e => setEmail(e)}
                     />
                     <IconButton
-                        style={styles.squareButton}
                         icon="send"
-                        size={20}
+                        size={23}
                         mode="contained"
                         selected={true}
                         onPress={handleSendEmail}
@@ -271,48 +271,37 @@ export default function PaymentScreen({
                     />
                 </View>    
             </View>
-            
-            <View style={[styles.buttonRow, {display: 'inline-block'}]}>
-                <View style={{justifyContent:'center'}}>
-                    <Button style={[styles.squareButton, {paddingVertical: 5}]}
-                        mode="contained"
-                        icon="send"
-                        onPress={() => passData()}
-                    >             
-                    Add to Tab
-                    </Button> 
-                </View>
 
-                <View style={{flexDirection: 'row', justifyContent:'center'}}>
-                    <View style={styles.buttonText}>
-                        <IconButton 
-                            style={styles.squareButton}
-                            icon="minus-circle"
-                            mode="contained"
-                            selected={true}
-                            onPress={() => handleVoidItem()}
-                            disabled={true}
-                            size={30}
-                        />
-                        <Text variant='bodySmall'>Void Item</Text>
-                    </View>
-                    <View style={styles.buttonText}>
-                        <IconButton 
-                            style={[styles.squareButton]}
-                            icon="minus-circle-multiple"
-                            mode="contained"
-                            selected={true}
-                            size={30}
-                            onPress={() => {
-                                if (isManager)
-                                    return setPaidInFull(true);
-                                setOverride(true)}
-                            }
-                        />
-                        <Text variant='bodySmall'>Void Tab</Text>
-                    </View>
-                </View> 
-            </View>
+            <View style={[styles.buttonRow, {marginTop:10}]}>     
+                <Button style={[styles.squareButton, styles.wideButton]}
+                    mode="contained"
+                    icon="minus-circle"
+                    onPress={() => handleVoidItem()}
+                    >             
+                Void Item
+                </Button> 
+                <Button style={[styles.squareButton, styles.wideButton]}
+                    mode="contained"
+                    icon="broom"
+                    onPress={() => {
+                        if (isManager)
+                            return setPaidInFull(true);
+                        setOverride(true)}
+                    }
+                >             
+                Clear Tab
+                </Button> 
+            </View>     
+            <View style={[pStyles.separator, {marginTop:10}]} />
+            <View style={[styles.buttonRow, {marginTop:10}]}>     
+                <Button style={[styles.squareButton, styles.wideButton]}
+                    mode="contained"
+                    icon="plus"
+                    onPress={() => passData()}
+                >             
+                Add Products
+                </Button> 
+            </View>       
             <MemoPaymentOptions 
                 remaining={remaining}
                 toPay={toPay}
@@ -354,6 +343,7 @@ const pStyles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fcf8f2',
         padding: 5,
+        borderRadius:9
     },
     box: {
         width: '100%'
@@ -383,11 +373,13 @@ const pStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical: 5
+        marginTop: 5,
+        borderRadius:9, 
     },
     email: {
         flex: 6,
         backgroundColor: '#ffffff',
+        borderRadius:9,
         paddingVertical: 8,
         marginRight: 5,
         height: 10

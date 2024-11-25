@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
-import { Button, Text, PaperProvider, Avatar, MD3LightTheme as DefaultTheme } from 'react-native-paper';
+import { Button, Text, IconButton, PaperProvider, Avatar, MD3LightTheme as DefaultTheme } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { AuthContext } from '../app/context/AuthContext.jsx';
 
@@ -34,23 +34,26 @@ export default function Header({ title, location, username, role, image }){
       </View>
 
       <View style={headerStyles.rightContainer}>
-        <View style={headerStyles.userInfo}>
-          <View style={{flexDirection: 'column'}}>
-            <Text variant='bodyLarge'>{ username } </Text>
-            <Text variant='bodySmall'>{`(${role})`}</Text>
-          </View>
-          <Avatar.Image 
-            size={50} 
+      <Avatar.Image 
+            size={40} 
+            style={{marginVertical:'auto'}}
             source={{ uri: image || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541' }} 
           />
-        </View>
+        <View style={headerStyles.userInfo}>
+        
+          <Text variant='bodyLarge' style={{marginVertical:'auto'}}>{ username } </Text>
+          <Text variant='labelLarge' style={{marginVertical:'auto'}}>{role}</Text>
 
+          
+
+        </View>
         <View style={headerStyles.logout}>
           <PaperProvider theme={theme}>
             <Button
               style={[styles.squareButton, styles.wideButton]}
               mode="contained"
               icon="logout"
+              compact={true}
               onPress={handleLogout}>
               Log Out
             </Button>
@@ -74,8 +77,10 @@ const headerStyles = StyleSheet.create({
   },
   
   leftContainer: { 
+    flex:1,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent:'space-between',
   },
 
   logoContainer: {
@@ -91,23 +96,27 @@ const headerStyles = StyleSheet.create({
   },
 
   centreContainer: {
+    flex:2,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   rightContainer: {
+    flex:1,
     flexDirection: 'row',
+    justifyContent:'space-between',
     alignItems: 'center',
-    gap: 16
+    height: '100%',
   },
   userInfo: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginRight: 20,
+    justifyContent:'space-evenly',
+    height: '100%',
+    flex:2,
   },
   logout: { 
-    maxHeight: '100%'
+    height: '100%',
+    flex:1
   }
   
 });

@@ -48,10 +48,7 @@ const OrderDetailsModal = ({ visible, onDismiss, order, handleDeleteOrder }) => 
       return product;
     });
     const updatedOrder = {
-      table: order.table._id, 
       products: updatedProducts,
-      comment: order.comment,
-      total: order.total
     }
     try {
       const response = await fetch(`${connection}/orders/${order._id}`, {
