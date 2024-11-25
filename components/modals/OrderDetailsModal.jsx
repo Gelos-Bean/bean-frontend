@@ -123,12 +123,15 @@ const OrderDetailsModal = ({ visible, onDismiss, order, handleDeleteOrder }) => 
               </View>
             ))}
           </ScrollView>
+          {order.comment ? (
           <View style={[styles.commentContainer, styles.inputContainer]}>
-                    <Text variant='titleMedium'>
-                      Comment: </Text>
-                    <Text variant='bodyLarge'>
-                      {order.comment}</Text>
-                  </View>
+            <Text variant='titleMedium'>
+              Comment: </Text>
+            <Text variant='bodyLarge'>
+              {order.comment}</Text>
+          </View>
+          ) : (null)}
+          
           <View style={styles.bottomButtonRow}>
             <Button
               style={[styles.squareButton, styles.wideButton]}

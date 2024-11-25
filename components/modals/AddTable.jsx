@@ -108,17 +108,6 @@ const AddTableModal = ({ visible, onDismiss, onAdd, loading}) => {
                   />
                 </View>
               </View>
-
-              <Text variant="bodyLarge">Limit</Text>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  placeholder="Optional"
-                  keyboardType="numeric"
-                  value={limit.toString()}
-                  onChangeText={(value) => setLimit(parseInt(value) || '')}
-                  style={[styles.textInputStyle, { width: '100%' }]}
-                />
-              </View>
             </>
           )}
 

@@ -304,15 +304,17 @@ const Manager = () => {
   
   function updateDailyReport() {
     if (reports && reports.length > 0) {
-      const today = new Date();
-      const todayISO = dateToIso(today);
-  
-  
-      const reportMatch = reports.find((report) => {
-        const reportDate = dateToIso(new Date(report.date));
-        return reportDate === todayISO;
-      });
-  
+      const options = {
+        timeZone: 'Australia/Sydney',
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        };
+      const newDate = new Date().toLocaleString('en-AU', options);
+        const dateParts = newDate.split('/');
+        const dateToday = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`  
+      console.log(`Date: ${newDate}`)
+      const reportMatch = reports.find((report) => report.date === dateToday);
       if (reportMatch) {
         setTodaysReport(reportMatch);
       } else {
