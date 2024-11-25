@@ -75,7 +75,7 @@ export default function ViewOneTab({ tabId, onExit }) {
     
     function passTableData() {
         router.push({
-            pathname: '/',
+            pathname: '/products',
             params: { 
                 redirectId: tabItems._id,
                 redirectTabNo: tabItems.tableNo

@@ -29,7 +29,7 @@ const Login = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (authState.authenticated) router.push('/');
+    if (authState.authenticated) router.push('/products');
   }, [authState.authenticated]);
 
 

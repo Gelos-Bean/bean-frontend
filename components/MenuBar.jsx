@@ -25,7 +25,7 @@ export default function MenuBar(){
       style={{justifyContent: 'space-between', paddingStart: 20, paddingEnd: 20 }}
       >
       <Appbar.BackAction onPress={() => { handleBackNavigation() }}/>
-        <Appbar.Action icon="home" title="Home" onPress={() => { goTo('/') }}/>
+        <Appbar.Action icon="home" title="Home" onPress={() => { goTo('products') }}/>
         <Appbar.Action icon="tab" title="Tabs" onPress={() => { goTo('/tabs') }} />
         <Appbar.Action icon="clipboard-list" title="Orders" onPress={() => { goTo('/orders') }} />
         { isAdmin &&
