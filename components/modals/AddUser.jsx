@@ -18,9 +18,11 @@ const AddUserModal = ({ visible, onDismiss, onAdd, loading}) => {
   }
 
   const handleAdd = () => {
-    if(pin.toString().length <= 0 || pin.toString().length > 7 ){
-      Alert.alert('Error', 'Pin must be between 1 and 8 digits in length');
-    } else if(username.length <= 2 || username.length > 12 ){
+    if (pin.toString().length >= 0 || pin.toString().length > 7 ){
+    Alert.alert('Error', 'Pin must be between 1 and 8 digits in length');
+    } else if(isNaN(pin)){
+      Alert.alert('Error', 'Pin must contain only numbers');
+    }else if(username.length <= 2 || username.length > 12 ){
       Alert.alert('Error', 'Username must be between 2 and 12 characters in length');
     } else if (username && name && pin) {
       onAdd(name, username, pin, image)
@@ -70,7 +72,7 @@ const AddUserModal = ({ visible, onDismiss, onAdd, loading}) => {
                 <TextInput
                   keyboardType="numeric"
                   value={pin.toString()}
-                  onChangeText={(value) => setPin(parseInt(value) || '')}
+                  onChangeText={(value) => setPin(value)}
                   style={[styles.textInputStyle, { width: '100%' }]}
                 />
               </View>
