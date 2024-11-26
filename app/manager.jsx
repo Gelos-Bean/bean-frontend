@@ -313,12 +313,11 @@ const Manager = () => {
       const newDate = new Date().toLocaleString('en-AU', options);
         const dateParts = newDate.split('/');
         const dateToday = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`  
-      console.log(`Date: ${newDate}`)
       const reportMatch = reports.find((report) => report.date === dateToday);
       if (reportMatch) {
         setTodaysReport(reportMatch);
       } else {
-        console.log('No report found for today');
+        console.log(`No report found for ${dateToday}`);
       }
     }
   }
@@ -428,6 +427,7 @@ const Manager = () => {
         return { success: false, message: data.msg };
       }
         populateUsers();
+        Alert.alert(`Success`,`User ${user.username} updated successfully`)
         return { success: true, message: data.msg };
       
     } catch (err) {
@@ -435,6 +435,29 @@ const Manager = () => {
       return { success: false, message: 'Failed to edit product. Please check your network connection.' };
     }
   }
+
+  //Delete user
+  async function deleteUser(userId) {
+    if(!userId){
+      return;
+    }
+      try {
+        const response = await fetch(`${connection}/users/${userId}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+        });
+    
+        const data = await response.json();
+        if (!data.success) {
+          ShowError(`Could not delete user. ${data.msg}`);
+          return;
+        }
+        Alert.alert(`Success`,`User deleted successfully`)
+        populateUsers();
+      } catch (error) {
+        ShowError('Failed to delete user. Please check your network connection');
+      }
+    }
 
   // On Load:
   useEffect(() => {
@@ -631,7 +654,7 @@ const Manager = () => {
                       reports={reports} todaysReport={todaysReport} printReport={handlePrintReport}/>
         <SelectUserModal 
                       visible={viewUsersModal} onDismiss={() => setViewUsersModal(false)}
-                      users={users} onEdit={editUser}/>
+                      users={users} onEdit={editUser} onDelete={deleteUser}/>
       </ErrorBoundary>
       </SafeAreaView>
   );

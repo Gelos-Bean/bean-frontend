@@ -5,7 +5,7 @@ import styles from '../../styles/modalStyles';
 import LoadingIndicator from '../LoadingIndicator';
 import EditUserModal from './EditUser';
 
-const SelectUserModal = ({ visible, onDismiss, users, onEdit }) => {
+const SelectUserModal = ({ visible, onDismiss, users, onEdit, onDelete }) => {
   
   const [selectedUser, setSelectedUser] = useState(null);
   
@@ -18,6 +18,15 @@ const SelectUserModal = ({ visible, onDismiss, users, onEdit }) => {
 
   function handleAdd(updatedUser){
     onEdit(updatedUser);
+    onDismiss();
+  }
+
+  function handleDelete(userId){
+    onDelete(userId);
+    onDismiss();
+  }
+
+  function handleDismiss(){
     onDismiss();
   }
 
@@ -68,7 +77,7 @@ const SelectUserModal = ({ visible, onDismiss, users, onEdit }) => {
               style={[styles.squareButton, styles.wideButton]}
               icon="window-close"
               mode="contained"
-              onPress={onDismiss}
+              onPress={handleDismiss}
             >
               Cancel
             </Button>
@@ -85,7 +94,7 @@ const SelectUserModal = ({ visible, onDismiss, users, onEdit }) => {
       </View>
       <EditUserModal 
         visible={viewEditUserModal} onDismiss={() => setViewEditUserModal(false)}
-        user={selectedUser} onAdd={handleAdd}/>
+        user={selectedUser} onAdd={handleAdd} onDelete={handleDelete}/>
     </Modal>
   );
 };
