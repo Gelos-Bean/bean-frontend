@@ -57,7 +57,8 @@ const Login = () => {
         ShowError(data.msg);
       }
     } catch (err) {
-      ShowError('Failed to load users. Please check your network connection and try again.');
+      ShowError(`Failed to load users. ${err}`);
+      console.error(`Error: ${err} Connection: ${connection}`);
     } finally {
       setUsersLoading(false);
     }

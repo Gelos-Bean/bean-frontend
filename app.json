@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "beanscene-pos",
-    "slug": "beanscene-pos",
+    "slug": "nimble-merchant",
     "version": "1.0.0",
     "orientation": "landscape",
     "icon": "./assets/images/icon.png",
@@ -20,7 +20,9 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.tafe.nimblemerchant"
+      "package": "com.tafe.nimblemerchant",
+      "useCleartextTraffic": true,
+      "permissions": ["INTERNET"]
     },
     "web": {
       "bundler": "metro",
@@ -35,8 +37,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "28ca5b58-cf69-4869-8669-ae1c109cdbee"
+        "projectId": "28a2b22a-61f4-4011-aeb9-0ccd6e1aa34f"
       }
-    }
+    },
+    "owner": "benkindon"
   }
 }
