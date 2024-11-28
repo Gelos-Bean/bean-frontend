@@ -4,7 +4,7 @@
     "slug": "nimble-merchant",
     "version": "1.0.0",
     "orientation": "landscape",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/BeanSceneIcon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/BeanSceneIcon.png",
         "backgroundColor": "#ffffff"
       },
       "useCleartextTraffic": true,
@@ -29,7 +29,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/BeanSceneIcon.png"
     },
     "plugins": [
       "expo-router"
