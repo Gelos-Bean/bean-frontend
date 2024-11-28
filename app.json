@@ -20,9 +20,11 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.tafe.nimblemerchant",
       "useCleartextTraffic": true,
-      "permissions": ["INTERNET"]
+      "permissions": [
+        "INTERNET"
+      ],
+      "package": "com.benkindon.nimblemerchant"
     },
     "web": {
       "bundler": "metro",
