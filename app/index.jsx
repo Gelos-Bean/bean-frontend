@@ -37,6 +37,7 @@ const Login = () => {
   const [users, setUsers] = useState([]); 
   const [usersLoading, setUsersLoading] = useState(false);
   async function PopulateUsers() {
+    console.log("Connection URL:", connection);
     setUsersLoading(true);
     if (!connection) {
       ShowError('Connection configuration is missing');
@@ -44,11 +45,12 @@ const Login = () => {
       return;
     }
     try {
-      const response = await withTimeout(fetch(`${connection}/users`, { method: 'GET' }), 5000);
+      const response = await fetch(`${connection}/Users`, { method: 'GET' });
   
-      if (!response.ok)
-        return ShowError('Server responded with an error');
-  
+      if (!response.ok) {
+        const errorText = await response.text(); 
+        return ShowError(`Server responded with an error: ${response.statusText} - ${errorText}`);
+      }  
       const data = await response.json();
   
       if (data.success && Array.isArray(data.msg)) {
@@ -57,7 +59,8 @@ const Login = () => {
         ShowError(data.msg);
       }
     } catch (err) {
-      ShowError('Failed to load users. Please check your network connection and try again.');
+      ShowError(`Failed to load users. ${err}`);
+      console.error(`Error: ${err} Connection: ${connection}`);
     } finally {
       setUsersLoading(false);
     }
