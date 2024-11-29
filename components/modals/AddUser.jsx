@@ -18,7 +18,7 @@ const AddUserModal = ({ visible, onDismiss, onAdd, loading}) => {
   }
 
   const handleAdd = () => {
-    if (pin.toString().length >= 0 || pin.toString().length > 7 ){
+    if (pin.toString().length <= 0 || pin.toString().length > 7 ){
     Alert.alert('Error', 'Pin must be between 1 and 8 digits in length');
     } else if(isNaN(pin)){
       Alert.alert('Error', 'Pin must contain only numbers');
