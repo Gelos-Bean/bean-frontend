@@ -34,11 +34,8 @@ export default function Orders() {
       const orders = await response.json();
 
       if (!orders.success) {
-        ShowError(`Could not load orders. ${orders.msg}`)
-        setLoadingOrders(false);
         return;
       }
-
       setOrders(orders.msg);
       setErrorLoadingOrders(false);
 
