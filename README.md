@@ -46,7 +46,7 @@ This POS system is optimised for Android tablets, but can also be used on mobile
 - **Node.js**: needs to be installed on your computer. It can be downloaded from [Node.js](https://nodejs.org/en)
 
 ### Downloading the Software <a id="download"></a>
-The software can be downloaded from the [NimbleMerchant website](https://example.com/download).
+The software can be downloaded from the [NimbleMerchant website](https://expo.dev/accounts/benkindon/projects/nimble-merchant/builds/ae809537-bf69-433c-abce-51554073592a).
 
 
 ## 🖧 Server Setup <a id="server-setup"></a>
@@ -92,7 +92,7 @@ Follow the steps below to log in and start the backend server:
 ## 🏁 Start Up <a id="start-up"></a>
 After succesfully [downloading & installing the software](#download) and [starting the server](#server-setup), open the application.  
 
-Pre-configured login credentials have been made available. To add more login users, please [contact Nimble Merchant](#contact), allowing for a two day turn around.
+Pre-configured login credentials have been made available. To add more users, please select the `Add User` option on the login screen, or as an adminstrator navigate to the configuration page and locate the Add User option.
 
 
 ## 📗 Documentation <a id="documentation"></a>
@@ -102,5 +102,12 @@ API documentation can be found in the [BeanAPI github repository](https://github
 
 ## 📞 Contact Us<a id="contact"></a>
 
-   - ### **General Enquiries**: [info@nimblemerchant.com.au](mailto:info@nimblemerchant.com.au)
-   - #### **Urgent Support**: Include "Urgent" in the email subject line for a response within 30 minutes.
+- ### **General Enquiries**: [info@nimblemerchant.com.au](mailto:info@nimblemerchant.com.au).
+   **For Urgent Support**: Include "Urgent" in the email subject line for a response within 30 minutes.   
+   *For general non-urgent enquiries, please allow for a two day turnaround.*  
+
+Restaurant styling and products are placeholders and can be replaced with personalised content on request
+
+## Further Support <a id="contact"></a>
+Contact Ben [gmail](mailto:benkindon@gmail.com)  
+Contact Nicole [gmail](mailto:nicolebirchh@gmail.com)
