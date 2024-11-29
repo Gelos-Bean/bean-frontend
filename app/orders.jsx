@@ -26,6 +26,13 @@ export default function Orders() {
       return () => clearInterval(interval); 
     }, [])
   );
+  const [refresh, setRefresh] = useState(false)
+  useEffect(() => {
+    if(refresh) {
+      getOrders();
+      setRefresh(false);
+    }
+  }, [refresh])
 
   const [orders, setOrders] = useState([]);
   async function getOrders() {
@@ -83,10 +90,10 @@ export default function Orders() {
       if (!data.success) {
         return Alert.alert('Error', data.msg);
       }
-  
+      
       setOrderToDelete(null);
       setOrderToView(null);
-      getOrders();
+      setRefresh(true);
   
     } catch (error) {
       Alert.alert('Error', error.message);
