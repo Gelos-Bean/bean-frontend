@@ -64,8 +64,6 @@ export default function ViewOneTab({ tabId, onExit }) {
     
                 if(!res)
                     return ShowError(res.msg);
-
-                Alert.alert(res.msg)
                 onExit();
             } catch (err) {
                 ShowError(err.message);

@@ -31,15 +31,16 @@ const EditProductModal = ({ visible, onDismiss, product, onConfirm }) => {
   const [newOptionModalVisible, setNewOptionModalVisible] = useState(false);
 
   // Fill in fields ONLY when the modal is made visible
+
   useEffect(() => {
     if (visible && product) {
       setId(product._id || '')
-      setOptions(product.options || []);
       setNameInput(product.name || '');
       setPriceInput(product.price ? product.price.toString() : '');
       setSelectedCategory(product.course || '');
       setSelectedOptions(product.options || []);
       setImageInput(product.image || '');
+      setSearchQuery('');
     }
   }, [visible]);
 
@@ -115,7 +116,7 @@ const EditProductModal = ({ visible, onDismiss, product, onConfirm }) => {
     <Modal animationType="slide" transparent={true} visible={visible} onDismiss={onDismiss}>
       <View style={styles.centeredView}>
         <View style={[styles.modalView, { width: '60%' }]}>
-          <Text variant="headlineMedium" style={styles.modalText}>New Product</Text>
+          <Text variant="headlineMedium" style={styles.modalText}>Edit Product</Text>
           <View style={{ flexDirection: 'row' }}>
             <View style={{ flex: 1, marginHorizontal: '1%', justifyContent:'flex-start' }}>
               <Text variant="bodyLarge">Name*</Text>
@@ -157,7 +158,7 @@ const EditProductModal = ({ visible, onDismiss, product, onConfirm }) => {
             <View style={{ flex: 1, marginHorizontal: '1%' }}>
               <Text variant="bodyLarge">Options</Text>
               <View style={styles.inputContainer}>
-                <TextInput
+              <TextInput
                   placeholder="Search for options"
                   value={searchQuery}
                   onChangeText={setSearchQuery}
@@ -191,7 +192,6 @@ const EditProductModal = ({ visible, onDismiss, product, onConfirm }) => {
                           <Checkbox
                             status={selectedOptions.some(opt => opt._id === option._id) ? 'checked' : 'unchecked'}
                             onPress={() => handleSelectOption(option)}
-                            
                           />
                         )}
                       />

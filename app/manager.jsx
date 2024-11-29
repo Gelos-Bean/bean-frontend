@@ -558,20 +558,20 @@ const Manager = () => {
                       onPress={() => setNewProductModalVisible(true)}>              
                     </IconButton>
                     <IconButton style={styles.squareButton}
-                      icon="magnify"
-                      mode="contained"
-                      selected={true}
-                      size={30}
-                      onPress={() => setSearchModalVisible(true)}>              
-                    </IconButton>
-                    <IconButton style={styles.squareButton}
                       icon="pencil"
                       mode="contained"
                       selected={true}
                       size={30}
                       disabled={!selectedProduct}
                       onPress={() => setViewEditProductModal(true)}>             
-                    </IconButton>   
+                    </IconButton> 
+                    <IconButton style={styles.squareButton}
+                      icon="magnify"
+                      mode="contained"
+                      selected={true}
+                      size={30}
+                      onPress={() => setSearchModalVisible(true)}>              
+                    </IconButton>  
                     <IconButton style={styles.squareButton}
                       icon="delete"
                       mode="contained"
