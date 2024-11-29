@@ -46,7 +46,7 @@ This POS system is optimised for Android tablets, but can also be used on mobile
 - **Node.js**: needs to be installed on your computer. It can be downloaded from [Node.js](https://nodejs.org/en)
 
 ### Downloading the Software <a id="download"></a>
-The software can be downloaded from the [NimbleMerchant website](https://expo.dev/accounts/benkindon/projects/nimble-merchant/builds/ae809537-bf69-433c-abce-51554073592a).
+The software can be downloaded from the [NimbleMerchant website](https://expo.dev/accounts/benkindon/projects/nimble-merchant/builds/0f16b253-b56a-498b-a251-874d47956623).
 
 
 ## 🖧 Server Setup <a id="server-setup"></a>
