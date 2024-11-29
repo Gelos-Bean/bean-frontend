@@ -155,7 +155,6 @@ const tabStyle = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#9C404D',
     backgroundColor: '#9C404D',
-    borderRadius: 5
   },
   highlightText:{
     color: '#ffffff',
