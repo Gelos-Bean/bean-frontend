@@ -24,7 +24,7 @@ export default function Header({ title, location, username, role, image }){
         <View style={headerStyles.logoContainer}>
           <Image
               style={headerStyles.logo}
-              source={require('../assets/images/BeanSceneLogo.png')} />
+              source={require('../assets/images/NM_Long.png')} />
         </View>
         <Text variant='bodyLarge'>{ location }</Text>
       </View>
