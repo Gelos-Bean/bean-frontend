@@ -1,7 +1,7 @@
 <div align="center">
 
 # NimbleMerchant POS System
-![Nimble Merchant Logo](assets/images/NimbleMerchant.jpg)
+![Nimble Merchant Logo](assets/images/NimbleMerchant.png)
 
 </div>
 
